@@ -133,16 +133,16 @@
 \maketitle
 
 \begin{abstract}
-Controllable video generation is increasingly specified through character identities, camera trajectories, required props, temporal actions, and multi-shot scripts. Scalar quality or alignment scores are useful for ranking models, but they provide weak debugging signals because they rarely identify the failure, its temporal evidence, affected target, or a concrete next repair.
+Controllable video generation increasingly depends on character identities, camera trajectories, required props, temporal actions, and multi-shot scripts. Scalar quality or alignment scores help rank models, but they provide limited debugging support because they rarely identify the failure, localize the supporting evidence, name the affected target, or specify a concrete repair.
 
-We present VideoGenDoctor, a framework that converts generation failures into code--span--target--plan records grounded in temporal evidence and representative keyframes. The default implementation combines lightweight feature-based screening, optional VLM verification, and a patch compiler that maps localized diagnoses to repair plans. We evaluate it on VideoGenDoctor-Bench-v0, a controlled diagnostic fixture with 324 videos, 9 deterministic perturbation types, and 2,016 human-verified evidence spans covering 12 observed failure codes from a 38-code taxonomy. VideoGenDoctor-diagnosis reaches macro-F1 0.9110 and tIoU@0.5 0.7316; the higher-cost Rule+GPT-4V reference reaches 0.9276 and 0.7688. In closed-loop evaluation, VideoGenDoctor-full improves automatic Pass@1/2 from 24.07\%/35.80\% for Score-only feedback to 64.81\%/83.64\%. On a 240-video failure-enriched subset from four controllable video generators, the default pipeline improves diagnosis macro-F1 from 0.7992 to 0.8264 and tIoU@0.5 from 0.5431 to 0.5982 over direct structured VLM reporting. The results support auditable repair records as a practical interface for controlled diagnosis and repair planning, while leaving broad open-world generality for future validation.
+We present VideoGenDoctor, a diagnosis-and-repair framework that represents generation failures as code--span--target--plan records grounded in temporal evidence and representative keyframes. The default implementation combines lightweight feature-based screening, optional VLM verification, and a patch compiler that maps localized diagnoses to structured repair plans. We evaluate VideoGenDoctor on VideoGenDoctor-Bench-v0, a controlled diagnostic fixture with 324 videos, 9 deterministic perturbation types, and 2,016 human-verified evidence spans covering 12 observed failure codes from a 38-code taxonomy. VideoGenDoctor-diagnosis reaches macro-F1 0.9110 and tIoU@0.5 0.7316; the higher-cost Rule+GPT-4V reference reaches 0.9276 and 0.7688. In closed-loop evaluation, VideoGenDoctor-full improves automatic Pass@1/2 from 24.07\%/35.80\% for Score-only feedback to 64.81\%/83.64\%. On a 240-video failure-enriched subset from four controllable video generators, the default pipeline improves diagnosis macro-F1 from 0.7992 to 0.8264 and tIoU@0.5 from 0.5431 to 0.5982 over direct structured VLM reporting. These results support auditable repair records as a practical interface for controlled diagnosis and repair planning, while leaving broad open-world generality to future validation.
 \end{abstract}
 
 
 \section{Introduction}
 \label{sec:intro}
 
-Recent diffusion-based models can synthesize multi-second videos conditioned on text, reference images, camera trajectories, character identities, and structured shot scripts~\cite{cogvideox2024,svd2023,motionctrl2024,instructvideo2024}. In production-style workflows, ShotIR-like specifications define per-shot props, characters, camera movement, shot type, and action order. When a generated video violates such specifications, however, users still lack a systematic interface for locating the failure and deciding the next intervention.
+Recent diffusion-based models can synthesize multi-second videos conditioned on text, reference images, camera trajectories, character identities, and structured shot scripts~\cite{cogvideox2024,svd2023,motionctrl2024,instructvideo2024}. In production-style workflows, ShotIR-like specifications define per-shot props, characters, camera movement, shot type, and action order. When a generated video violates these specifications, users need more than a model-level score: they need to know what failed, where the evidence appears, which target is affected, and how the next generation attempt should be changed.
 
 Current video-generation evaluators such as VBench~\cite{vbench2024}, EvalCrafter~\cite{evalcrafter2024}, VideoScore~\cite{videoscore2024}, and T2V-CompBench~\cite{t2vcompbench2024} report aggregate quality, motion, or alignment scores. These scores are useful for model comparison but weak as debugging signals: a low score does not indicate whether the character identity drifted, a required prop disappeared, camera motion was violated, or a specific temporal segment should be regenerated.
 
@@ -151,6 +151,8 @@ VideoGenDoctor reframes controllable-video evaluation as structured diagnosis an
 R = \{(c_i,t_0^i,t_1^i,y_i,\sigma_i,K_i,T_i,a_i)\},
 \]
 where $c_i$ is a failure code, $(t_0^i,t_1^i)$ is the evidence span, $y_i$ is the affected target, $\sigma_i$ is confidence, $K_i$ contains representative keyframes, $T_i$ stores optional track-level evidence, and $a_i$ is a compiled repair action. The interface is designed to be machine-readable and human-auditable; executable repair depends on the capabilities exposed by the downstream generator or editor.
+
+This framing leads to three empirical questions. First, can structured records improve failure-code detection and temporal localization over direct VLM critiques? Second, do localized evidence and template-constrained plans improve repair utility beyond score-only feedback or code-only patches? Third, how far do conclusions from deterministic perturbations transfer to naturally occurring generator failures without claiming open-world coverage?
 
 \paragraph{Scope.}
 We separate the interface claim from the open-world generality claim. The expanded controlled fixture supports the claim that code--span--target--plan records provide auditable diagnosis and useful repair plans under known perturbations. A failure-enriched real-generator subset suggests transfer beyond deterministic perturbations, but broader coverage across generators, domains, styles, and long-form videos remains future work. We therefore call VideoGenDoctor-Bench-v0 a controlled diagnostic fixture rather than a general open-world benchmark.
@@ -183,7 +185,7 @@ Program repair systems typically localize a defect, classify it, and generate a 
   \put(71.6,54.5){\color{white}\rule{24mm}{7mm}}
   \put(72.0,56.0){\scriptsize\bfseries Structured Repair Plan}
 \end{overpic}
-\caption{VideoGenDoctor framework overview. The system converts a generated video and its prompt or structured specification into failure-as-code diagnosis records, grounds each record in localized temporal evidence, maps records to structured repair plans, and verifies regenerated videos in a closed loop.}
+\caption{Overview of VideoGenDoctor. The system converts a generated video and its prompt or structured specification into failure-as-code records, grounds each record in localized temporal evidence, compiles a structured repair plan, and verifies regenerated videos in a bounded closed loop.}
 \label{fig:system_overview}
 \end{figure}
 
@@ -201,7 +203,7 @@ where $c$ is the taxonomy code, $(t_0,t_1)$ is the evidence span, $y$ is the aff
 \begin{table}[H]
 \centering
 \footnotesize
-\caption{Representative failure types and repair-plan template mappings. A diagnosis record combines a failure type with a localized span, target, confidence, evidence, and repair-plan action.}
+\caption{Representative mappings from failure types to evidence signals and repair-plan templates. Each diagnosis record stores the failure code, localized span, affected target, confidence, evidence, and compiled repair action.}
 \label{tab:code_patch_mapping}
 \begin{tabular}{p{0.29\textwidth}p{0.33\textwidth}p{0.26\textwidth}}
 \toprule
@@ -228,7 +230,7 @@ The optional Stage-2 judge receives the top-$K$ candidate segments ($K=3$ by def
 with $\alpha=0.6$ by default. Hosted endpoints, prompts, sampled frames, raw responses, parsed JSON, and latency metadata are logged for reproducibility.
 
 \subsection{Evidence Localization and Repair Planning}
-Each retained record stores an evidence object $E=(t_0,t_1,K,T)$ so that the diagnosis can be audited. Fixed segments are sufficient for the current fixture; future versions can refine spans using frame-level peaks and track-based merging. The patch compiler then emits either ShotIR field-level diffs or generator-agnostic repair plans. Each plan preserves the triggering code, evidence span, affected target, and rationale. In closed-loop evaluation, a video passes when all failure confidences fall below $\tau=0.5$ or the loop reaches $K_{\max}=3$; because this automatic criterion is verifier-dependent, Section~\ref{sec:repair_results} also reports blind human repair validation.
+Each retained record stores an evidence object $E=(t_0,t_1,K,T)$ so that the diagnosis can be audited. Fixed segments are sufficient for the current fixture; future versions can refine spans using frame-level peaks and track-based merging. The patch compiler emits either ShotIR field-level diffs or generator-agnostic repair plans, preserving the triggering code, evidence span, affected target, and rationale. In closed-loop evaluation, a video passes when all failure confidences fall below $\tau=0.5$ or the loop reaches $K_{\max}=3$. Because this automatic criterion depends on the verifier, Section~\ref{sec:repair_results} also reports blind human repair validation.
 
 \section{Experiments}
 \label{sec:setup}
@@ -236,7 +238,7 @@ Each retained record stores an evidence object $E=(t_0,t_1,K,T)$ so that the dia
 
 \subsection{Benchmark and Evaluation Protocol}
 \label{sec:dataset}
-We evaluate VideoGenDoctor as a diagnosis-and-repair system. The main questions are whether predicted failure codes are correct, evidence spans are temporally localized, repair plans are valid and useful, and repaired videos satisfy the specification under independent human judgment.
+We evaluate VideoGenDoctor as a diagnosis-and-repair system rather than as a new video generator. The experiments align with the three questions in the introduction: failure-code correctness, temporal evidence localization, repair-plan usefulness, and final specification satisfaction under independent human judgment.
 
 \paragraph{Controlled fixture.}
 VideoGenDoctor-Bench-v0 contains 324 perturbed videos, 2,016 verified evidence spans, 9 deterministic perturbation types, and 12 observed failure codes. It is built from 18 clean source clips across six domain groups; each clip is paired with a ShotIR-style specification and perturbed by nine deterministic operators under two seeds. The fixture validates interface consistency, evidence auditability, and repair-planning usefulness under controlled failures; it is not intended as a comprehensive open-world benchmark. Construction details and operator-to-template alignment are moved to Appendix~\ref{app:moved_main_details}, Table~\ref{tab:controlled_fixture_composition}, and Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:operator_alignment}.
@@ -249,7 +251,7 @@ A reliability subset of 120 videos and 768 candidate evidence spans is dual-anno
 
 \begin{table}[H]
 \centering\small
-\caption{Dataset statistics. The first row is the expanded controlled perturbation fixture. The second row is the expanded real-failure subset collected from naturally occurring failures across multiple generators.}
+\caption{Dataset statistics for the controlled fixture and failure-enriched real-generator subset. The real-failure split contains naturally occurring, annotator-verified specification violations from multiple generators and is not used to estimate failure prevalence.}
 \label{tab:dataset_statistics}
 \begin{tabular*}{0.95\textwidth}{@{\extracolsep{\fill}}lccccc@{}}
 \toprule
@@ -270,7 +272,7 @@ We report macro-F1 and micro-F1 for failure-code detection, tIoU@0.3/0.5 and Top
 \label{sec:f1_results}
 \begin{table}[H]
 \centering\small
-\caption{Failure-code detection on the expanded controlled fixture. Direct VLM baselines are included to compare VideoGenDoctor with strong agent-style alternatives. Confidence intervals are estimated by video-level bootstrap resampling. Best values are boldfaced.}
+\caption{Failure-code detection on the controlled fixture. Direct VLM baselines test whether schema-constrained diagnosis improves over strong free-form and structured critique alternatives. Confidence intervals are estimated by video-level bootstrap resampling; best values are boldfaced.}
 \label{tab:code_detection}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccc}
@@ -290,7 +292,7 @@ VLM structured report & 0.8869 & 0.9018 & [0.864, 0.908] \\
 \end{adjustbox}
 \end{table}
 
-VideoGenDoctor-diagnosis outperforms free-form and structured direct VLM reporting on macro-F1, while Rule+GPT-4V remains the strongest configuration. The larger gains in the localization results below indicate that the main advantage of structured diagnosis is not only detecting that a failure exists, but grounding it stably enough to support repair.
+VideoGenDoctor-diagnosis outperforms free-form and structured direct VLM reporting on macro-F1, while Rule+GPT-4V remains the strongest configuration. The stronger localization results below suggest that the benefit of structured diagnosis is not limited to detecting a failure; the records also ground failures stably enough to support repair planning.
 
 \subsection{Per-Code Reliability and Evidence Localization}
 \label{sec:per_code}
@@ -306,7 +308,7 @@ The controlled fixture covers twelve observed codes. Detailed per-code precision
 
 \begin{table}[H]
 \centering\small
-\caption{Evidence localization against human evidence spans on the expanded controlled fixture. Confidence intervals are estimated by video-level bootstrap resampling. Best values are boldfaced.}
+\caption{Evidence localization against human evidence spans on the controlled fixture. Confidence intervals are estimated by video-level bootstrap resampling; best values are boldfaced.}
 \label{tab:evidence_localization}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccccc}
@@ -355,7 +357,7 @@ The main repair gain is most consistent with structured repair planning and veri
 \label{sec:real_failures}
 \begin{table}[H]
 \centering\small
-\caption{Generalization check on expanded controlled perturbations and naturally occurring generator failures. Macro-F1 and tIoU@0.5 are computed from each method's diagnosis front end; Patch useful and Human Pass@2 evaluate the corresponding downstream repair protocol. Best values within each subset are boldfaced.}
+\caption{Transfer from controlled perturbations to naturally occurring generator failures. Macro-F1 and tIoU@0.5 evaluate each diagnosis front end; patch usefulness and Human Pass@2 evaluate the corresponding downstream repair protocol. Best values within each subset are boldfaced.}
 \label{tab:controlled_vs_real}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{llcccc}
@@ -377,7 +379,7 @@ All methods degrade on naturally occurring failures, confirming that the control
 \label{sec:ablations}
 \begin{table}[H]
 \centering\scriptsize
-\caption{Repair ablation on the expanded controlled fixture. We isolate the contribution of failure codes, temporal spans, evidence keyframes, patch templates, and verification. Best utility values are boldfaced; the new-artifact rate is reported for context rather than bold-ranked.}
+\caption{Repair ablation on the controlled fixture. The variants isolate the contributions of failure codes, affected targets, temporal spans, evidence keyframes, patch templates, and verification. Best utility values are boldfaced; the new-artifact rate is reported for context rather than bold-ranked.}
 \label{tab:repair_ablation}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{0.22\textwidth}cccccccc}
@@ -401,7 +403,7 @@ The ablation tests whether localized evidence and template-constrained repair co
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{Paired comparison of repair variants. We report paired bootstrap differences in blind human Pass@2. Small differences between Patch+Judge and Full loop should be interpreted cautiously.}
+\caption{Paired comparison of repair variants. Differences are paired bootstrap estimates in blind human Pass@2. Small differences between Patch+Judge and the full loop should be interpreted cautiously.}
 \label{tab:paired_repair_test}
 \begin{tabular}{lccc}
 \toprule
@@ -420,7 +422,7 @@ We also perform leave-one-perturbation-out and leave-one-source-group-out evalua
 \section{Discussion}
 \label{sec:discussion}
 
-The current evidence supports a scoped claim: structured code--span--target--plan records improve diagnosis and repair planning over score-only feedback and direct VLM reporting on the controlled fixture and the current failure-enriched real-generator subset. It does not show that VideoGenDoctor solves open-world video repair. The controlled fixture demonstrates auditable localization under known perturbations, while the real-failure subset provides an initial but still limited transfer check.
+The current evidence supports a scoped claim: structured code--span--target--plan records improve diagnosis and repair planning over score-only feedback and direct VLM reporting on the controlled fixture and the current failure-enriched real-generator subset. The evidence does not show that VideoGenDoctor solves open-world video repair. The controlled fixture demonstrates auditable localization under known perturbations, while the real-failure subset provides an initial but still limited transfer check.
 
 The value of VideoGenDoctor should be assessed as an interface contribution rather than as a new video generation model or a learned repair algorithm. Its advantages lie in schema validity, temporal grounding, repair-plan usefulness, human auditability, and cost-performance. Rule+GPT-4V + repair loop is the strongest absolute scorer in the current controlled evaluation, but it relies on a more expensive hosted front end and is best interpreted as an upper-reference configuration rather than the default operating point. We therefore headline VideoGenDoctor-full because it preserves the structured interface and audit trail while delivering the main closed-loop gain at the paper's default cost point. The modular design also allows feature extractors, rules, VLM judges, and patch compilers to be replaced independently; Stage-2 judging is restricted to top-ranked candidate segments, and the closed loop bounds repair by $K_{\max}$.
 
@@ -428,7 +430,7 @@ The value of VideoGenDoctor should be assessed as an interface contribution rath
 The expanded fixture remains controlled; the real-failure subset is failure-enriched and cannot estimate natural failure prevalence; automatic pass rates are partly verifier-dependent; only observed taxonomy codes support empirical claims; and repair assumes access to a generator or editor that can consume at least part of the patch vocabulary. Broader validation requires larger generator coverage, longer videos, more domains and styles, stronger adapter executability tests, and larger multi-annotator studies.
 
 \section{Conclusion}
-We presented VideoGenDoctor, a structured framework for failure diagnosis, evidence localization, and repair planning in controllable video generation. The core contribution is an auditable code--span--target--plan interface that connects evaluation to repair planning. The expanded evaluation consists of a 324-video controlled diagnostic fixture with 2,016 verified evidence spans and a 240-video failure-enriched real-generator subset with 1,536 verified evidence spans. The controlled fixture covers 12 observed taxonomy codes under 9 deterministic perturbation operators, while the real-generator subset covers 18 observed taxonomy codes across four publicly identifiable video generation systems. The primary empirical gain comes from structured repair planning and independent verification, while the full closed loop mainly provides traceable integration from diagnosis to evidence, patch planning, re-rendering, and verification. The broader generality claim remains scoped by the controlled and failure-enriched nature of the current evaluation sets.
+We presented VideoGenDoctor, a structured framework for failure diagnosis, evidence localization, and repair planning in controllable video generation. The core contribution is an auditable code--span--target--plan interface that connects evaluation to actionable repair planning. The evaluation combines a 324-video controlled diagnostic fixture with 2,016 verified evidence spans and a 240-video failure-enriched real-generator subset with 1,536 verified evidence spans. The controlled fixture covers 12 observed taxonomy codes under 9 deterministic perturbation operators, while the real-generator subset covers 18 observed taxonomy codes across four publicly identifiable video generation systems. The main empirical gain comes from structured repair planning and independent verification; the full closed loop provides traceable integration from diagnosis to evidence, patch planning, re-rendering, and verification. The broader generality claim remains bounded by the controlled and failure-enriched nature of the current evaluation sets.
 
 \section{Ethics Statement}
 \label{sec:ethics}
