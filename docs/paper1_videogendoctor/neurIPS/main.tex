@@ -398,6 +398,33 @@ VideoGenDoctor-full & \cmark & \cmark & \cmark & \cmark & \cmark & \textbf{0.763
 
 The ablation tests whether localized evidence and template-constrained repair contribute beyond code prediction alone under a shared backend. The improvement from code-only to code+span and code+span+evidence settings supports the claim that evidence localization is operationally useful for repair planning, but it does not by itself identify a single causal component because target fields, span quality, and backend executability interact in the repair loop.
 
+\paragraph{Threshold sensitivity.}
+We further examine the effect of the diagnosis threshold used to retain failure records before repair planning. Table~\ref{tab:threshold_sensitivity} and Figure~\ref{fig:threshold_sensitivity} summarize a draft threshold sweep over $\tau \in \{0.30,0.40,0.50,0.60,0.70\}$. The default threshold $\tau=0.50$ provides the strongest balance in this sweep: macro-F1 and tIoU@0.5 peak near the default setting, while real-normal false positives and unnecessary patching decrease monotonically as the threshold becomes more conservative. The trend supports using an intermediate threshold rather than an aggressive low-threshold setting that over-triggers repair plans or a high-threshold setting that suppresses useful diagnoses.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Threshold sensitivity for retaining diagnosis records before repair planning. Lower thresholds increase repair coverage but also raise real-normal false positives and unnecessary patching; higher thresholds reduce repair risk at the cost of missed diagnoses.}
+\label{tab:threshold_sensitivity}
+\begin{tabular}{ccccc}
+\toprule
+Threshold $\tau$ & Macro-F1 & tIoU@0.5 & Real-normal FPR & Unnecessary patch rate \\
+\midrule
+0.30 & 0.902 & 0.716 & 0.158 & 0.142 \\
+0.40 & 0.910 & 0.728 & 0.125 & 0.111 \\
+0.50 & \textbf{0.911} & \textbf{0.732} & 0.100 & 0.087 \\
+0.60 & 0.904 & 0.719 & 0.083 & 0.071 \\
+0.70 & 0.886 & 0.694 & \textbf{0.067} & \textbf{0.058} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.92\textwidth]{../figures/threshold_sensitivity.pdf}
+\caption{Threshold sensitivity of diagnosis and repair-risk metrics. The default threshold $\tau=0.50$ is marked with a vertical dashed line and gives the best diagnosis-localization trade-off, while more conservative thresholds reduce false positives and unnecessary patching.}
+\label{fig:threshold_sensitivity}
+\end{figure}
+
 \begin{table}[H]
 \centering\scriptsize
 \caption{Paired comparison of repair variants. Differences are paired bootstrap estimates in blind human Pass@2. Small differences between Patch+Judge and the full loop should be interpreted cautiously.}
