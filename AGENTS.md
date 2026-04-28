@@ -21,10 +21,18 @@
 - `docs/paper1_videogendoctor/latex/references.bib`
 - `docs/paper1_videogendoctor/neurIPS/main.tex`
 - `docs/paper1_videogendoctor/neurIPS/checklist.tex`
-- `docs/paper1_videogendoctor/figures/` 下与论文直接相关的图表源文件
+- `docs/paper1_videogendoctor/figures/` 下与论文直接相关的图表、图片、矢量图、导出 PDF、源 PPTX、SVG 等 figure 资源
 - 其他被本次论文任务直接修改的附录、表格计划、审稿说明或投稿材料
 
 如果工作区中同时存在与论文无关的大量改动，默认只提交与本次论文任务直接相关的文件，不把整个工作区一起提交。
+
+## Figure 资源要求
+
+当论文正文或附录引用了新的 figure，或现有 figure 被更新时：
+
+1. 相关 figure 文件必须一并纳入版本管理。
+2. 提交论文主稿时，应同步提交对应的 figure 资源。
+3. 推送到 GitHub 时，论文文本文件和本次修改涉及的 figure 文件应一并推送，避免仓库中出现“TeX 已更新但图未上传”的不一致状态。
 
 ## 提交信息约定
 
