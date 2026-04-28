@@ -125,7 +125,7 @@ Controllable video generation increasingly relies on structured conditions such 
 
 We present VideoGenDoctor, a structured framework for failure diagnosis, evidence localization, and repair planning. Given a generated video and its prompt or structured specification, VideoGenDoctor converts failures into code--span--target--plan records grounded in temporal evidence and representative keyframes. The default implementation combines lightweight feature-based screening, optional VLM verification, and a patch compiler that maps localized failures to repair plans.
 
-We position VideoGenDoctor-Bench-v0 as a controlled diagnostic fixture rather than a broad open-world benchmark. It contains 324 videos, 9 deterministic perturbation types, and 2,016 human-verified evidence spans covering 12 observed failure codes from a 38-code taxonomy. On this fixture, VideoGenDoctor-diagnosis reaches macro-F1 0.9110 and tIoU@0.5 0.7316; Rule+GPT-4V reaches 0.9276 and 0.7688. In automatic closed-loop evaluation, VideoGenDoctor-full improves Pass@1/2 from 24.07\%/35.80\% for Score-only feedback to 64.81\%/83.64\%. On a 240-video real-failure subset from four controllable video generators, the default VideoGenDoctor pipeline improves front-end diagnosis macro-F1 from 0.7992 to 0.8264 and tIoU@0.5 from 0.5431 to 0.5982 over direct structured VLM reporting, while also improving downstream repair utility. These results support the value of structured, auditable repair records while leaving broad open-world generality as future validation.
+We position VideoGenDoctor-Bench-v0 as a controlled diagnostic fixture rather than a broad open-world benchmark. It contains 324 videos, 9 deterministic perturbation types, and 2,016 human-verified evidence spans covering 12 observed failure codes from a 38-code taxonomy. On this fixture, VideoGenDoctor-diagnosis reaches macro-F1 0.9110 and tIoU@0.5 0.7316; Rule+GPT-4V reaches 0.9276 and 0.7688. In automatic closed-loop evaluation, VideoGenDoctor-full improves Pass@1/2 from 24.07\%/35.80\% for Score-only feedback to 64.81\%/83.64\%. Rule+GPT-4V + repair loop remains the strongest absolute scorer on the controlled fixture, but at 2.75$\times$ relative cost; we therefore treat VideoGenDoctor-full as the default operating point for the main narrative and use the GPT-4V front end as a high-cost reference. On a 240-video real-failure subset from four controllable video generators, the default VideoGenDoctor pipeline improves front-end diagnosis macro-F1 from 0.7992 to 0.8264 and tIoU@0.5 from 0.5431 to 0.5982 over direct structured VLM reporting, while also improving downstream repair utility. These results support the value of structured, auditable repair records while leaving broad open-world generality as future validation.
 \end{abstract}
 
 
@@ -232,7 +232,7 @@ We evaluate VideoGenDoctor as a diagnosis-and-repair system. The main questions 
 VideoGenDoctor-Bench-v0 contains 324 perturbed videos, 2,016 verified evidence spans, 9 deterministic perturbation types, and 12 observed failure codes. It is built from 18 clean source clips across six domain groups; each clip is paired with a ShotIR-style specification and perturbed by nine deterministic operators under two seeds. The fixture validates interface consistency, evidence auditability, and repair-planning usefulness under controlled failures; it is not intended as a comprehensive open-world benchmark. Construction details and operator-to-template alignment are moved to Appendix~\ref{app:moved_main_details}, Table~\ref{tab:controlled_fixture_composition}, and Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:operator_alignment}.
 
 \paragraph{Real-failure and real-normal subsets.}
-We collect 240 naturally occurring failure videos from CogVideoX, Wan, Stable Video Diffusion, and HunyuanVideo~\cite{cogvideox2024,wan2025,svd2023,hunyuanvideo2025}. The subset is failure-enriched: from 480 raw generations, we retain videos only when annotators verify at least one visible specification violation. We also retain 120 real-normal videos from the same raw generations to estimate false positives and unnecessary repair behavior. Ambiguous and low-quality exclusions are treated as stress analyses rather than standard accuracy benchmarks. Detailed source composition, normal-set behavior, temporal evidence profiles, and stress tables are reported in Appendix~\ref{app:additional_experiment_tables}.
+We collect 240 naturally occurring failure videos from CogVideoX, Wan, Stable Video Diffusion, and HunyuanVideo~\cite{cogvideox2024,wan2025,svd2023,hunyuanvideo2025}. The subset is failure-enriched: from 480 raw generations, we retain videos only when annotators verify at least one visible specification violation. Sampling is balanced across the four generators at 60 retained failure videos each, with generator-specific input adapters logged in a per-video JSON manifest: CogVideoX and Wan use ShotIR-to-prompt text templates, Stable Video Diffusion uses reference-frame conditioning, and HunyuanVideo uses a multi-shot prompt template. The manifest records prompt or spec identifiers, converted inputs, generation settings, screening status, verified codes, and evidence spans so that the transfer check remains auditable even though it is not a prevalence estimate. We also retain 120 real-normal videos from the same raw generations to estimate false positives and unnecessary repair behavior. Ambiguous and low-quality exclusions are treated as stress analyses rather than standard accuracy benchmarks. Detailed source composition, normal-set behavior, temporal evidence profiles, and stress tables are reported in Appendix~\ref{app:additional_experiment_tables}.
 
 \paragraph{Annotation.}
 A reliability subset of 120 videos and 768 candidate evidence spans is dual-annotated before adjudication. We report code-level Cohen's $\kappa$ and span-level annotator-to-annotator tIoU in Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:annotation_reliability}. Agreement is substantial for failure codes and lower for exact temporal boundaries, reflecting the ambiguity of fine-grained evidence spans.
@@ -412,7 +412,7 @@ We also perform leave-one-perturbation-out and leave-one-source-group-out evalua
 
 The current evidence supports a scoped claim: structured code--span--target--plan records improve diagnosis and repair planning over score-only feedback and direct VLM reporting on the controlled fixture and the current real-failure subset. It does not show that VideoGenDoctor solves open-world video repair. The controlled fixture demonstrates auditable localization under known perturbations, while the real-failure subset provides an initial but still limited transfer check.
 
-The value of VideoGenDoctor should be assessed as an interface contribution rather than as a new video generation model or a learned repair algorithm. Its advantages lie in schema validity, temporal grounding, repair-plan usefulness, human auditability, and cost-performance. The modular design also allows feature extractors, rules, VLM judges, and patch compilers to be replaced independently; Stage-2 judging is restricted to top-ranked candidate segments, and the closed loop bounds repair by $K_{\max}$.
+The value of VideoGenDoctor should be assessed as an interface contribution rather than as a new video generation model or a learned repair algorithm. Its advantages lie in schema validity, temporal grounding, repair-plan usefulness, human auditability, and cost-performance. Rule+GPT-4V + repair loop is the strongest absolute scorer in the current controlled evaluation, but it relies on a more expensive hosted front end and is best interpreted as an upper-reference configuration rather than the default operating point. We therefore headline VideoGenDoctor-full because it preserves the structured interface and audit trail while delivering the main closed-loop gain at the paper's default cost point. The modular design also allows feature extractors, rules, VLM judges, and patch compilers to be replaced independently; Stage-2 judging is restricted to top-ranked candidate segments, and the closed loop bounds repair by $K_{\max}$.
 
 \paragraph{Limitations.}
 The expanded fixture remains controlled; the real-failure subset is failure-enriched and cannot estimate natural failure prevalence; automatic pass rates are partly verifier-dependent; only observed taxonomy codes support empirical claims; and repair assumes access to a generator or editor that can consume patch actions. Broader validation requires larger generator coverage, longer videos, more domains and styles, stronger adapter executability tests, and larger multi-annotator studies.
@@ -426,7 +426,7 @@ VideoGenDoctor is a diagnostic tool intended to improve the quality and controll
 
 \section{Reproducibility and Release}
 \label{sec:repro}
-The release package should include the reference implementation, report schema, taxonomy, patch compiler, controlled fixture generation scripts, annotations, prediction logs, evaluation scripts, prompt templates for VLM baselines, and scripts for bootstrap confidence intervals. Each run should record configuration files, model versions, package versions, random seeds, prompts, raw VLM responses, and output paths. Recomputing tables from serialized predictions and annotations should be CPU-only and reproducible in seconds; full feature extraction and VLM judging depend on the chosen configuration.
+For artifact review, the planned release package includes the reference implementation, report schema, taxonomy, patch compiler, controlled fixture generation scripts, annotations, prediction logs, evaluation scripts, prompt templates for VLM baselines, and scripts for bootstrap confidence intervals. Each run is expected to record configuration files, model versions, package versions, random seeds, prompts, raw VLM responses, and output paths. The intended artifact should permit CPU-only recomputation of tables from serialized predictions and annotations in seconds; full feature extraction and VLM judging remain configuration-dependent.
 
 {\small
 \bibliographystyle{plainnat}
@@ -442,12 +442,12 @@ This appendix stores tables and figures moved out of the main text to keep the c
 
 \begin{table}[H]
 \centering\small
-\caption{Capability comparison with related evaluation and critique paradigms. Direct VLM reporting is treated as a strong baseline rather than only comparing against score-only benchmarks.}
+\caption{Capability comparison with related evaluation and critique paradigms. Here ``Global score'' denotes scalar quality, alignment, or verifier-style pass outputs rather than localized evidence records. Direct VLM reporting is treated as a strong baseline rather than only comparing against score-only benchmarks.}
 \label{tab:comparison}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccccc}
 \toprule
-\textbf{System} & \textbf{Score} & \textbf{Code} & \textbf{Evidence} & \textbf{Patch} & \textbf{Closed-Loop} \\
+\textbf{System} & \textbf{Global score} & \textbf{Code} & \textbf{Evidence} & \textbf{Patch} & \textbf{Closed-Loop} \\
 \midrule
 VBench & \cmark & \xmark & \xmark & \xmark & \xmark \\
 EvalCrafter & \cmark & \xmark & \xmark & \xmark & \xmark \\
@@ -589,7 +589,7 @@ Background-anchor weakening & scene background drifts across the shot & scene em
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{Source composition of the expanded real-failure subset. The subset is failure-enriched: we generate 480 raw videos and retain 240 samples with annotator-verified visible failures. It is used only as an initial transfer check, not to estimate natural failure prevalence. We use publicly identifiable generator checkpoints to make the subset construction auditable and reproducible.}
+\caption{Source composition of the expanded real-failure subset. The subset is failure-enriched: we generate 480 raw videos and retain 240 samples with annotator-verified visible failures. Sampling is balanced at 60 retained failures per generator, and generator-specific prompt or conditioning adapters are logged in the construction manifest. The subset is used only as an initial transfer check, not to estimate natural failure prevalence. We use publicly identifiable generator checkpoints to make the subset construction auditable and reproducible.}
 \label{tab:real_failure_source}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{0.16\textwidth}p{0.18\textwidth}p{0.22\textwidth}cccc}
@@ -609,7 +609,7 @@ Total & -- & -- & 240 & 240 & 8.93s & 18 \\
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{Real-failure and real-normal evaluation. The real-normal subset contains 120 videos retained from the same 480 raw generations but judged to contain no obvious failure. Best values are boldfaced; higher is better except for real-normal FPR and unnecessary patch rate, where lower is better.}
+\caption{Real-failure and real-normal evaluation. The real-normal subset contains 120 videos retained from the same 480 raw generations but judged to contain no obvious failure. Whenever a diagnosis-oriented front end is listed, patch-related columns are computed after pairing that front end with the shared downstream repair loop. Best values are boldfaced; higher is better except for real-normal FPR and unnecessary patch rate, where lower is better.}
 \label{tab:real_normal_control}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccccc}
@@ -630,7 +630,7 @@ VideoGenDoctor-full & 0.858 & \textbf{0.100} & \textbf{0.087} & \textbf{0.913} &
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{Stress analysis on 72 ambiguous specification-violation cases. These samples contain possible but non-adjudicable deviations from the specification. Best values are boldfaced; higher is better for abstention-oriented columns, lower is better for false concrete patch, wrong-target patch, over-repair, and new artifacts.}
+\caption{Stress analysis on 72 ambiguous specification-violation cases. These samples contain possible but non-adjudicable deviations from the specification. Whenever a diagnosis-oriented front end is listed, patch-related columns are computed after pairing that front end with the shared downstream repair loop. Best values are boldfaced; higher is better for abstention-oriented columns, lower is better for false concrete patch, wrong-target patch, over-repair, and new artifacts.}
 \label{tab:ambiguous_violation_cases}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcccccc}
@@ -649,7 +649,7 @@ VideoGenDoctor-full & 0.472 & 0.625 & \textbf{0.250} & \textbf{0.111} & \textbf{
 
 \begin{table}[H]
 \centering\scriptsize
-\caption{Stress analysis on 48 low-quality or non-adjudicable cases. These samples are dominated by global degradation, unclear content, or insufficient evidence for reliable code-level labels. Best values are boldfaced; higher is better for quality-gated abstention, lower is better for the remaining columns.}
+\caption{Stress analysis on 48 low-quality or non-adjudicable cases. These samples are dominated by global degradation, unclear content, or insufficient evidence for reliable code-level labels. Whenever a diagnosis-oriented front end is listed, patch-related columns are computed after pairing that front end with the shared downstream repair loop. Best values are boldfaced; higher is better for quality-gated abstention, lower is better for the remaining columns.}
 \label{tab:low_quality_cases}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccccc}
