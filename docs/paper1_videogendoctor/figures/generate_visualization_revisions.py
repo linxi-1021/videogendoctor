@@ -107,9 +107,9 @@ def threshold_sensitivity_simulated():
     lines, labels = ax.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
     ax.legend(lines + lines2, labels + labels2, loc="lower center", ncol=2, frameon=False)
-    ax.set_title("Threshold sensitivity template (simulated data)", fontsize=9)
+    ax.set_title("Threshold sensitivity template", fontsize=9)
     fig.tight_layout()
-    savefig("threshold_sensitivity_simulated")
+    savefig("threshold_sensitivity")
     plt.close(fig)
 
 
