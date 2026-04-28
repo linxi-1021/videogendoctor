@@ -47,9 +47,13 @@
 
 建议保留为表格的内容：taxonomy、operator-template alignment、per-code reliability、patch adapter details。这些内容是结构化审计信息，表格更适合精确查阅。
 
-建议保留或强化为图的内容：confusion matrix 应继续使用热力图；temporal evidence distribution 应继续使用时间分布图和热力图；closed-loop repair comparison 适合分组柱状图，主稿已有对应 figure；cost-performance trade-off 更适合 Pareto scatter plot，横轴为 relative cost 或 relative latency，纵轴为 Human Pass@2，可标注 VideoGenDoctor-full 与 Rule+GPT-4V 的成本收益差异。
+建议保留或强化为图的内容：confusion matrix 应继续使用热力图；temporal evidence distribution 应继续使用时间分布图和热力图；closed-loop repair comparison 适合分组柱状图，主稿已有对应 figure；cost-performance trade-off 更适合 Pareto scatter plot，横轴为 relative cost 或 relative latency，纵轴为 Human Pass@2，可标注 VideoGenDoctor-full 与 Rule+GPT-4V 的成本收益差异。该建议已执行：已基于主稿 Table~\ref{tab:cost_performance} 的真实数据生成 `cost_performance_pareto.pdf/png`，并插入 NeurIPS 附录。
 
 可新增图：threshold sensitivity curve。横轴为诊断阈值或 verifier 阈值，纵轴同时展示 Macro-F1、tIoU@0.5、real-normal FPR 和 unnecessary patch rate。该图能回应审稿人对阈值选择和鲁棒性的质疑。
+
+模拟数据示意图如下，仅用于展示未来补实验的图表结构，不能作为真实实验结果写入论文。
+
+![Threshold sensitivity template simulated data](../figures/threshold_sensitivity_simulated.png)
 
 ## 6. 实验设计优化建议
 
