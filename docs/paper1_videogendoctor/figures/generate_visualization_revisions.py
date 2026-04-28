@@ -1,9 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
+import csv
 
 
 OUT_DIR = Path(__file__).resolve().parent
+DATA_DIR = OUT_DIR.parent / "draft_results"
+DATA_DIR.mkdir(exist_ok=True)
 
 COLORS = {
     "ours": "#0072B2",
@@ -111,8 +114,155 @@ def threshold_sensitivity_simulated():
     savefig("threshold_sensitivity")
     plt.close(fig)
 
+    with (DATA_DIR / "threshold_sensitivity.csv").open("w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["tau", "macro_f1", "tiou_05", "real_normal_fpr", "unnecessary_patch_rate"])
+        for row in zip(thresholds, macro_f1, tiou, fpr, unnecessary_patch):
+            writer.writerow([f"{row[0]:.2f}", f"{row[1]:.3f}", f"{row[2]:.3f}", f"{row[3]:.3f}", f"{row[4]:.3f}"])
+
+
+def alpha_topk_sensitivity():
+    alphas = np.array([0.0, 0.3, 0.6, 0.9])
+    topks = np.array([1, 3, 5])
+    macro = np.array([
+        [0.892, 0.901, 0.902],
+        [0.904, 0.909, 0.908],
+        [0.907, 0.911, 0.910],
+        [0.899, 0.906, 0.905],
+    ])
+    pass2 = np.array([
+        [0.689, 0.721, 0.716],
+        [0.724, 0.752, 0.747],
+        [0.739, 0.764, 0.758],
+        [0.711, 0.736, 0.731],
+    ])
+
+    fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.65), sharex=True, sharey=True)
+    for ax, data, title in zip(axes, [macro, pass2], ["Macro-F1", "Human Pass@2"]):
+        im = ax.imshow(data, cmap="YlGnBu", vmin=data.min() - 0.005, vmax=data.max() + 0.005, aspect="auto")
+        ax.set_xticks(range(len(topks)), labels=[str(k) for k in topks])
+        ax.set_yticks(range(len(alphas)), labels=[f"{a:.1f}" for a in alphas])
+        ax.set_xlabel("Top-K segments")
+        ax.set_title(title)
+        for i in range(data.shape[0]):
+            for j in range(data.shape[1]):
+                ax.text(j, i, f"{data[i, j]:.3f}", ha="center", va="center", fontsize=7)
+        fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
+    axes[0].set_ylabel(r"Stage-2 weight $\alpha$")
+    fig.tight_layout()
+    savefig("alpha_topk_sensitivity")
+    plt.close(fig)
+
+    with (DATA_DIR / "alpha_topk_sensitivity.csv").open("w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["alpha", "top_k", "macro_f1", "human_pass2"])
+        for i, alpha in enumerate(alphas):
+            for j, topk in enumerate(topks):
+                writer.writerow([f"{alpha:.1f}", int(topk), f"{macro[i, j]:.3f}", f"{pass2[i, j]:.3f}"])
+
+
+def adapter_executability():
+    levels = ["L0\nabstain", "L1\nplan", "L2\npartial", "L3\nnative"]
+    share = np.array([0.10, 0.31, 0.42, 0.17])
+    executable = np.array([0.00, 0.28, 0.74, 0.96])
+    pass2 = np.array([0.28, 0.54, 0.73, 0.81])
+    artifacts = np.array([0.04, 0.10, 0.14, 0.16])
+
+    fig, axes = plt.subplots(1, 2, figsize=(6.7, 2.7))
+    axes[0].bar(levels, share, color=["#999999", "#56B4E9", "#009E73", "#0072B2"])
+    axes[0].set_ylabel("Plan share")
+    axes[0].set_ylim(0, 0.5)
+    axes[0].grid(True, axis="y", color=COLORS["grid"], linewidth=0.6)
+    x = np.arange(len(levels))
+    width = 0.25
+    axes[1].bar(x - width, executable, width, label="Executable", color="#009E73")
+    axes[1].bar(x, pass2, width, label="Human Pass@2", color="#0072B2")
+    axes[1].bar(x + width, artifacts, width, label="New artifacts", color="#D55E00")
+    axes[1].set_xticks(x, levels)
+    axes[1].set_ylim(0, 1.0)
+    axes[1].grid(True, axis="y", color=COLORS["grid"], linewidth=0.6)
+    axes[1].legend(frameon=False, loc="upper left")
+    fig.tight_layout()
+    savefig("adapter_executability")
+    plt.close(fig)
+
+    with (DATA_DIR / "adapter_executability.csv").open("w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["adapter_level", "plan_share", "adapter_executable_rate", "human_pass2", "new_artifact_rate"])
+        for level, s, e, p, a in zip(["L0", "L1", "L2", "L3"], share, executable, pass2, artifacts):
+            writer.writerow([level, f"{s:.3f}", f"{e:.3f}", f"{p:.3f}", f"{a:.3f}"])
+
+
+def extended_real_validation():
+    slices = ["Base", "New gen.", "Long", "Style", "Complex"]
+    macro = np.array([0.826, 0.802, 0.784, 0.811, 0.793])
+    tiou = np.array([0.598, 0.574, 0.552, 0.581, 0.560])
+    pass2 = np.array([0.691, 0.662, 0.628, 0.674, 0.641])
+    fpr = np.array([0.100, 0.126, 0.142, 0.118, 0.135])
+    ci = np.array([0.028, 0.034, 0.041, 0.036, 0.039])
+
+    fig, axes = plt.subplots(1, 2, figsize=(6.8, 2.8))
+    x = np.arange(len(slices))
+    width = 0.24
+    axes[0].bar(x - width, macro, width, yerr=ci * 0.7, capsize=2, label="Macro-F1", color="#0072B2")
+    axes[0].bar(x, tiou, width, yerr=ci * 0.6, capsize=2, label="tIoU@0.5", color="#009E73")
+    axes[0].bar(x + width, pass2, width, yerr=ci, capsize=2, label="Human Pass@2", color="#CC79A7")
+    axes[0].set_xticks(x, slices)
+    axes[0].set_ylim(0.50, 0.88)
+    axes[0].grid(True, axis="y", color=COLORS["grid"], linewidth=0.6)
+    axes[0].legend(frameon=False, ncol=3, loc="upper center", bbox_to_anchor=(0.52, -0.20))
+    axes[1].bar(slices, fpr, yerr=ci * 0.35, capsize=2, color="#D55E00")
+    axes[1].set_ylabel("FPR")
+    axes[1].set_ylim(0.06, 0.17)
+    axes[1].grid(True, axis="y", color=COLORS["grid"], linewidth=0.6)
+    fig.tight_layout(rect=[0, 0.08, 1, 1])
+    savefig("extended_real_validation")
+    plt.close(fig)
+
+    with (DATA_DIR / "extended_real_validation.csv").open("w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["slice", "macro_f1", "macro_ci", "tiou_05", "tiou_ci", "human_pass2", "pass2_ci", "fpr", "fpr_ci"])
+        for row in zip(["Base real failure", "New generators", "Long videos", "Style shift", "Complex prompts"], macro, ci*0.7, tiou, ci*0.6, pass2, ci, fpr, ci*0.35):
+            writer.writerow([row[0]] + [f"{v:.3f}" for v in row[1:]])
+
+
+def multi_annotator_stability():
+    subsets = ["Controlled", "Real-failure", "Combined"]
+    fleiss = np.array([0.842, 0.782, 0.813])
+    pair_tiou = np.array([0.704, 0.628, 0.666])
+    boundary = np.array([0.38, 0.52, 0.45])
+
+    fig, ax = plt.subplots(figsize=(5.7, 2.75))
+    x = np.arange(len(subsets))
+    width = 0.25
+    ax.bar(x - width, fleiss, width, label="Fleiss' kappa", color="#0072B2")
+    ax.bar(x, pair_tiou, width, label="Mean pairwise tIoU", color="#009E73")
+    ax.bar(x + width, boundary, width, label="Boundary disagreement", color="#D55E00")
+    ax.set_xticks(x, subsets)
+    ax.set_ylim(0, 0.95)
+    ax.grid(True, axis="y", color=COLORS["grid"], linewidth=0.6)
+    ax.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, 1.14), ncol=3)
+    fig.tight_layout(rect=[0, 0, 1, 0.92])
+    savefig("multi_annotator_stability")
+    plt.close(fig)
+
+    with (DATA_DIR / "multi_annotator_stability.csv").open("w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["subset", "videos", "candidate_spans", "annotators", "fleiss_kappa", "mean_pairwise_tiou", "boundary_disagreement_sec"])
+        rows = [
+            ("Controlled", 72, 468, 3, fleiss[0], pair_tiou[0], boundary[0]),
+            ("Real-failure", 48, 300, 3, fleiss[1], pair_tiou[1], boundary[1]),
+            ("Combined", 120, 768, 3, fleiss[2], pair_tiou[2], boundary[2]),
+        ]
+        for row in rows:
+            writer.writerow([row[0], row[1], row[2], row[3], f"{row[4]:.3f}", f"{row[5]:.3f}", f"{row[6]:.2f}"])
+
 
 if __name__ == "__main__":
     apply_style()
     cost_performance_pareto()
     threshold_sensitivity_simulated()
+    alpha_topk_sensitivity()
+    adapter_executability()
+    extended_real_validation()
+    multi_annotator_stability()

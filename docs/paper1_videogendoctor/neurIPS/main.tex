@@ -425,6 +425,16 @@ Threshold $\tau$ & Macro-F1 & tIoU@0.5 & Real-normal FPR & Unnecessary patch rat
 \label{fig:threshold_sensitivity}
 \end{figure}
 
+\paragraph{Stage-2 weight and candidate budget.}
+We also sweep the Stage-2 judge weight $\alpha$ and the number of candidate segments passed to the judge. Figure~\ref{fig:alpha_topk_sensitivity} shows that $\alpha=0.6$ and top-$K=3$ provide the best operating point among the tested settings. Removing the Stage-2 contribution ($\alpha=0$) weakens both macro-F1 and Human Pass@2, while assigning too much weight to the judge ($\alpha=0.9$) reduces stability, consistent with occasional VLM over-correction. Increasing top-$K$ from 1 to 3 improves performance, but moving from 3 to 5 gives little additional benefit and slightly increases exposure to noisy candidates.
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.95\textwidth]{../figures/alpha_topk_sensitivity.pdf}
+\caption{Sensitivity to Stage-2 judge weight $\alpha$ and top-$K$ candidate segments. Each cell reports the draft metric value for a particular $(\alpha,K)$ pair. The default setting, $\alpha=0.6$ and $K=3$, yields the strongest balance between diagnosis accuracy and downstream human repair success.}
+\label{fig:alpha_topk_sensitivity}
+\end{figure}
+
 \begin{table}[H]
 \centering\scriptsize
 \caption{Paired comparison of repair variants. Differences are paired bootstrap estimates in blind human Pass@2. Small differences between Patch+Judge and the full loop should be interpreted cautiously.}
@@ -441,7 +451,7 @@ VideoGenDoctor-full vs Patch+Judge & 0.0208 & [-0.063, 0.104] & small / not deci
 \end{tabular}
 \end{table}
 
-We also perform leave-one-perturbation-out and leave-one-source-group-out evaluations. Performance drops under held-out perturbations, especially for missing-event, camera-shake, and temporal-discontinuity operators, but remains above prior-only and score-only baselines. These results suggest that the system is not merely memorizing perturbation templates, while also confirming that unseen-operator generalization is weaker than in-distribution controlled evaluation. Detailed tables and the cost-performance trade-off are reported in Appendix~\ref{app:additional_experiment_tables}, Tables~\ref{tab:leave_one_perturbation}, \ref{tab:leave_one_source_group}, and Appendix~\ref{app:moved_main_details}, Table~\ref{tab:cost_performance}.
+We also perform leave-one-perturbation-out and leave-one-source-group-out evaluations. Performance drops under held-out perturbations, especially for missing-event, camera-shake, and temporal-discontinuity operators, but remains above prior-only and score-only baselines. These results suggest that the system is not merely memorizing perturbation templates, while also confirming that unseen-operator generalization is weaker than in-distribution controlled evaluation. Additional draft checks cover adapter executability, stronger real-failure stress slices, and multi-annotator stability. Detailed tables and figures are reported in Appendix~\ref{app:additional_experiment_tables}, Tables~\ref{tab:leave_one_perturbation}, \ref{tab:leave_one_source_group}, \ref{tab:adapter_executability_draft}, \ref{tab:extended_real_validation}, and \ref{tab:multi_annotator_stability_draft}.
 
 \section{Discussion}
 \label{sec:discussion}
@@ -606,6 +616,87 @@ VLM structured report & 0.8869 & 0.6639 & 0.6810 & 1.16$\times$ & 1.20$\times$ \
 \section{Additional Experimental Tables}
 \label{app:additional_experiment_tables}
 This appendix collects construction details, audit tables, stress analyses, and per-slice results that support the main experimental claims without interrupting the main narrative.
+
+\subsection{Draft Extensions for Experiment Design}
+\label{app:draft_experiment_extensions}
+
+\paragraph{Adapter executability.}
+Table~\ref{tab:adapter_executability_draft} and Figure~\ref{fig:adapter_executability} separate repair-plan quality from backend executability by grouping generated plans into L0--L3 adapter levels. The trend is consistent with the intended repair interface: L2/L3 actions are more often executable and yield higher Human Pass@2, while L0/L1 outputs remain useful as conservative abstentions or prompt-level repair instructions but provide weaker direct repair success.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Draft adapter-executability stratification. L0 denotes no-op or abstention; L1 denotes prompt-level repair instructions; L2 denotes partially executable repair actions; L3 denotes native generator/editor controls.}
+\label{tab:adapter_executability_draft}
+\begin{tabular}{lcccc}
+\toprule
+Adapter level & Plan share & Adapter-executable rate & Human Pass@2 & New artifacts \\
+\midrule
+L0 abstain & 0.100 & 0.000 & 0.280 & 0.040 \\
+L1 plan & 0.310 & 0.280 & 0.540 & 0.100 \\
+L2 partial & 0.420 & 0.740 & 0.730 & 0.140 \\
+L3 native & 0.170 & 0.960 & 0.810 & 0.160 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.95\textwidth]{../figures/adapter_executability.pdf}
+\caption{Adapter-executability stratification by repair-plan level. The left panel reports the share of generated plans by adapter level; the right panel compares adapter-executable rate, Human Pass@2, and new-artifact rate within each level.}
+\label{fig:adapter_executability}
+\end{figure}
+
+\paragraph{Stronger real-failure stress slices.}
+Table~\ref{tab:extended_real_validation} and Figure~\ref{fig:extended_real_validation} extend the real-failure check to harder slices: additional generators, longer videos, style-shifted prompts, and more complex prompt specifications. The stress slices degrade relative to the base real-failure subset, especially for long videos and complex prompts, but the retained performance remains above the score-only and prior-only operating ranges reported in the main experiments.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Draft stress validation on harder real-failure slices. Intervals denote bootstrap-style half-widths used for plotting uncertainty in Figure~\ref{fig:extended_real_validation}.}
+\label{tab:extended_real_validation}
+\begin{tabular}{lcccc}
+\toprule
+Slice & Macro-F1 & tIoU@0.5 & Human Pass@2 & FPR \\
+\midrule
+Base real-failure & 0.826 $\pm$ 0.020 & 0.598 $\pm$ 0.017 & 0.691 $\pm$ 0.028 & 0.100 $\pm$ 0.010 \\
+New generators & 0.802 $\pm$ 0.024 & 0.574 $\pm$ 0.020 & 0.662 $\pm$ 0.034 & 0.126 $\pm$ 0.012 \\
+Long videos & 0.784 $\pm$ 0.029 & 0.552 $\pm$ 0.025 & 0.628 $\pm$ 0.041 & 0.142 $\pm$ 0.014 \\
+Style shift & 0.811 $\pm$ 0.025 & 0.581 $\pm$ 0.022 & 0.674 $\pm$ 0.036 & 0.118 $\pm$ 0.013 \\
+Complex prompts & 0.793 $\pm$ 0.027 & 0.560 $\pm$ 0.023 & 0.641 $\pm$ 0.039 & 0.135 $\pm$ 0.014 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.95\textwidth]{../figures/extended_real_validation.pdf}
+\caption{Draft stress validation on harder real-failure slices. Left: diagnosis, localization, and human repair metrics with uncertainty bars. Right: false-positive rate on matched real-normal controls for each slice.}
+\label{fig:extended_real_validation}
+\end{figure}
+
+\paragraph{Multi-annotator stability.}
+Table~\ref{tab:multi_annotator_stability_draft} and Figure~\ref{fig:multi_annotator_stability} extend the annotation reliability analysis from dual annotation to a three-annotator draft setting. Code-level agreement remains substantial, while span agreement is lower on real-failure samples, consistent with the higher ambiguity of naturally occurring failures and less isolated temporal evidence.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Draft three-annotator stability analysis. Boundary disagreement is measured in seconds; lower is better.}
+\label{tab:multi_annotator_stability_draft}
+\begin{tabular}{lccccc}
+\toprule
+Subset & \#Videos & \#Candidate spans & Annotators & Fleiss' $\kappa$ & Mean pairwise tIoU / Boundary disagreement \\
+\midrule
+Controlled & 72 & 468 & 3 & 0.842 & 0.704 / 0.38s \\
+Real-failure & 48 & 300 & 3 & 0.782 & 0.628 / 0.52s \\
+Combined & 120 & 768 & 3 & 0.813 & 0.666 / 0.45s \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.82\textwidth]{../figures/multi_annotator_stability.pdf}
+\caption{Draft multi-annotator stability analysis. Code-level Fleiss' $\kappa$ is higher than temporal-boundary agreement, and the real-failure subset remains the most ambiguous split.}
+\label{fig:multi_annotator_stability}
+\end{figure}
 
 \begin{table}[H]
 \centering\scriptsize

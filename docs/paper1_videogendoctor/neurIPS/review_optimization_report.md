@@ -62,24 +62,28 @@
 变量：$\tau \in \{0.3,0.4,0.5,0.6,0.7\}$，$\alpha \in \{0.0,0.3,0.6,0.9\}$，$K \in \{1,3,5\}$。
 指标：Macro-F1、tIoU@0.5、Human Pass@2、real-normal FPR、unnecessary patch rate。
 展示：折线图或小型热力图。
+执行状态：已补入主稿正文。阈值 $\tau$ 使用折线图和表格；$\alpha$ 与 top-$K$ 使用双热力图展示 Macro-F1 和 Human Pass@2。
 
 2. Adapter executability 分层实验。
 目的：区分 repair-plan quality 和真实可执行 patch 的收益。
 变量：L0/L1/L2/L3 adapter level，或者按生成器分组。
 指标：patch vocabulary validity、adapter-executable rate、Human Pass@2、new-artifact rate。
 展示：堆叠柱状图或分组柱状图。
+执行状态：已补入附录草稿扩展实验，使用 L0/L1/L2/L3 分层表格和分组柱状图。
 
 3. 更强真实失败验证。
 目的：降低 controlled perturbation 过拟合质疑。
 变量：新增生成器、长视频、不同风格域、不同 prompt 复杂度。
 指标：Macro-F1、tIoU@0.5、Human Pass@2、FPR。
 展示：per-generator 表格加置信区间，或按域分面的柱状图。
+执行状态：已补入附录草稿扩展实验，覆盖 new generators、long videos、style shift 和 complex prompts，并以带误差线的分组柱状图展示。
 
 4. 多标注者稳定性。
 目的：补强 evidence span 主观性问题。
 变量：至少 3 名标注者，比较 majority vote 与 adjudication。
 指标：Fleiss' $\kappa$、mean pairwise tIoU、boundary disagreement。
 展示：箱线图或表格。
+执行状态：已补入附录草稿扩展实验，使用三标注者稳定性表格和分组柱状图展示 Fleiss' $\kappa$、mean pairwise tIoU 与 boundary disagreement。
 
 ## 7. 审稿人视角评议
 
