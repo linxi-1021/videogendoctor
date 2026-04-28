@@ -1,0 +1,1572 @@
+
+% VideoGenDoctor manuscript -- compressed main-text version
+% Generated from the provided TeX source and synchronized with the current paper data.
+% Important: All numeric values retained from the original TeX are existing values.
+% Legacy placeholders are retained only where no authenticated value has been supplied.
+
+\documentclass[11pt,letterpaper]{article}
+
+% \usepackage{cvpr}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{adjustbox}
+\usepackage{xcolor}
+\usepackage{xurl}
+\usepackage[nopatch=footnote]{microtype}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{float}
+\usepackage{caption}
+\usepackage[percent]{overpic}
+\usepackage{enumitem}
+\usepackage{etoolbox}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{titling}
+\usepackage{pifont}
+
+\definecolor{VDGBlue}{HTML}{1F4E79}
+\definecolor{VDGGray}{HTML}{555555}
+\definecolor{TodoRed}{HTML}{B00020}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=VDGBlue,
+  citecolor=VDGBlue,
+  urlcolor=VDGBlue
+}
+
+\setstretch{1.06}
+\setlength{\parindent}{1.25em}
+\setlength{\parskip}{0.25em}
+\setlength{\emergencystretch}{2em}
+
+\titleformat{\section}
+  {\Large\bfseries\color{VDGBlue}}
+  {\thesection}{0.75em}{}
+\titleformat{\subsection}
+  {\large\bfseries}
+  {\thesubsection}{0.65em}{}
+\titlespacing*{\section}{0pt}{1.8ex plus .6ex minus .2ex}{0.9ex}
+\titlespacing*{\subsection}{0pt}{1.3ex plus .4ex minus .2ex}{0.55ex}
+
+\captionsetup{
+  font=small,
+  labelfont=bf,
+  justification=raggedright,
+  singlelinecheck=false
+}
+
+\setlist[itemize]{leftmargin=1.5em,itemsep=0.25em,topsep=0.3em}
+\setlist[enumerate]{leftmargin=1.6em,itemsep=0.25em,topsep=0.3em}
+\AtBeginEnvironment{table}{\centering\small\setlength{\tabcolsep}{5.5pt}\renewcommand{\arraystretch}{1.12}}
+
+\pretitle{\begin{center}\LARGE\bfseries\color{VDGBlue}\linespread{1.05}\selectfont}
+\posttitle{\par\end{center}\vspace{0.35em}}
+\preauthor{\begin{center}\normalsize\color{VDGGray}}
+\postauthor{\par\end{center}\vspace{-0.8em}}
+\date{}
+
+\newcommand{\eg}{e.g.}
+\newcommand{\ie}{i.e.}
+\newcommand{\code}[1]{{\sffamily\bfseries\small #1}}
+\newcommand{\tblcode}[1]{{\ttfamily\scriptsize\begingroup\def\_{\textunderscore\penalty0\hskip0pt\relax}#1\endgroup}}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+\newcommand{\TBD}{\textcolor{TodoRed}{\textbf{TBD}}}
+\newcommand{\todoresult}[1]{\textcolor{TodoRed}{\textbf{TBD: #1}}}
+\newcommand{\safeincludegraphics}[2][]{%
+\IfFileExists{#2}{\includegraphics[#1]{#2}}{\fbox{\begin{minipage}[c][0.23\textheight][c]{0.88\linewidth}\centering Missing figure: \texttt{\detokenize{#2}}\end{minipage}}}%
+}
+
+% Auto-generated numeric macros retained from the original manuscript.
+% Begin inlined from auto_numbers.tex
+\newcommand{\BenchNumVideos}{324}
+\newcommand{\BenchNumEvidenceSpans}{2,016}
+\newcommand{\BenchNumPerturbTypes}{9}
+\newcommand{\TaxonomyNumCodes}{12}
+\newcommand{\TaxonomyTotalCodes}{38}
+\newcommand{\MacroF}{0.9110}
+\newcommand{\MicroF}{0.9243}
+\newcommand{\tIoUthree}{0.8261}
+\newcommand{\tIoUfive}{0.7316}
+\newcommand{\TopOneHit}{0.4336}
+\newcommand{\TopThreeHit}{0.6815}
+\newcommand{\BestFOneMethod}{Rule+GPT-4V}
+\newcommand{\BestMacroF}{0.9276}
+\newcommand{\BestEvidenceMethod}{Rule+GPT-4V}
+\newcommand{\BestTIoUfive}{0.7688}
+\newcommand{\GPTMacroF}{0.9276}
+\newcommand{\GPTMicroF}{0.9386}
+\newcommand{\GPTtIoUfive}{0.7688}
+\newcommand{\GPTTopThreeHit}{0.7747}
+\newcommand{\PassAtOne}{64.81\%}
+\newcommand{\PassAtTwo}{83.64\%}
+\newcommand{\PatchJudgePassAtOne}{62.96\%}
+\newcommand{\PatchJudgePassAtTwo}{81.79\%}
+\newcommand{\ScoreOnlyPassAtOne}{24.07\%}
+\newcommand{\ScoreOnlyPassAtTwo}{35.80\%}
+\newcommand{\PassAtOneGain}{40.74}
+\newcommand{\PassAtTwoGain}{47.84}
+\newcommand{\GainPatch}{33.95}
+\newcommand{\AvgIters}{1.54}
+\newcommand{\TimeToUsable}{2.86 min}
+\newcommand{\CostPerMin}{0.019 USD/min}
+\newcommand{\ClosedLoopVideos}{324}
+\newcommand{\GainOpenVLM}{1.21}
+\newcommand{\GainGPTV}{3.50}
+\newcommand{\IdentityF}{0.918}
+\newcommand{\CameraF}{0.905}
+\newcommand{\MotionF}{0.897}
+\newcommand{\AlignF}{0.940}
+\newcommand{\StyleF}{0.958}
+% End inlined from auto_numbers.tex
+
+% Legacy evaluation placeholder macros retained for compatibility with earlier source structure.
+\newcommand{\DirectVLMFreeMacroF}{0.8402}
+\newcommand{\DirectVLMStructuredMacroF}{0.8869}
+\newcommand{\DirectVLMPatchPassOne}{56.17\%}
+\newcommand{\DirectVLMPatchPassTwo}{74.38\%}
+\newcommand{\HumanPassAtOne}{58.33\%}
+\newcommand{\HumanPassAtTwo}{76.39\%}
+\newcommand{\PatchJudgeHumanPassAtOne}{56.25\%}
+\newcommand{\PatchJudgeHumanPassAtTwo}{74.31\%}
+\newcommand{\IAAcode}{0.831}
+\newcommand{\IAAspan}{0.681}
+\newcommand{\RealFailureVideos}{240}
+\newcommand{\RealFailureGenerators}{4}
+\newcommand{\RealFailureEvidenceSpans}{1,536}
+\newcommand{\RealFailureObservedCodes}{18}
+
+\begin{document}
+
+\title{VideoGenDoctor: Structured Failure Diagnosis, Evidence Localization,\\and Repair Planning for Controllable Video Generation}
+
+\author{Anonymous Submission}
+
+\maketitle
+
+\begin{abstract}
+Controllable video generation increasingly relies on structured conditions such as character identity, camera trajectory, required props, temporal actions, and multi-shot specifications. Existing evaluation pipelines mostly return scalar quality or alignment scores, which are insufficient for debugging because they rarely identify what failed, where it failed, which evidence supports the diagnosis, or how the next generation attempt should be repaired.
+
+We present VideoGenDoctor, a structured framework for failure diagnosis, evidence localization, and repair planning. Given a generated video and its prompt or structured specification, VideoGenDoctor converts failures into code--span--target--plan records grounded in temporal evidence and representative keyframes. The default implementation combines lightweight feature-based screening, optional VLM verification, and a patch compiler that maps localized failures to repair plans.
+
+We position VideoGenDoctor-Bench-v0 as a controlled diagnostic fixture rather than a broad open-world benchmark. It contains 324 videos, 9 deterministic perturbation types, and 2,016 human-verified evidence spans covering 12 observed failure codes from a 38-code taxonomy. On this fixture, VideoGenDoctor-diagnosis reaches macro-F1 0.9110 and tIoU@0.5 0.7316; Rule+GPT-4V reaches 0.9276 and 0.7688. In automatic closed-loop evaluation, VideoGenDoctor-full improves Pass@1/2 from 24.07\%/35.80\% for Score-only feedback to 64.81\%/83.64\%. On a 240-video real-failure subset from four controllable video generators, the default VideoGenDoctor pipeline improves front-end diagnosis macro-F1 from 0.7992 to 0.8264 and tIoU@0.5 from 0.5431 to 0.5982 over direct structured VLM reporting, while also improving downstream repair utility. These results support the value of structured, auditable repair records while leaving broad open-world generality as future validation.
+\end{abstract}
+
+
+\section{Introduction}
+\label{sec:intro}
+
+Recent diffusion-based models can synthesize multi-second videos conditioned on text, reference images, camera trajectories, character identities, and structured shot scripts~\cite{cogvideox2024,svd2023,motionctrl2024,instructvideo2024}. In production-style workflows, ShotIR-like specifications define per-shot props, characters, camera movement, shot type, and action order. When a generated video violates such specifications, however, users still lack a systematic interface for locating the failure and deciding the next intervention.
+
+Current video-generation evaluators such as VBench~\cite{vbench2024}, EvalCrafter~\cite{evalcrafter2024}, VideoScore~\cite{videoscore2024}, and T2V-CompBench~\cite{t2vcompbench2024} report aggregate quality, motion, or alignment scores. These scores are useful for model comparison but weak as debugging signals: a low score does not indicate whether the character identity drifted, a required prop disappeared, camera motion was violated, or a specific temporal segment should be regenerated.
+
+VideoGenDoctor reframes controllable-video evaluation as structured diagnosis and repair planning. Given a video $V$ and specification $S$, it outputs records
+\[
+R = \{(c_i,t_0^i,t_1^i,y_i,\sigma_i,K_i,T_i,a_i)\},
+\]
+where $c_i$ is a failure code, $(t_0^i,t_1^i)$ is the evidence span, $y_i$ is the affected target, $\sigma_i$ is confidence, $K_i$ contains representative keyframes, $T_i$ stores optional track-level evidence, and $a_i$ is a compiled repair action. The interface is designed to be machine-readable, human-auditable, and compatible with downstream video repair tools.
+
+\paragraph{Scope.}
+We separate the interface claim from the open-world generality claim. The expanded controlled fixture supports the claim that code--span--target--plan records provide auditable diagnosis and useful repair plans under known perturbations. A real-failure subset suggests transfer beyond deterministic perturbations, but broader coverage across generators, domains, styles, and long-form videos remains future work. We therefore call VideoGenDoctor-Bench-v0 a controlled diagnostic fixture rather than a general open-world benchmark.
+
+\paragraph{Contributions.}
+This paper contributes: (1) a code--span--target--plan representation for controllable video debugging; (2) a modular framework combining feature-based candidate generation, optional VLM verification, evidence aggregation, and patch compilation; (3) VideoGenDoctor-Bench-v0, with 324 controlled videos, 2,016 verified evidence spans, 9 perturbation types, and 12 observed codes, plus a 240-video real-failure subset covering 18 observed codes; and (4) an evaluation against direct VLM diagnosis, VLM-to-patch repair, blind human repair validation, per-code reliability analysis, paired bootstrap comparisons, and real-failure transfer checks.
+
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Video generation evaluation.}
+Existing benchmarks and evaluators measure aggregate video quality, motion smoothness, subject consistency, and text-video alignment~\cite{vbench2024,evalcrafter2024,videoscore2024,t2vcompbench2024}. They are valuable for ranking models but do not usually produce localized evidence or executable repair plans. VideoGenDoctor instead returns structured failure records tied to temporal spans and repair templates. A compact capability comparison is provided in Appendix~\ref{app:moved_main_details}, Table~\ref{tab:comparison}.
+
+\paragraph{VLM critics and temporal grounding.}
+Large vision-language models can inspect sampled frames and produce critiques~\cite{llava2023,internvl2024,gpt4v2023}. We therefore treat direct VLM reporting and VLM-to-patch generation as strong baselines rather than strawmen. The central question is whether constraining critique through code--span--target records improves temporal grounding, schema validity, auditability, repair executability, and cost. For temporal localization, we adapt temporal intersection-over-union:
+\[
+\mathrm{tIoU} = \frac{\max\bigl(0,\min(\hat{t}_1,t_1^*)-\max(\hat{t}_0,t_0^*)\bigr)}{\max(\hat{t}_1,t_1^*)-\min(\hat{t}_0,t_0^*)}.
+\]
+
+\paragraph{Automated repair.}
+Program repair systems typically localize a defect, classify it, and generate a patch. VideoGenDoctor adapts this pattern to controllable video generation: each diagnosis must expose evidence and map to a supported repair family, connecting evaluation directly to iterative generation.
+
+\section{VideoGenDoctor}
+\label{sec:method}
+
+\subsection{Overview}
+\begin{figure}[H]
+\centering
+\begin{overpic}[width=\textwidth]{../figures/overview.pdf}
+  \put(71.6,54.5){\color{white}\rule{24mm}{7mm}}
+  \put(72.0,56.0){\scriptsize\bfseries Structured Repair Plan}
+\end{overpic}
+\caption{VideoGenDoctor framework overview. The system converts a generated video and its prompt or structured specification into failure-as-code diagnosis records, grounds each record in localized temporal evidence, maps records to structured repair plans, and verifies regenerated videos in a closed loop.}
+\label{fig:system_overview}
+\end{figure}
+
+VideoGenDoctor contains four modules: segmentation and feature extraction, candidate diagnosis, optional VLM verification, and patch compilation. The first module samples keyframes and computes lightweight signals; the second applies thresholded rules to produce failure candidates; the third calibrates top-ranked candidates using structured VLM questions; and the fourth maps retained diagnosis records to structured repair actions such as reference injection, prop injection, camera override, segment regeneration, or style correction.
+
+\subsection{Failure Records and Patch Templates}
+VideoGenDoctor uses a machine-readable taxonomy with \TaxonomyTotalCodes{} codes grouped into Identity, Camera, Motion, Alignment, Style, and Scene. The current controlled fixture evaluates \TaxonomyNumCodes{} observed codes; the remaining codes define an extensible namespace and are not treated as empirically validated. The full taxonomy and group-level description are provided in Appendix~\ref{app:moved_main_details} and Appendix~\ref{app:taxonomy}.
+
+Each predicted failure is represented as
+\[
+r=(c,t_0,t_1,y,\tilde{\sigma},K,T,a),
+\]
+where $c$ is the taxonomy code, $(t_0,t_1)$ is the evidence span, $y$ is the affected target, $\tilde{\sigma}$ is confidence, $K$ stores representative keyframes, $T$ stores optional tracks, and $a$ is the compiled repair action. Detectors and judges can be replaced without changing this schema.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Representative failure types and repair-plan template mappings. A diagnosis record combines a failure type with a localized span, target, confidence, evidence, and repair-plan action.}
+\label{tab:code_patch_mapping}
+\begin{tabular}{p{0.29\textwidth}p{0.33\textwidth}p{0.26\textwidth}}
+\toprule
+\textbf{Failure type} & \textbf{Evidence signal} & \textbf{Repair action} \\
+\midrule
+Face identity drift & Face embedding drift across keyframes & Reference-frame injection \\
+Body / clothing drift & Character-region appearance drift & Reference-frame or character-anchor injection \\
+Camera movement deviation & Camera flow trace or trajectory mismatch & Camera movement override \\
+Frozen frames or action stalls & Near-zero flow or stalled pose track & Regenerate affected segment \\
+Missing required prop & Object presence check or VLM prop-absence judgment & Prop injection \\
+Style inconsistency & Style or color embedding drift across segments & Style correction \\
+Background inconsistency & Scene/background embedding drift & Background anchoring \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Candidate Diagnosis and Verification}
+Given video $V$, we partition it into 2-second fixed-stride segments and sample six keyframes per segment. The default implementation computes semantic embedding drift with OpenCLIP~\cite{openclip2023}, optical flow with RAFT~\cite{raft2020} or OpenCV Farneback~\cite{opencv2000,farneback2003}, face drift with InsightFace~\cite{arcface2019}, and object or prop cues with YOLOv8~\cite{yolov8} when enabled. For each segment $s$ and failure code $c$, rule $\rho_c$ produces a score $\sigma_{s,c}\in[0,1]$; top-ranked candidates inherit segment boundaries and keyframes ranked by frame-level anomaly scores.
+
+The optional Stage-2 judge receives the top-$K$ candidate segments ($K=3$ by default), sampled keyframes, temporal bounds, candidate codes, and relevant prompt or ShotIR fields. It answers structured questions rather than writing an unconstrained report. Final confidence is
+\[
+\tilde{\sigma}_{s,c}=(1-\alpha)\sigma^{(1)}_{s,c}+\alpha\sigma^{(2)}_{s,c},
+\]
+with $\alpha=0.6$ by default. Hosted endpoints, prompts, sampled frames, raw responses, parsed JSON, and latency metadata are logged for reproducibility.
+
+\subsection{Evidence Localization and Repair Planning}
+Each retained record stores an evidence object $E=(t_0,t_1,K,T)$ so that the diagnosis can be audited. Fixed segments are sufficient for the current fixture; future versions can refine spans using frame-level peaks and track-based merging. The patch compiler then emits either ShotIR field-level diffs or generator-agnostic repair plans. Each plan preserves the triggering code, evidence span, affected target, and rationale. In closed-loop evaluation, a video passes when all failure confidences fall below $\tau=0.5$ or the loop reaches $K_{\max}=3$; because this automatic criterion is verifier-dependent, Section~\ref{sec:repair_results} also reports blind human repair validation.
+
+\section{Experiments}
+\label{sec:setup}
+\label{sec:experiments}
+
+\subsection{Benchmark and Evaluation Protocol}
+\label{sec:dataset}
+We evaluate VideoGenDoctor as a diagnosis-and-repair system. The main questions are whether predicted failure codes are correct, evidence spans are temporally localized, repair plans are valid and useful, and repaired videos satisfy the specification under independent human judgment.
+
+\paragraph{Controlled fixture.}
+VideoGenDoctor-Bench-v0 contains 324 perturbed videos, 2,016 verified evidence spans, 9 deterministic perturbation types, and 12 observed failure codes. It is built from 18 clean source clips across six domain groups; each clip is paired with a ShotIR-style specification and perturbed by nine deterministic operators under two seeds. The fixture validates interface consistency, evidence auditability, and repair-planning usefulness under controlled failures; it is not intended as a comprehensive open-world benchmark. Construction details and operator-to-template alignment are moved to Appendix~\ref{app:moved_main_details}, Table~\ref{tab:controlled_fixture_composition}, and Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:operator_alignment}.
+
+\paragraph{Real-failure and real-normal subsets.}
+We collect 240 naturally occurring failure videos from CogVideoX, Wan, Stable Video Diffusion, and HunyuanVideo~\cite{cogvideox2024,wan2025,svd2023,hunyuanvideo2025}. The subset is failure-enriched: from 480 raw generations, we retain videos only when annotators verify at least one visible specification violation. We also retain 120 real-normal videos from the same raw generations to estimate false positives and unnecessary repair behavior. Ambiguous and low-quality exclusions are treated as stress analyses rather than standard accuracy benchmarks. Detailed source composition, normal-set behavior, temporal evidence profiles, and stress tables are reported in Appendix~\ref{app:additional_experiment_tables}.
+
+\paragraph{Annotation.}
+A reliability subset of 120 videos and 768 candidate evidence spans is dual-annotated before adjudication. We report code-level Cohen's $\kappa$ and span-level annotator-to-annotator tIoU in Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:annotation_reliability}. Agreement is substantial for failure codes and lower for exact temporal boundaries, reflecting the ambiguity of fine-grained evidence spans.
+
+\begin{table}[H]
+\centering\small
+\caption{Dataset statistics. The first row is the expanded controlled perturbation fixture. The second row is the expanded real-failure subset collected from naturally occurring failures across multiple generators.}
+\label{tab:dataset_statistics}
+\begin{tabular*}{0.95\textwidth}{@{\extracolsep{\fill}}lccccc@{}}
+\toprule
+\textbf{Split} & \textbf{\#Vid} & \textbf{\#Evidence} & \textbf{AvgDur} & \textbf{PerturbTypes} & \textbf{\#Codes} \\
+\midrule
+Controlled fixture & 324 & 2016 & 10.46s & 9 & 12 \\
+Real-failure subset & 240 & 1536 & 8.93s & -- & 18 \\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+\subsection{Compared Methods and Metrics}
+We compare internal diagnosis variants (Prior-only, Rule-only, Rule+DummyJudge, Rule+Open-VLM, Rule+GPT-4V, and VideoGenDoctor-diagnosis), repair variants (VideoGenDoctor-patch, Patch+Judge, and VideoGenDoctor-full), and external VLM baselines including free-form VLM reporting, structured VLM reporting, self-consistency, VLM temporal proposal + patch, VLM-to-patch, and Score+LLM-to-patch. Most direct VLM baselines share the same hosted GPT-4V endpoint as Rule+GPT-4V to isolate prompt structure, output schema, and repair-planning protocol rather than model backbone. Whenever a table reports human repair success for a diagnosis-oriented front end, that front end is paired with the same downstream repair loop so that only the diagnostic interface changes. Implementation details are reported in Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:vlm_details}; strengthened VLM-agent results are summarized in Appendix~\ref{app:moved_main_details}, Table~\ref{tab:strong_vlm_agent_baselines}.
+
+We report macro-F1 and micro-F1 for failure-code detection, tIoU@0.3/0.5 and Top-$K$ keyframe hit rate for localization, automatic and human Pass@1/2 for repair, patch usefulness, new-artifact rate, and video-level bootstrap 95\% confidence intervals. All span-aware metrics use the same matching protocol: records are grouped by failure code, target-incompatible predictions are filtered, and remaining pairs are matched by Hungarian assignment~\cite{kuhn1955hungarian} using tIoU as the primary score and confidence only as a tie-breaker. Invalid or missing spans receive no localization credit.
+
+\subsection{Failure-Code Detection}
+\label{sec:f1_results}
+\begin{table}[H]
+\centering\small
+\caption{Failure-code detection on the expanded controlled fixture. Direct VLM baselines are included to compare VideoGenDoctor with strong agent-style alternatives. Confidence intervals are estimated by video-level bootstrap resampling. Best values are boldfaced.}
+\label{tab:code_detection}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Method} & \textbf{Macro-F1} & \textbf{Micro-F1} & \textbf{95\% CI} \\
+\midrule
+Prior-only & 0.4479 & 0.4635 & [0.419, 0.477] \\
+Rule+DummyJudge & 0.8584 & 0.8716 & [0.836, 0.879] \\
+Rule-only & 0.8926 & 0.9038 & [0.872, 0.911] \\
+Rule+Open-VLM & 0.9047 & 0.9175 & [0.885, 0.922] \\
+VideoGenDoctor-diagnosis & 0.9110 & 0.9243 & [0.893, 0.928] \\
+Rule+GPT-4V & \textbf{0.9276} & \textbf{0.9386} & [0.912, 0.941] \\
+VLM free-form report & 0.8402 & 0.8627 & [0.814, 0.866] \\
+VLM structured report & 0.8869 & 0.9018 & [0.864, 0.908] \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+VideoGenDoctor-diagnosis outperforms free-form and structured direct VLM reporting on macro-F1, while Rule+GPT-4V remains the strongest configuration. The larger gains in the localization results below indicate that the main advantage of structured diagnosis is not only detecting that a failure exists, but grounding it stably enough to support repair.
+
+\subsection{Per-Code Reliability and Evidence Localization}
+\label{sec:per_code}
+\label{sec:evidence_results}
+The controlled fixture covers twelve observed codes. Detailed per-code precision, recall, F1, and tIoU are reported in Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:per_code_controlled}; the confusion matrix below summarizes dominant error modes.
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.72\textwidth]{../figures/confusion_matrix.pdf}
+\caption{Per-code confusion matrix for the 12 observed taxonomy codes on the expanded controlled fixture. The strongest off-diagonal confusions occur among camera and motion failures, while identity, prop-missing, compression-artifact, and scene-background failures remain comparatively concentrated on the diagonal.}
+\label{fig:confusion_matrix}
+\end{figure}
+
+\begin{table}[H]
+\centering\small
+\caption{Evidence localization against human evidence spans on the expanded controlled fixture. Confidence intervals are estimated by video-level bootstrap resampling. Best values are boldfaced.}
+\label{tab:evidence_localization}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Method} & \textbf{tIoU@0.3} & \textbf{tIoU@0.5} & \textbf{Top-1} & \textbf{Top-3} & \textbf{95\% CI} \\
+\midrule
+Prior-only & 0.5817 & 0.4295 & 0.1188 & 0.3315 & [0.403, 0.457] \\
+Rule+DummyJudge & 0.7282 & 0.6128 & 0.2241 & 0.4259 & [0.586, 0.639] \\
+Rule-only & 0.7836 & 0.6714 & 0.2670 & 0.5123 & [0.645, 0.698] \\
+Rule+Open-VLM & 0.8089 & 0.7062 & 0.3565 & 0.5941 & [0.681, 0.731] \\
+VideoGenDoctor-diagnosis & 0.8261 & 0.7316 & 0.4336 & 0.6815 & [0.707, 0.754] \\
+Rule+GPT-4V & \textbf{0.8554} & \textbf{0.7688} & \textbf{0.4923} & \textbf{0.7747} & [0.746, 0.790] \\
+VLM free-form report & 0.7204 & 0.5986 & 0.2994 & 0.5117 & [0.570, 0.625] \\
+VLM structured report & 0.7812 & 0.6639 & 0.3651 & 0.5858 & [0.637, 0.690] \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\subsection{Closed-Loop Repair and Human Validation}
+\label{sec:repair_results}
+Closed-loop repair is evaluated on the controlled fixture. Automatic Pass@1/2 is computed on all 324 videos; blind human Pass@1/2 is computed on a stratified 144-video subset. Human raters see the specification and output video but not method names or diagnosis records.
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{Closed-loop repair evaluation on the expanded controlled fixture. Automatic metrics are computed on all 324 controlled videos. Human metrics are computed on a stratified blind-evaluation subset of 144 videos. Best pass rates and patch-usefulness values are boldfaced; the new-artifact rate is reported for context rather than bold-ranked because abstention-heavy baselines are not directly comparable.}
+\label{tab:closed_loop_repair}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccccccccc}
+\toprule
+\textbf{Method} & \textbf{Auto P@1} & \textbf{95\% CI} & \textbf{Auto P@2} & \textbf{95\% CI} & \textbf{Human Pass@1} & \textbf{95\% CI} & \textbf{Human Pass@2} & \textbf{95\% CI} & \textbf{Patch useful} & \textbf{New artifacts} \\
+\midrule
+Score-only & 0.2407 & [0.196, 0.291] & 0.3580 & [0.307, 0.411] & 0.1875 & [0.130, 0.257] & 0.2778 & [0.207, 0.355] & 2.28 & 0.0833 \\
+Patch-only & 0.5247 & [0.471, 0.579] & 0.6975 & [0.646, 0.744] & 0.4792 & [0.399, 0.559] & 0.6319 & [0.551, 0.706] & 3.50 & 0.1736 \\
+VLM-to-patch & 0.5617 & [0.507, 0.615] & 0.7438 & [0.694, 0.788] & 0.5069 & [0.427, 0.586] & 0.6736 & [0.594, 0.746] & 3.64 & 0.2153 \\
+Patch+Judge & 0.6296 & [0.575, 0.681] & 0.8179 & [0.773, 0.857] & 0.5625 & [0.482, 0.640] & 0.7431 & [0.667, 0.807] & 3.93 & 0.1458 \\
+VideoGenDoctor-full & \textbf{0.6481} & [0.594, 0.699] & \textbf{0.8364} & [0.793, 0.873] & \textbf{0.5833} & [0.503, 0.660] & \textbf{0.7639} & [0.689, 0.826] & \textbf{4.11} & 0.1319 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+The main repair gain is most consistent with structured repair planning and verification rather than with the final loop wrapper alone. The paired comparison in Section~\ref{sec:ablations} shows that the difference between Patch+Judge and VideoGenDoctor-full is small and not statistically decisive, so the full loop is best interpreted as traceable workflow integration.
+
+\subsection{Controlled Fixture versus Real Generator Failures}
+\label{sec:real_failures}
+\begin{table}[H]
+\centering\small
+\caption{Generalization check on expanded controlled perturbations and naturally occurring generator failures. Macro-F1 and tIoU@0.5 are computed from each method's diagnosis front end; Patch useful and Human Pass@2 evaluate the corresponding downstream repair protocol. Best values within each subset are boldfaced.}
+\label{tab:controlled_vs_real}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Subset} & \textbf{Method} & \textbf{Macro-F1} & \textbf{tIoU@0.5} & \textbf{Patch useful} & \textbf{Human Pass@2} \\
+\midrule
+Controlled fixture & VLM structured report + repair loop & 0.8869 & 0.6639 & 3.62 & 0.6810 \\
+Controlled fixture & VideoGenDoctor default pipeline & \textbf{0.9110} & \textbf{0.7316} & \textbf{4.11} & \textbf{0.7639} \\
+Real-failure subset & VLM structured report + repair loop & 0.7992 & 0.5431 & 3.36 & 0.6075 \\
+Real-failure subset & VideoGenDoctor default pipeline & \textbf{0.8264} & \textbf{0.5982} & \textbf{3.82} & \textbf{0.6908} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+All methods degrade on naturally occurring failures, confirming that the controlled fixture is not a substitute for open-world evaluation. The real-failure subset contains more overlapping artifacts, less isolated evidence, and weaker alignment between specification fields and visible deviations. Per-code and per-generator results are reported in Appendix~\ref{app:additional_experiment_tables}, Tables~\ref{tab:real_per_code} and~\ref{tab:per_generator_results}.
+
+\subsection{Ablation and Generalization Checks}
+\label{sec:ablations}
+\begin{table}[H]
+\centering\scriptsize
+\caption{Repair ablation on the expanded controlled fixture. We isolate the contribution of failure codes, temporal spans, evidence keyframes, patch templates, and verification. Best utility values are boldfaced; the new-artifact rate is reported for context rather than bold-ranked.}
+\label{tab:repair_ablation}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.22\textwidth}cccccccc}
+\toprule
+Repair setting & Code & Target & Span & Evidence & Template & Human Pass@2 & Patch useful & New artifacts \\
+\midrule
+Score-only & \xmark & \xmark & \xmark & \xmark & \xmark & 0.2778 & 2.28 & 0.0833 \\
+Code-only patch & \cmark & \xmark & \xmark & \xmark & \cmark & 0.4583 & 2.91 & 0.1597 \\
+Code+target patch & \cmark & \cmark & \xmark & \xmark & \cmark & 0.5417 & 3.24 & 0.1736 \\
+Code+span patch & \cmark & \xmark & \cmark & \xmark & \cmark & 0.6250 & 3.57 & 0.1667 \\
+Code+span+evidence patch & \cmark & \xmark & \cmark & \cmark & \cmark & 0.6875 & 3.80 & 0.1528 \\
+VLM-to-patch & optional & optional & optional & optional & \xmark & 0.6736 & 3.64 & 0.2153 \\
+Patch+Judge & \cmark & \cmark & \cmark & \cmark & \cmark & 0.7431 & 3.93 & 0.1458 \\
+VideoGenDoctor-full & \cmark & \cmark & \cmark & \cmark & \cmark & \textbf{0.7639} & \textbf{4.11} & 0.1319 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+The ablation tests whether localized evidence and template-constrained repair contribute beyond code prediction alone. The improvement from code-only to code+span and code+span+evidence settings supports the claim that evidence localization is operationally useful for repair planning.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Paired comparison of repair variants. We report paired bootstrap differences in blind human Pass@2. Small differences between Patch+Judge and Full loop should be interpreted cautiously.}
+\label{tab:paired_repair_test}
+\begin{tabular}{lccc}
+\toprule
+Comparison & $\Delta$ Human Pass@2 & 95\% CI & Interpretation \\
+\midrule
+Patch-only vs Score-only & 0.3541 & [0.250, 0.458] & substantial gain \\
+VLM-to-patch vs Patch-only & 0.0417 & [-0.054, 0.139] & small / not decisive \\
+Patch+Judge vs Patch-only & 0.1112 & [0.021, 0.215] & verification helps \\
+VideoGenDoctor-full vs Patch+Judge & 0.0208 & [-0.063, 0.104] & small / not decisive \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+We also perform leave-one-perturbation-out and leave-one-source-group-out evaluations. Performance drops under held-out perturbations, especially for missing-event, camera-shake, and temporal-discontinuity operators, but remains above prior-only and score-only baselines. These results suggest that the system is not merely memorizing perturbation templates, while also confirming that unseen-operator generalization is weaker than in-distribution controlled evaluation. Detailed tables and the cost-performance trade-off are reported in Appendix~\ref{app:additional_experiment_tables}, Tables~\ref{tab:leave_one_perturbation}, \ref{tab:leave_one_source_group}, and Appendix~\ref{app:moved_main_details}, Table~\ref{tab:cost_performance}.
+
+\section{Discussion}
+\label{sec:discussion}
+
+The current evidence supports a scoped claim: structured code--span--target--plan records improve diagnosis and repair planning over score-only feedback and direct VLM reporting on the controlled fixture and the current real-failure subset. It does not show that VideoGenDoctor solves open-world video repair. The controlled fixture demonstrates auditable localization under known perturbations, while the real-failure subset provides an initial but still limited transfer check.
+
+The value of VideoGenDoctor should be assessed as an interface contribution rather than as a new video generation model or a learned repair algorithm. Its advantages lie in schema validity, temporal grounding, repair-plan usefulness, human auditability, and cost-performance. The modular design also allows feature extractors, rules, VLM judges, and patch compilers to be replaced independently; Stage-2 judging is restricted to top-ranked candidate segments, and the closed loop bounds repair by $K_{\max}$.
+
+\paragraph{Limitations.}
+The expanded fixture remains controlled; the real-failure subset is failure-enriched and cannot estimate natural failure prevalence; automatic pass rates are partly verifier-dependent; only observed taxonomy codes support empirical claims; and repair assumes access to a generator or editor that can consume patch actions. Broader validation requires larger generator coverage, longer videos, more domains and styles, stronger adapter executability tests, and larger multi-annotator studies.
+
+\section{Conclusion}
+We presented VideoGenDoctor, a structured framework for failure diagnosis, evidence localization, and repair planning in controllable video generation. The core contribution is an auditable code--span--target--plan interface that connects evaluation to actionable repair planning. The expanded evaluation consists of a 324-video controlled diagnostic fixture with 2,016 verified evidence spans and a 240-video real-failure subset with 1,536 verified evidence spans. The controlled fixture covers 12 observed taxonomy codes under 9 deterministic perturbation operators, while the real-failure subset covers 18 observed taxonomy codes across four publicly identifiable video generation systems. The primary empirical gain comes from structured repair planning and independent verification, while the full closed loop mainly provides traceable integration from diagnosis to evidence, patch planning, re-rendering, and verification. The broader generality claim remains scoped by the controlled and failure-enriched nature of the current evaluation sets.
+
+\section{Ethics Statement}
+\label{sec:ethics}
+VideoGenDoctor is a diagnostic tool intended to improve the quality and controllability of generated videos. Any tool that improves generation reliability could also be misused to strengthen misleading media. In sensitive deployments, automated repair should be paired with provenance tracking, watermarking, human review, and access control. Evidence localization may surface keyframes containing sensitive information, so downstream systems should support local processing, keyframe redaction, coarse time-binning, and privacy-preserving aggregation where appropriate. The taxonomy also encodes normative judgments about what counts as a failure; creative workflows should expose thresholds and permit human override.
+
+\section{Reproducibility and Release}
+\label{sec:repro}
+The release package should include the reference implementation, report schema, taxonomy, patch compiler, controlled fixture generation scripts, annotations, prediction logs, evaluation scripts, prompt templates for VLM baselines, and scripts for bootstrap confidence intervals. Each run should record configuration files, model versions, package versions, random seeds, prompts, raw VLM responses, and output paths. Recomputing tables from serialized predictions and annotations should be CPU-only and reproducible in seconds; full feature extraction and VLM judging depend on the chosen configuration.
+
+{\small
+\bibliographystyle{unsrt}
+\bibliography{references}
+}
+
+\appendix
+
+
+\section{Supplementary Main-Text Results}
+\label{app:moved_main_details}
+This appendix stores tables and figures moved out of the main text to keep the core narrative compact while preserving the audit trail for comparisons, taxonomy scope, fixture construction, temporal evidence profiles, strengthened VLM baselines, repair visualization, and cost-performance trade-offs.
+
+\begin{table}[H]
+\centering\small
+\caption{Capability comparison with related evaluation and critique paradigms. Direct VLM reporting is treated as a strong baseline rather than only comparing against score-only benchmarks.}
+\label{tab:comparison}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{System} & \textbf{Score} & \textbf{Code} & \textbf{Evidence} & \textbf{Patch} & \textbf{Closed-Loop} \\
+\midrule
+VBench & \cmark & \xmark & \xmark & \xmark & \xmark \\
+EvalCrafter & \cmark & \xmark & \xmark & \xmark & \xmark \\
+VideoScore & \cmark & \xmark & \xmark & \xmark & \xmark \\
+T2V-CompBench & \cmark & partial & \xmark & \xmark & \xmark \\
+Direct VLM report & partial & partial & partial & partial & \xmark \\
+\textbf{VideoGenDoctor} & \cmark & \cmark & \cmark & \cmark & \cmark \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Failure-as-code taxonomy groups. Each group defines a namespace for diagnosis records and links to evidence procedures and repair-plan templates.}
+\label{tab:failure_taxonomy_groups}
+\begin{tabular}{p{0.20\textwidth}p{0.70\textwidth}}
+\toprule
+\textbf{Group} & \textbf{Operational scope} \\
+\midrule
+Identity & Identity drift, face/body consistency, wrong character, clothing consistency. \\
+Camera & Shot type, camera movement, viewpoint angle, unintended zoom, camera shake. \\
+Motion & Action timing, frame continuity, motion physics, frozen frames, segment breaks. \\
+Alignment & Prompt adherence, required objects and props, character count, prop placement. \\
+Style & Color consistency, texture flicker, compression artifacts, art-style consistency. \\
+Scene & Background consistency, lighting, environment match, scene-object stability. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Composition of the expanded controlled diagnostic fixture. Each domain group contains three clean source clips. Every source clip is paired with a ShotIR-style specification and perturbed by nine deterministic operators under two random seeds.}
+\label{tab:controlled_fixture_composition}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.27\textwidth}cccccc}
+\toprule
+Domain group & \#Source clips & Avg. duration & Resolution & \#Perturb. ops & \#Seeds & \#Videos \\
+\midrule
+Indoor / human-object & 3 & 10.1s & 768$\times$432 & 9 & 2 & 54 \\
+Outdoor / motion & 3 & 10.8s & 768$\times$432 & 9 & 2 & 54 \\
+Multi-object interaction & 3 & 10.4s & 768$\times$432 & 9 & 2 & 54 \\
+Camera-control scene & 3 & 11.0s & 768$\times$432 & 9 & 2 & 54 \\
+Style / lighting variation & 3 & 10.2s & 768$\times$432 & 9 & 2 & 54 \\
+Scene-change / background & 3 & 10.3s & 768$\times$432 & 9 & 2 & 54 \\
+\midrule
+Total & 18 & 10.46s & -- & 9 & 2 & 324 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/temporal_evidence_profile.pdf}
+\vspace{0.3em}
+\safeincludegraphics[width=\textwidth]{../figures/temporal_evidence_real_profile.pdf}
+\vspace{0.3em}
+\safeincludegraphics[width=\textwidth]{../figures/temporal_evidence_heatmap.pdf}
+\caption{Temporal distribution of verified evidence spans in the expanded evaluation sets. Panel (a) aggregates the 2,016 controlled-fixture spans over 2-second bins and shows the front- and mid-loaded pattern expected from deterministic perturbation operators. Panel (b) summarizes the 1,536 real-failure spans over the same time bins, making the later and more diffuse temporal mass directly comparable to panel (a). Panel (c) further breaks the real-failure spans down by failure group and time bin, highlighting that motion and camera failures dominate the later intervals and overlap more strongly than in the controlled fixture.}
+\label{fig:temporal_evidence_distribution}
+\end{figure}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Strengthened VLM-agent baselines on the expanded controlled fixture. All rows are evaluated under the same downstream repair protocol; diagnosis-only front ends are explicitly paired with that shared repair loop when human repair success is reported. Self-consistency improves direct VLM reporting but increases cost. The validity column reports whether the emitted action stays inside the supported repair-plan vocabulary; it does not claim generator-adapter executability. Best values are boldfaced; higher is better except for relative cost, where lower is better.}
+\label{tab:strong_vlm_agent_baselines}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccccc}
+\toprule
+Method & Macro-F1 & tIoU@0.5 & Human Pass@2 & Schema validity & Patch vocabulary validity & Relative cost \\
+\midrule
+VLM free-form report & 0.8402 & 0.5986 & 0.6125 & 0.742 & 0.604 & 1.12$\times$ \\
+VLM structured report & 0.8869 & 0.6639 & 0.6810 & 0.914 & 0.732 & 1.16$\times$ \\
+VLM structured + self-consistency & 0.8978 & 0.6824 & 0.7042 & 0.951 & 0.755 & 3.48$\times$ \\
+VLM temporal proposal + patch & 0.8915 & 0.7018 & 0.7076 & 0.936 & 0.802 & 2.05$\times$ \\
+VideoGenDoctor-full & 0.9110 & 0.7316 & 0.7639 & 0.991 & 0.953 & \textbf{1.00}$\times$ \\
+Rule+GPT-4V + repair loop & \textbf{0.9276} & \textbf{0.7688} & \textbf{0.7917} & \textbf{0.993} & \textbf{0.957} & 2.75$\times$ \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=0.82\textwidth]{../figures/manuscript_fig3.pdf}
+\caption{Closed-loop repair comparison on the expanded controlled fixture. Left: automatic verifier Pass@1/2 on all 324 controlled videos. Right: blind human Pass@1/2 on the stratified 144-video human-evaluation subset. Automatic pass rates may be coupled to the system verifier, while human pass rates provide an independent check of repair success.}
+\label{fig:repair_curve}
+\end{figure}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Cost-performance trade-off under a shared downstream repair protocol. Diagnosis-only front ends are paired with the same repair loop before reporting Human Pass@2. Cost is reported relative to the default VideoGenDoctor-full configuration. Values in the last two columns are multiplicative factors relative to VideoGenDoctor-full (1.00$\times$). Best values are boldfaced; higher is better for task metrics, lower is better for cost and latency.}
+\label{tab:cost_performance}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.28\textwidth}ccccc}
+\toprule
+Method & Macro-F1 & tIoU@0.5 & Human Pass@2 & Relative cost & Relative latency \\
+\midrule
+Rule-only + repair loop & 0.8926 & 0.6714 & 0.5988 & \textbf{0.42}$\times$ & \textbf{0.58}$\times$ \\
+Rule+Open-VLM + repair loop & 0.9047 & 0.7062 & 0.7160 & 0.73$\times$ & 0.87$\times$ \\
+VideoGenDoctor-full & 0.9110 & 0.7316 & 0.7639 & 1.00$\times$ & 1.00$\times$ \\
+Rule+GPT-4V + repair loop & \textbf{0.9276} & \textbf{0.7688} & \textbf{0.7917} & 2.75$\times$ & 2.31$\times$ \\
+VLM structured report & 0.8869 & 0.6639 & 0.6810 & 1.16$\times$ & 1.20$\times$ \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+
+% Begin inlined from appendix.tex
+\section{Additional Experimental Tables}
+\label{app:additional_experiment_tables}
+This appendix collects construction details, audit tables, stress analyses, and per-slice results that support the main experimental claims without interrupting the main narrative.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Operator-template alignment analysis for the expanded controlled fixture. The table makes explicit which observable cues, rule signals, failure codes, and repair-plan templates are aligned by construction.}
+\label{tab:operator_alignment}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.18\textwidth}p{0.16\textwidth}p{0.16\textwidth}p{0.16\textwidth}p{0.17\textwidth}p{0.11\textwidth}}
+\toprule
+Perturbation operator & Observable cue & Rule / feature signal & Failure code & Repair-plan template & Alignment type \\
+\midrule
+Identity-anchor removal & face or body appearance drift & face embedding drift; character-region embedding drift & \tblcode{ID\_FACE\_DRIFT}, \tblcode{ID\_BODY\_DRIFT} & \tblcode{inject\_reference\_frame}; \tblcode{replace\_character\_anchor} & identity-anchor \\
+Required-prop dropping & required object becomes absent or inconsistent & object detector absence; VLM prop-absence judgment & \tblcode{AL\_PROP\_MISSING} & \tblcode{inject\_prop} & prop-presence \\
+Camera-movement alteration & requested trajectory is replaced by static or wrong motion & global flow direction; trajectory mismatch & \tblcode{CA\_MOVE\_WRONG} & \tblcode{set\_camera\_movement} & motion-control \\
+Shot-type / framing alteration & framing violates requested shot type & crop statistics; VLM framing judgment & \tblcode{CA\_SHOT\_TYPE\_WRONG} & \tblcode{adjust\_framing} & framing-control \\
+Camera-shake injection & unstable camera with unintended jitter & flow instability; camera-shake heuristic & \tblcode{CA\_SHAKE} & \tblcode{stabilize\_camera} & stability-control \\
+Action dropping / shifting & required event missing or misordered & action-track gap; VLM event-order judgment & \tblcode{MO\_EVENT\_MISSING} & \tblcode{inject\_action\_keyframe}; \tblcode{regenerate\_segment} & event-structure \\
+Temporal jitter / frame-drop injection & discontinuity, duplicate frames, or rate mismatch & flow anomaly; near-zero motion plateau & \tblcode{MO\_JITTER}, \tblcode{MO\_SEGMENT\_BREAK} & \tblcode{normalize\_frame\_rate}; \tblcode{regenerate\_segment} & temporal-continuity \\
+Compression re-encoding & blockiness and deblocking artifacts & compression detector; texture degradation signal & \tblcode{ST\_COMPRESSION\_ARTIFACT} & \tblcode{apply\_enhancement} & quality-restoration \\
+Background-anchor weakening & scene background drifts across the shot & scene embedding drift; background-anchor mismatch & \tblcode{SC\_BG\_INCONSISTENCY} & \tblcode{fix\_background\_anchor} & scene-anchor \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Source composition of the expanded real-failure subset. The subset is failure-enriched: we generate 480 raw videos and retain 240 samples with annotator-verified visible failures. It is used only as an initial transfer check, not to estimate natural failure prevalence. We use publicly identifiable generator checkpoints to make the subset construction auditable and reproducible.}
+\label{tab:real_failure_source}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.16\textwidth}p{0.18\textwidth}p{0.22\textwidth}cccc}
+\toprule
+Generator & Version / checkpoint & Input type & \#Prompts / specs & \#Videos & Avg. duration & \#Unique observed codes \\
+\midrule
+CogVideoX & CogVideoX1.5-5B & text / ShotIR-to-prompt & 60 & 60 & 8.4s & 15 \\
+Wan & Wan2.1-T2V-14B & text / ShotIR-to-prompt & 60 & 60 & 9.2s & 16 \\
+Stable Video Diffusion & SVD-XT-1.1 & image-to-video / reference frame & 60 & 60 & 8.6s & 14 \\
+HunyuanVideo & HunyuanVideo-1.5 & text / multi-shot prompt & 60 & 60 & 9.5s & 17 \\
+\midrule
+Total & -- & -- & 240 & 240 & 8.93s & 18 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Real-failure and real-normal evaluation. The real-normal subset contains 120 videos retained from the same 480 raw generations but judged to contain no obvious failure. Best values are boldfaced; higher is better except for real-normal FPR and unnecessary patch rate, where lower is better.}
+\label{tab:real_normal_control}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccc}
+\toprule
+Method & Real-failure Recall & Real-normal FPR & Unnecessary Patch Rate & No-op Accuracy & Specificity \\
+\midrule
+Score-only & 0.621 & 0.258 & 0.231 & 0.769 & 0.742 \\
+Rule-only & 0.806 & 0.168 & 0.154 & 0.846 & 0.832 \\
+VLM structured report & 0.818 & 0.217 & 0.205 & 0.795 & 0.783 \\
+VLM structured + self-consistency & 0.837 & 0.167 & 0.150 & 0.850 & 0.833 \\
+VLM temporal proposal + patch & 0.848 & 0.192 & 0.183 & 0.817 & 0.808 \\
+VideoGenDoctor-diagnosis & \textbf{0.862} & 0.108 & 0.092 & 0.908 & 0.892 \\
+VideoGenDoctor-full & 0.858 & \textbf{0.100} & \textbf{0.087} & \textbf{0.913} & \textbf{0.900} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Stress analysis on 72 ambiguous specification-violation cases. These samples contain possible but non-adjudicable deviations from the specification. Best values are boldfaced; higher is better for abstention-oriented columns, lower is better for false concrete patch, wrong-target patch, over-repair, and new artifacts.}
+\label{tab:ambiguous_violation_cases}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccccc}
+\toprule
+Method & Abstention rate & Appropriate abstention & False concrete patch & Wrong-target patch & Over-repair & New artifacts \\
+\midrule
+Score-only & 0.292 & 0.361 & 0.514 & 0.222 & 0.347 & 0.083 \\
+VLM structured report & 0.181 & 0.292 & 0.611 & 0.278 & 0.431 & 0.153 \\
+VLM temporal proposal + patch & 0.222 & 0.347 & 0.556 & 0.236 & 0.389 & 0.194 \\
+VideoGenDoctor-diagnosis & \textbf{0.500} & \textbf{0.639} & 0.292 & 0.125 & 0.208 & \textbf{0.069} \\
+VideoGenDoctor-full & 0.472 & 0.625 & \textbf{0.250} & \textbf{0.111} & \textbf{0.181} & 0.111 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Stress analysis on 48 low-quality or non-adjudicable cases. These samples are dominated by global degradation, unclear content, or insufficient evidence for reliable code-level labels. Best values are boldfaced; higher is better for quality-gated abstention, lower is better for the remaining columns.}
+\label{tab:low_quality_cases}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccc}
+\toprule
+Method & Quality-gated abstention & False concrete patch & Wrong-target patch & Over-repair & New artifacts \\
+\midrule
+Score-only & 0.417 & 0.375 & 0.125 & 0.208 & 0.063 \\
+VLM structured report & 0.292 & 0.458 & 0.188 & 0.271 & 0.104 \\
+VLM temporal proposal + patch & 0.333 & 0.396 & 0.167 & 0.250 & 0.146 \\
+VideoGenDoctor-diagnosis & \textbf{0.667} & 0.146 & 0.063 & 0.104 & \textbf{0.042} \\
+VideoGenDoctor-full & 0.625 & \textbf{0.125} & \textbf{0.042} & \textbf{0.083} & 0.083 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Observed failure-code distribution in the expanded controlled fixture and real-failure subset. The full taxonomy contains 38 codes, but empirical claims are restricted to the observed codes below.}
+\label{tab:code_distribution}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.30\textwidth}p{0.14\textwidth}ccc}
+\toprule
+Failure code & Group & Controlled spans & Real-failure spans & Total spans \\
+\midrule
+\tblcode{ID\_FACE\_DRIFT} & Identity & 150 & 112 & 262 \\
+\tblcode{ID\_BODY\_DRIFT} & Identity & 132 & 76 & 208 \\
+\tblcode{ID\_CLOTHING\_CHANGE} & Identity & -- & 60 & 60 \\
+\tblcode{CA\_MOVE\_WRONG} & Camera & 240 & 104 & 344 \\
+\tblcode{CA\_SHOT\_TYPE\_WRONG} & Camera & 144 & 84 & 228 \\
+\tblcode{CA\_SHAKE} & Camera & 126 & 70 & 196 \\
+\tblcode{CA\_WRONG\_ANGLE} & Camera & -- & 68 & 68 \\
+\tblcode{MO\_JITTER} & Motion & 174 & 124 & 298 \\
+\tblcode{MO\_FROZEN\_FRAME} & Motion & 156 & 72 & 228 \\
+\tblcode{MO\_SEGMENT\_BREAK} & Motion & 162 & 88 & 250 \\
+\tblcode{MO\_EVENT\_MISSING} & Motion & 126 & 90 & 216 \\
+\tblcode{MO\_ACTION\_ORDER\_WRONG} & Motion & -- & 56 & 56 \\
+\tblcode{AL\_PROP\_MISSING} & Alignment & 198 & 116 & 314 \\
+\tblcode{AL\_TEXT\_PROMPT\_MISMATCH} & Alignment & -- & 132 & 132 \\
+\tblcode{ST\_COMPRESSION\_ARTIFACT} & Style & 252 & 80 & 332 \\
+\tblcode{ST\_COLOR\_SHIFT} & Style & -- & 56 & 56 \\
+\tblcode{SC\_BG\_INCONSISTENCY} & Scene & 156 & 86 & 242 \\
+\tblcode{SC\_OBJECT\_TELEPORT} & Scene & -- & 62 & 62 \\
+\midrule
+Total & -- & 2016 & 1536 & 3552 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Annotation reliability. Dual annotation is performed on a reliability subset before adjudication.}
+\label{tab:annotation_reliability}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.28\textwidth}ccccc}
+\toprule
+Subset & \#Videos & \#Candidate spans & \#Annotators & Code agreement & Span agreement \\
+\midrule
+Controlled reliability subset & 72 & 468 & 2 & $\kappa$ = 0.858 & tIoU = 0.716 \\
+Real-failure reliability subset & 48 & 300 & 2 & $\kappa$ = 0.803 & tIoU = 0.641 \\
+Combined & 120 & 768 & 2 & $\kappa$ = 0.831 & tIoU = 0.681 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Implementation details for VLM-based judges and external diagnosis/repair baselines.}
+\label{tab:vlm_details}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}cc>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}}
+\toprule
+Setting & Model & Frames & Res. & Prompt & Rel. cost \\
+\midrule
+Rule+Open-VLM & Qwen2-VL-7B-Instruct & 18 & 512px short side & structured QA & 0.34$\times$ \\
+Rule+GPT-4V & GPT-4V endpoint & 18 & 512px short side & structured QA & 2.75$\times$ \\
+VLM free-form report & GPT-4V endpoint & 12 & 512px short side & free-form critique & 1.12$\times$ \\
+VLM structured report & GPT-4V endpoint & 12 & 512px short side & JSON schema & 1.16$\times$ \\
+VLM structured + self-consistency & GPT-4V endpoint & 12 frames $\times$ 3 runs & 512px short side & JSON schema, 3 runs & 3.48$\times$ \\
+VLM temporal proposal + patch & GPT-4V endpoint & 12 & 512px short side & span proposal + JSON & 2.05$\times$ \\
+VLM-to-patch & GPT-4V endpoint & 12 & 512px short side & JSON patch & 1.19$\times$ \\
+Score+LLM-to-patch & scalar evaluator + LLM & 0 & -- & score-to-patch JSON & N/A \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\vspace{2pt}
+\begin{minipage}{0.98\linewidth}
+\footnotesize\emph{Note.} Most direct VLM baselines share the same hosted GPT-4V endpoint~\cite{gpt4v2023} to isolate prompt- and schema-level effects rather than backbone changes; Rule+Open-VLM provides an open-model reference. Hosted endpoint calls are logged with raw responses for auditability. `N/A' denotes a scalar-evaluator-dominated pipeline whose cost is not directly comparable to frame-based VLM calls.
+\end{minipage}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Per-code reliability of the default VideoGenDoctor diagnosis configuration on the expanded controlled fixture.}
+\label{tab:per_code_controlled}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Observed code} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{tIoU@0.5} \\
+\midrule
+\tblcode{ID\_FACE\_DRIFT} & 0.938 & 0.914 & 0.926 & 0.748 \\
+\tblcode{ID\_BODY\_DRIFT} & 0.922 & 0.897 & 0.909 & 0.725 \\
+\tblcode{CA\_MOVE\_WRONG} & 0.932 & 0.916 & 0.924 & 0.734 \\
+\tblcode{CA\_SHOT\_TYPE\_WRONG} & 0.913 & 0.889 & 0.901 & 0.705 \\
+\tblcode{CA\_SHAKE} & 0.901 & 0.878 & 0.889 & 0.692 \\
+\tblcode{MO\_JITTER} & 0.890 & 0.865 & 0.877 & 0.676 \\
+\tblcode{MO\_FROZEN\_FRAME} & 0.963 & 0.950 & 0.956 & 0.794 \\
+\tblcode{MO\_SEGMENT\_BREAK} & 0.906 & 0.883 & 0.894 & 0.704 \\
+\tblcode{MO\_EVENT\_MISSING} & 0.875 & 0.848 & 0.861 & 0.662 \\
+\tblcode{AL\_PROP\_MISSING} & 0.951 & 0.930 & 0.940 & 0.760 \\
+\tblcode{ST\_COMPRESSION\_ARTIFACT} & 0.950 & 0.966 & 0.958 & 0.779 \\
+\tblcode{SC\_BG\_INCONSISTENCY} & 0.910 & 0.885 & 0.897 & 0.686 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Per-code reliability on the expanded real-failure subset. The subset is more challenging than the controlled fixture, especially for motion, camera, and scene-level failures.}
+\label{tab:real_per_code}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.31\textwidth}ccccc}
+\toprule
+Failure code & \#Spans & Precision & Recall & F1 & tIoU@0.5 \\
+\midrule
+\tblcode{ID\_FACE\_DRIFT} & 112 & 0.884 & 0.848 & 0.866 & 0.648 \\
+\tblcode{ID\_BODY\_DRIFT} & 76 & 0.856 & 0.823 & 0.839 & 0.615 \\
+\tblcode{ID\_CLOTHING\_CHANGE} & 60 & 0.834 & 0.798 & 0.816 & 0.586 \\
+\tblcode{CA\_MOVE\_WRONG} & 104 & 0.866 & 0.832 & 0.849 & 0.628 \\
+\tblcode{CA\_SHOT\_TYPE\_WRONG} & 84 & 0.838 & 0.803 & 0.820 & 0.590 \\
+\tblcode{CA\_SHAKE} & 70 & 0.820 & 0.779 & 0.799 & 0.559 \\
+\tblcode{CA\_WRONG\_ANGLE} & 68 & 0.825 & 0.786 & 0.805 & 0.568 \\
+\tblcode{MO\_JITTER} & 124 & 0.823 & 0.777 & 0.799 & 0.565 \\
+\tblcode{MO\_FROZEN\_FRAME} & 72 & 0.899 & 0.854 & 0.876 & 0.663 \\
+\tblcode{MO\_SEGMENT\_BREAK} & 88 & 0.827 & 0.792 & 0.809 & 0.582 \\
+\tblcode{MO\_EVENT\_MISSING} & 90 & 0.807 & 0.762 & 0.784 & 0.542 \\
+\tblcode{MO\_ACTION\_ORDER\_WRONG} & 56 & 0.792 & 0.748 & 0.769 & 0.524 \\
+\tblcode{AL\_PROP\_MISSING} & 116 & 0.893 & 0.863 & 0.878 & 0.669 \\
+\tblcode{AL\_TEXT\_PROMPT\_MISMATCH} & 132 & 0.842 & 0.794 & 0.817 & 0.596 \\
+\tblcode{ST\_COMPRESSION\_ARTIFACT} & 80 & 0.914 & 0.874 & 0.893 & 0.688 \\
+\tblcode{ST\_COLOR\_SHIFT} & 56 & 0.846 & 0.806 & 0.825 & 0.601 \\
+\tblcode{SC\_BG\_INCONSISTENCY} & 86 & 0.832 & 0.795 & 0.813 & 0.578 \\
+\tblcode{SC\_OBJECT\_TELEPORT} & 62 & 0.823 & 0.782 & 0.802 & 0.545 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Per-generator results on the real-failure and real-normal subsets. FPR is computed on 30 real-normal samples per generator.}
+\label{tab:per_generator_results}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccclc}
+\toprule
+Generator & Macro-F1 & tIoU@0.5 & Human Pass@2 & Real-normal FPR & Main failure groups & Normal samples \\
+\midrule
+CogVideoX & 0.834 & 0.609 & 0.702 & 0.092 & Camera, Motion, Alignment & 30 \\
+Wan & 0.821 & 0.588 & 0.681 & 0.108 & Motion, Camera, Identity & 30 \\
+Stable Video Diffusion & 0.842 & 0.617 & 0.696 & 0.083 & Identity, Style, Scene & 30 \\
+HunyuanVideo & 0.809 & 0.579 & 0.684 & 0.117 & Camera, Motion, Alignment & 30 \\
+\midrule
+Average & 0.827 & 0.598 & 0.691 & 0.100 & -- & 120 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Leave-one-perturbation-out evaluation. Each held-out operator is excluded from threshold tuning and then used only for testing.}
+\label{tab:leave_one_perturbation}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccc}
+\toprule
+Held-out perturbation operator & Macro-F1 & tIoU@0.5 & Top-3 hit \\
+\midrule
+Identity-anchor removal & 0.884 & 0.681 & 0.644 \\
+Required-prop dropping & 0.902 & 0.704 & 0.672 \\
+Camera-movement alteration & 0.871 & 0.653 & 0.612 \\
+Shot-type / framing alteration & 0.862 & 0.641 & 0.606 \\
+Camera-shake injection & 0.851 & 0.628 & 0.590 \\
+Action dropping / shifting & 0.838 & 0.612 & 0.568 \\
+Temporal jitter / frame-drop injection & 0.846 & 0.621 & 0.577 \\
+Compression re-encoding & 0.910 & 0.719 & 0.688 \\
+Background-anchor weakening & 0.868 & 0.646 & 0.610 \\
+\midrule
+Average & 0.870 & 0.656 & 0.619 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Leave-one-source-group-out evaluation over the six controlled-fixture domain groups.}
+\label{tab:leave_one_source_group}
+\begin{tabular}{lccc}
+\toprule
+Held-out source group & Macro-F1 & tIoU@0.5 & Top-3 hit \\
+\midrule
+Indoor / human-object & 0.899 & 0.714 & 0.665 \\
+Outdoor / motion & 0.887 & 0.702 & 0.651 \\
+Multi-object interaction & 0.892 & 0.706 & 0.657 \\
+Camera-control scene & 0.875 & 0.683 & 0.631 \\
+Style / lighting variation & 0.907 & 0.722 & 0.676 \\
+Scene-change / background & 0.884 & 0.694 & 0.642 \\
+\midrule
+Average & 0.891 & 0.704 & 0.654 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Full Failure Taxonomy}
+\label{app:taxonomy}
+Table~\ref{tab:full_taxonomy} reports the machine-readable taxonomy used by
+VideoGenDoctor v0.1. The v0.1 taxonomy contains \TaxonomyTotalCodes{} codes
+grouped into six categories. Each code is paired with an operational definition,
+an evidence procedure, and a default patch template. The current benchmark
+evaluates the \TaxonomyNumCodes{} codes observed in VideoGenDoctor-Bench-v0,
+while the remaining codes define the extensible namespace used by the report
+schema and patch compiler.
+
+\begingroup
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{longtable}{
+  >{\raggedright\arraybackslash}p{0.23\textwidth}
+  >{\raggedright\arraybackslash}p{0.27\textwidth}
+  >{\raggedright\arraybackslash}p{0.21\textwidth}
+  >{\raggedright\arraybackslash}p{0.13\textwidth}}
+\caption{Full VideoGenDoctor v0.1 failure taxonomy used by the report schema and patch compiler.}
+\label{tab:full_taxonomy}\\
+\toprule
+\textbf{Code} & \textbf{Definition} & \textbf{Evidence Procedure} & \textbf{Patch Template} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Code} & \textbf{Definition} & \textbf{Evidence Procedure} & \textbf{Patch Template} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{4}{r}{Continued on next page} \\
+\endfoot
+\bottomrule
+\endlastfoot
+\multicolumn{4}{l}{Identity} \\
+\tblcode{ID\_FACE\_DRIFT} & Face identity changes inconsistently between frames or segments. & Compare face embeddings across keyframes and flag large cosine distance. & \tblcode{inject\_reference\_frame} \\
+\tblcode{ID\_BODY\_DRIFT} & Body appearance, clothing, or build changes inconsistently. & Compare character-region embeddings across segments. & \tblcode{inject\_reference\_frame} \\
+\tblcode{ID\_WRONG\_CHARACTER} & A visible character does not match any specified character. & Check face embeddings against known character anchors. & \tblcode{replace\_character\_anchor} \\
+\tblcode{ID\_CLOTHING\_CHANGE} & Clothing changes between shots without narrative justification. & Measure character-region appearance drift across segments. & \tblcode{fix\_character\_consistency} \\
+\tblcode{ID\_MULTIPLE\_FACES} & Multiple distinct faces appear when one character is expected. & Count distinct identities detected in a single-character shot. & \tblcode{reduce\_character\_count} \\
+\tblcode{ID\_NO\_FACE\_VISIBLE} & An expected face is absent when the shot requires face visibility. & Check face detection under close-up or medium-shot constraints. & \tblcode{adjust\_framing} \\
+\midrule
+\multicolumn{4}{l}{Scene} \\
+\tblcode{SC\_BG\_INCONSISTENCY} & The background changes unexpectedly between segments. & Measure background-region embedding drift across consecutive segments. & \tblcode{fix\_background\_anchor} \\
+\tblcode{SC\_ENVIRONMENT\_MISMATCH} & The scene environment does not match the specified location. & Compare frames with the location description using image-text similarity. & \tblcode{set\_environment} \\
+\tblcode{SC\_LIGHTING\_SHIFT} & Lighting changes inconsistently within a shot. & Measure per-frame luminance variation within the segment. & \tblcode{normalize\_lighting} \\
+\tblcode{SC\_OBJECT\_TELEPORT} & A scene object appears or disappears without plausible motion. & Track object boxes across adjacent frames. & \tblcode{stabilize\_scene\_objects} \\
+\tblcode{SC\_BG\_FLICKER} & The background flickers or pulses unnaturally. & Detect high-frequency luminance variation in background regions. & \tblcode{smooth\_background} \\
+\tblcode{SC\_WRONG\_TIME\_OF\_DAY} & The time of day does not match the specification. & Classify sky and ambient lighting against the expected time. & \tblcode{set\_time\_of\_day} \\
+\midrule
+\multicolumn{4}{l}{Motion} \\
+\tblcode{MO\_JITTER} & Unnatural frame-to-frame jitter appears outside intended camera motion. & Measure optical-flow magnitude variance and direction instability. & \tblcode{normalize\_frame\_rate} \\
+\tblcode{MO\_FRAME\_DROP} & Duplicate or dropped frames produce visible stutter. & Detect near-zero adjacent-frame flow when motion is expected. & \tblcode{interpolate\_frames} \\
+\tblcode{MO\_UNNATURAL\_MOTION} & Character or object motion is physically implausible. & Compare flow direction and magnitude with expected motion constraints. & \tblcode{constrain\_motion} \\
+\tblcode{MO\_EVENT\_MISSING} & A required action or event does not occur in the expected segment. & Ask the VLM judge whether the specified action is visible. & \tblcode{inject\_action\_keyframe} \\
+\tblcode{MO\_ACTION\_ORDER\_WRONG} & Actions occur in the wrong temporal order. & Compare detected action timestamps with the specification order. & \tblcode{reorder\_segments} \\
+\tblcode{MO\_MOTION\_BLUR\_EXCESS} & Excessive motion blur degrades keyframes. & Use sharpness measures such as Laplacian variance. & \tblcode{reduce\_motion\_blur} \\
+\tblcode{MO\_FROZEN\_FRAME} & The video is frozen when motion is expected. & Detect near-zero flow across the full segment. & \tblcode{regenerate\_segment} \\
+\tblcode{MO\_SEGMENT\_BREAK} & A visual discontinuity occurs at a segment boundary. & Detect embedding-drift spikes at boundaries. & \tblcode{smooth\_segment\_transition} \\
+\midrule
+\multicolumn{4}{l}{Camera} \\
+\tblcode{CA\_MOVE\_WRONG} & Camera movement deviates from the specified movement. & Compare optical-flow direction patterns with the expected movement type. & \tblcode{set\_camera\_movement} \\
+\tblcode{CA\_SHOT\_TYPE\_WRONG} & The shot type does not match the specification. & Compare face or body box size ratios with the expected shot type. & \tblcode{adjust\_framing} \\
+\tblcode{CA\_UNINTENDED\_ZOOM} & Unplanned zoom-in or zoom-out occurs. & Detect radial flow without a zoom specification. & \tblcode{remove\_zoom} \\
+\tblcode{CA\_SHAKE} & Camera shake appears outside the specified movement. & Detect high-frequency oscillation in global optical flow. & \tblcode{stabilize\_camera} \\
+\tblcode{CA\_WRONG\_ANGLE} & Camera angle deviates from the specification. & Ask the VLM judge to compare the observed angle with the target angle. & \tblcode{set\_camera\_angle} \\
+\tblcode{CA\_ROLL} & Unintended camera roll appears. & Estimate the rotational component of optical flow. & \tblcode{remove\_camera\_roll} \\
+\midrule
+\multicolumn{4}{l}{Alignment} \\
+\tblcode{AL\_PROP\_MISSING} & A required prop is not visible in the segment. & Use object detection or VLM verification for prop absence. & \tblcode{inject\_prop} \\
+\tblcode{AL\_PROP\_WRONG\_PLACEMENT} & A required prop appears in the wrong region. & Compare the prop box with the expected screen region. & \tblcode{reposition\_prop} \\
+\tblcode{AL\_TEXT\_PROMPT\_MISMATCH} & The generated content does not align with the prompt. & Measure text-image similarity and verify mismatches with a judge. & \tblcode{strengthen\_prompt\_guidance} \\
+\tblcode{AL\_CHARACTER\_COUNT\_WRONG} & The number of visible characters does not match the specification. & Count faces or bodies and compare with the expected count. & \tblcode{adjust\_character\_count} \\
+\tblcode{AL\_WRONG\_PROP} & A visible prop is not listed in the specification. & Detect high-confidence unlisted objects. & \tblcode{remove\_prop} \\
+\tblcode{AL\_PROP\_OCCLUDED} & A required prop is present but substantially occluded. & Estimate visible area and occlusion of the prop box. & \tblcode{adjust\_prop\_placement} \\
+\midrule
+\multicolumn{4}{l}{Style} \\
+\tblcode{ST\_COLOR\_SHIFT} & The color palette changes inconsistently across segments. & Measure HSV histogram distance between segments. & \tblcode{apply\_color\_grading} \\
+\tblcode{ST\_ART\_STYLE\_INCONSISTENCY} & The art style shifts between segments. & Compare style embeddings across segments. & \tblcode{apply\_style\_transfer} \\
+\tblcode{ST\_COMPRESSION\_ARTIFACT} & Visible compression artifacts degrade video quality. & Detect blocking, ringing, or quality-score degradation. & \tblcode{apply\_enhancement} \\
+\tblcode{ST\_TEXTURE\_FLICKER} & Texture patterns flicker or shimmer unnaturally. & Measure high temporal frequency in texture regions. & \tblcode{smooth\_texture} \\
+\tblcode{ST\_OVEREXPOSURE} & Significant frame regions are overexposed. & Count the fraction of saturated high-value pixels. & \tblcode{adjust\_exposure} \\
+\tblcode{ST\_UNDEREXPOSURE} & Significant frame regions are underexposed. & Count the fraction of near-black pixels. & \tblcode{adjust\_exposure} \\
+\end{longtable}
+\endgroup
+
+
+\section{Judge Protocol}
+\label{app:judge}
+The Stage-2 judge receives the top-$K$ candidate segments produced by Stage-1. For each
+segment, the input includes the segment identifier, temporal bounds, keyframe paths, candidate
+failure codes, and specification context, including required props, expected actions, camera
+movement, shot type, and character anchors. The judge answers structured questions rather than
+producing a free-form report. This design keeps the output comparable across local open-source
+VLMs and hosted vision-capable models.
+
+For identity failures, the judge checks whether the face, body appearance, clothing, or other
+distinctive visual attributes of the main character change inconsistently across keyframes.
+For alignment failures, it verifies whether required props are visible, whether they appear in
+the expected screen region, and whether the generated content matches the prompt or structured
+specification. For camera failures, it compares the observed camera movement, shot type, and
+viewpoint angle with the requested control signal. For motion failures, it verifies whether
+required actions occur, whether they occur in the specified order, and whether stutter, frozen
+frames, or segment breaks are visible. For style and scene failures, it checks lighting, color,
+compression artifacts, background consistency, and environment match.
+
+The output is a structured object containing a natural-language answer for each question, a
+confidence score, per-code probability updates, and a re-ranking of keyframes. The final
+failure score is computed as
+\[
+\tilde{\sigma}_{s,c} = (1-\alpha)\sigma^{(1)}_{s,c} + \alpha\sigma^{(2)}_{s,c},
+\]
+where $\sigma^{(1)}_{s,c}$ is the Stage-1 score, $\sigma^{(2)}_{s,c}$ is the judge score,
+and $\alpha=0.6$ by default. All judge calls record the model name, prompt, raw response,
+token count when available, and output path to support reproducibility.
+
+
+\section{Patch Template Examples}
+\label{app:patch}
+VideoGenDoctor compiles each diagnosis record into one or more patch actions. If a ShotIR
+specification is available, the compiler emits field-level diffs. If the generator does not
+expose a structured specification interface, the compiler emits generator-agnostic repair
+plans that can be translated into prompt edits, reference-frame injection, segment-level
+re-rendering, or post-processing steps.
+
+\begin{verbatim}
+{"action": "inject_reference_frame",
+ "field": "character_id",
+ "value": "<anchor_frame>",
+ "reason": "ID_FACE_DRIFT detected at t=1.2s"}
+\end{verbatim}
+
+\begin{verbatim}
+{"action": "set_camera_movement",
+ "field": "camera_movement",
+ "value": "<expected_camera_movement>",
+ "reason": "CA_MOVE_WRONG detected in the localized span"}
+\end{verbatim}
+
+\begin{verbatim}
+{"action": "inject_prop",
+ "field": "props_required",
+ "value": "<missing_prop>",
+ "reason": "AL_PROP_MISSING verified by object or VLM evidence"}
+\end{verbatim}
+
+\begin{verbatim}
+{"action": "regenerate_segment",
+ "field": "segment",
+ "value": "<t0,t1>",
+ "reason": "MO_FROZEN_FRAME or MO_SEGMENT_BREAK is localized to this span"}
+\end{verbatim}
+
+Each patch specifies an action type, the affected target, an optional update value, and a short
+rationale tied to the evidence span. When multiple records affect the same target, the compiler
+groups them before re-rendering to reduce conflicts among patch actions.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Patch-to-generator adapter details. A repair plan is counted as adapter-executable only when it can be automatically translated into target-generator or editor inputs without manual rewriting. L0/L1 rows denote abstention or prompt-rewrite instructions rather than executable patches.}
+\label{tab:patch_adapter_details}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.18\textwidth}p{0.14\textwidth}p{0.10\textwidth}p{0.15\textwidth}p{0.24\textwidth}p{0.12\textwidth}}
+\toprule
+Repair-plan action & ShotIR field & Counted as & Adapter availability & Concrete generator/editor input & Fallback \\
+\midrule
+inject\_reference\_frame & character.identity\_anchor & L2 & L2 available for SVD; L1 partial for text-to-video models & reference image input + identity prompt strengthening & prompt-only repair plan \\
+set\_camera\_movement & camera.movement & L1 & L1 partial & camera-control prompt rewrite; trajectory adapter when supported & no\_op\_uncertain if no camera control exists \\
+set\_camera\_angle & camera.viewpoint & L1 & L1 partial & viewpoint prompt rewrite; optional camera-control token & repair suggestion only \\
+inject\_prop & props\_required & L1 / L2 & L1 available; L2 partial with mask/reference input & prop phrase insertion + optional reference or mask & prompt edit \\
+reposition\_prop & props.region & L1 & L1 partial & region-aware prompt rewrite or mask-conditioned edit & prompt-only repair plan \\
+regenerate\_segment & temporal span & L2 / L3 & L2 available when segment rerendering is supported & segment-level rerender or temporal inpainting call & full-clip rerender \\
+stabilize\_camera & camera.constraint & L1 / L2 & L1 partial & no-shake constraint or stabilization post-process & repair suggestion only \\
+normalize\_frame\_rate & motion.continuity & L2 & L2 partial & frame interpolation or temporal smoothing post-process & regenerate\_segment \\
+apply\_enhancement & style.quality & L2 & L2 available & enhancement / deblocking post-process & prompt edit for higher quality \\
+fix\_background\_anchor & scene.background\_anchor & L1 & L1 partial & background-anchor prompt strengthening; optional reference image & prompt-only repair plan \\
+no\_op\_uncertain & -- & L0 & L0 available & abstain from concrete repair & no action \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+In the reported Human Pass@K evaluation, the concretely executed actions are the L2/L3 subset exposed by the active backend, primarily reference-frame injection, segment rerendering or temporal smoothing, enhancement or deblocking, and mask- or reference-conditioned prop insertion when supported. L0/L1 rows remain structured repair-plan instructions and are not counted as executable patches.
+
+\section{Annotation Guide Summary}
+\label{app:annotation}
+Annotators review each perturbed video together with the original prompt or ShotIR
+specification and the auto-assigned candidate failure codes. For each candidate, annotators
+determine whether the failure is visually present, assign the tightest temporal span that contains
+the visible deviation, and select representative keyframes when available. Annotators may also
+add missing failures if the perturbation produces an additional visible artifact.
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/annotation_interface_appendix.png}
+\caption{Annotation interface used for manual verification in VideoGenDoctor-Bench-v0. The tool exposes a sample navigator, side-by-side review of the original and perturbed videos, temporal evidence marking, structured failure verification cards, and free-form notes for adjudication.}
+\label{fig:annotation_interface_appendix}
+\end{figure}
+
+The annotation record is stored as one JSON object per video and includes the video identifier,
+annotator identifier, verified failure codes, confidence values, evidence spans, and free-form
+notes. A failure is retained in the benchmark only when the annotator can verify it from the
+rendered video and specification, without relying on perturbation metadata alone. Ambiguous
+cases are handled conservatively: if a deviation is not visually identifiable, the candidate is
+marked as not verified.
+
+The expanded experiment fixture includes a dual-annotated reliability subset of 120 videos and
+768 candidate evidence spans. The subset contains both controlled perturbation samples and
+naturally occurring real-failure samples. Larger multi-annotator validation with more than two
+independent annotators remains future work.
+
+\section{Example Diagnostic Report}
+\label{app:diagnostic_report}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/report.png}
+\caption{Example VideoGenDoctor diagnostic report for a perturbed video. The report summarizes global scores, ranked failure records with confidence and temporal spans, representative keyframes, patch hints derived from the retained failure codes, and segment-level evidence used for localized review and repair.}
+\label{fig:diagnostic_report}
+\end{figure}
+% End inlined from appendix.tex
+
+
+
+\section{Direct VLM Baseline Prompt Templates}
+\label{app:vlm_baselines}
+
+The four direct VLM/LLM baselines differ only in their allowed information access and output schema. The free-form and structured VLM report baselines receive sampled frames and the specification. The VLM-to-patch baseline also receives sampled frames, the taxonomy names, and the repair-plan vocabulary, but not VideoGenDoctor's rule scores or patch compiler outputs. The Score+LLM-to-patch baseline receives scalar evaluator scores and the specification only; it does not receive sampled frames. These information boundaries are fixed before evaluation and are used for all samples.
+
+\paragraph{F.1 Free-form VLM report prompt.}
+The model receives the video specification, sampled keyframes with timestamps, and a short instruction: identify visible failures, explain the evidence, and propose repair suggestions. The response is then parsed into taxonomy codes and evidence spans for evaluation.
+
+\paragraph{F.2 Structured VLM report prompt.}
+The model receives the same input but must output JSON objects with fields \texttt{failure\_code}, \texttt{temporal\_span}, \texttt{affected\_target}, \texttt{confidence}, \texttt{evidence\_keyframes}, \texttt{rationale}, and \texttt{repair\_action}. Failures without visual evidence must be marked as uncertain rather than hallucinated.
+
+\begin{verbatim}
+You are evaluating whether a generated video follows the given specification.
+For each visible failure, return a JSON record:
+{
+  "failure_code": "<taxonomy code>",
+  "temporal_span": [t0, t1],
+  "affected_target": "<character / prop / camera / motion / style / scene>",
+  "confidence": <0-1>,
+  "evidence_keyframes": ["frame@time", ...],
+  "rationale": "short visual reason",
+  "repair_action": "<patch action>"
+}
+Only report failures that are visually supported by the frames.
+\end{verbatim}
+
+\paragraph{F.3 VLM-to-patch prompt.}
+The VLM-to-patch baseline receives the same video specification and sampled keyframes as the direct VLM diagnosis baselines, but it is asked to output repair actions directly rather than diagnosis records. This baseline is allowed to access the taxonomy names and the supported repair-plan vocabulary, but it is not given VideoGenDoctor's Stage-1 rule scores, candidate segments, or patch compiler outputs. It may infer temporal spans from the sampled frames, but it does not receive ground-truth spans or VideoGenDoctor-predicted spans. This setting tests whether a VLM can directly produce structured repair plans from the specification and visual evidence.
+
+\begin{verbatim}
+You are a video-generation repair planner.
+
+Input:
+1. A video specification or ShotIR-style instruction.
+2. Sampled keyframes from the generated video, each with a timestamp.
+3. The failure-code taxonomy names.
+4. The supported repair-plan vocabulary.
+
+Your task:
+Inspect the sampled frames and the specification. Identify only visually supported
+problems and output structured repair-plan actions. Do not write a free-form critique.
+Do not invent failures that are not visible in the frames.
+
+You may use the following failure-code groups:
+- Identity: ID_FACE_DRIFT, ID_BODY_DRIFT, ID_WRONG_CHARACTER,
+  ID_CLOTHING_CHANGE, ID_MULTIPLE_FACES, ID_NO_FACE_VISIBLE
+- Camera: CA_MOVE_WRONG, CA_SHOT_TYPE_WRONG, CA_UNINTENDED_ZOOM,
+  CA_SHAKE, CA_WRONG_ANGLE, CA_ROLL
+- Motion: MO_JITTER, MO_FRAME_DROP, MO_UNNATURAL_MOTION,
+  MO_EVENT_MISSING, MO_ACTION_ORDER_WRONG, MO_MOTION_BLUR_EXCESS,
+  MO_FROZEN_FRAME, MO_SEGMENT_BREAK
+- Alignment: AL_PROP_MISSING, AL_PROP_WRONG_PLACEMENT,
+  AL_TEXT_PROMPT_MISMATCH, AL_CHARACTER_COUNT_WRONG,
+  AL_WRONG_PROP, AL_PROP_OCCLUDED
+- Style: ST_COLOR_SHIFT, ST_ART_STYLE_INCONSISTENCY,
+  ST_COMPRESSION_ARTIFACT, ST_TEXTURE_FLICKER,
+  ST_OVEREXPOSURE, ST_UNDEREXPOSURE
+- Scene: SC_BG_INCONSISTENCY, SC_ENVIRONMENT_MISMATCH,
+  SC_LIGHTING_SHIFT, SC_OBJECT_TELEPORT, SC_BG_FLICKER,
+  SC_WRONG_TIME_OF_DAY
+
+Supported repair-plan vocabulary:
+- inject_reference_frame
+- replace_character_anchor
+- fix_character_consistency
+- adjust_framing
+- set_camera_movement
+- set_camera_angle
+- stabilize_camera
+- remove_zoom
+- remove_camera_roll
+- inject_prop
+- reposition_prop
+- remove_prop
+- adjust_character_count
+- strengthen_prompt_guidance
+- inject_action_keyframe
+- reorder_segments
+- regenerate_segment
+- interpolate_frames
+- normalize_frame_rate
+- constrain_motion
+- smooth_segment_transition
+- reduce_motion_blur
+- apply_color_grading
+- apply_style_transfer
+- apply_enhancement
+- smooth_texture
+- adjust_exposure
+- fix_background_anchor
+- set_environment
+- normalize_lighting
+- stabilize_scene_objects
+- set_time_of_day
+- no_op_uncertain
+
+Return a JSON object with the following schema:
+{
+  "patches": [
+    {
+      "patch_id": "<unique patch id>",
+      "failure_code": "<taxonomy code or uncertain>",
+      "action": "<one item from the supported repair-plan vocabulary>",
+      "target": "<character / prop / camera / motion / style / scene target>",
+      "temporal_span": [<start_sec>, <end_sec>],
+      "evidence_keyframes": ["frame@time", "..."],
+      "confidence": <0-1>,
+      "patch_fields": {
+        "field": "<generator or ShotIR field to modify>",
+        "value": "<new value, constraint, or reference to insert>"
+      },
+      "rationale": "<short visual reason>"
+    }
+  ],
+  "global_notes": "<one-sentence summary>",
+  "uncertain": <true or false>
+}
+
+Rules:
+1. Output valid JSON only.
+2. Every patch must use an action from the supported repair-plan vocabulary.
+3. If no visually supported failure is visible, return:
+   {"patches": [], "global_notes": "No visually supported repair action.", "uncertain": true}
+4. If the temporal span is uncertain, estimate it from the nearest sampled frame
+   timestamps and set "confidence" below 0.5.
+5. Do not output patches for purely aesthetic preferences unless the specification
+   explicitly requires them.
+\end{verbatim}
+
+\paragraph{F.4 Score+LLM-to-patch prompt.}
+The Score+LLM-to-patch baseline receives scalar evaluator outputs and the original video specification, but it does not receive sampled frames. This baseline is intentionally weaker in visual grounding but represents a common production setting where low-level evaluators return scalar scores and an LLM converts low-scoring dimensions into repair suggestions. Because it cannot inspect frames, it is not allowed to claim frame-specific visual evidence. It may output approximate temporal spans only when the scalar evaluator provides segment-level scores; otherwise the temporal span must be marked as \texttt{null}. This makes the information boundary explicit and prevents unfair comparison with frame-based VLM baselines.
+
+\begin{verbatim}
+You are a repair planner for controllable video generation.
+
+Input:
+1. The original video specification or ShotIR-style instruction.
+2. Scalar evaluator outputs, such as quality, alignment, motion, identity,
+   camera, style, and scene-consistency scores.
+3. Optional segment-level scalar scores if available.
+4. The supported repair-plan vocabulary.
+
+Important information boundary:
+You do NOT receive sampled frames or the video itself. Therefore:
+- Do not claim that a failure is visually observed.
+- Do not mention specific visual evidence or keyframes.
+- Only infer likely repair actions from low-scoring evaluator dimensions.
+- Use "evidence_source": "scalar_score" for all patches.
+- Use "temporal_span": null unless segment-level scores identify a specific interval.
+
+Supported repair-plan vocabulary:
+- inject_reference_frame
+- replace_character_anchor
+- fix_character_consistency
+- adjust_framing
+- set_camera_movement
+- set_camera_angle
+- stabilize_camera
+- remove_zoom
+- remove_camera_roll
+- inject_prop
+- reposition_prop
+- remove_prop
+- adjust_character_count
+- strengthen_prompt_guidance
+- inject_action_keyframe
+- reorder_segments
+- regenerate_segment
+- interpolate_frames
+- normalize_frame_rate
+- constrain_motion
+- smooth_segment_transition
+- reduce_motion_blur
+- apply_color_grading
+- apply_style_transfer
+- apply_enhancement
+- smooth_texture
+- adjust_exposure
+- fix_background_anchor
+- set_environment
+- normalize_lighting
+- stabilize_scene_objects
+- set_time_of_day
+- no_op_uncertain
+
+Return a JSON object with the following schema:
+{
+  "patches": [
+    {
+      "patch_id": "<unique patch id>",
+      "score_dimension": "<low-scoring evaluator dimension>",
+      "inferred_failure_type": "<short inferred failure description>",
+      "action": "<one item from the supported repair-plan vocabulary>",
+      "target": "<character / prop / camera / motion / style / scene target>",
+      "temporal_span": null,
+      "evidence_source": "scalar_score",
+      "triggering_scores": {
+        "<score_name>": <score_value>
+      },
+      "confidence": <0-1>,
+      "patch_fields": {
+        "field": "<generator or ShotIR field to modify>",
+        "value": "<new value, constraint, or reference to insert>"
+      },
+      "rationale": "<short reason based only on scalar scores and specification>"
+    }
+  ],
+  "global_notes": "<one-sentence summary>",
+  "uncertain": <true or false>
+}
+
+Rules:
+1. Output valid JSON only.
+2. Do not claim visual evidence because frames are not provided.
+3. Do not output frame IDs or evidence keyframes.
+4. Use temporal_span = null unless segment-level scalar scores are provided.
+5. Every patch must use an action from the supported repair-plan vocabulary.
+6. If the scalar scores do not indicate a clear repair target, return:
+   {"patches": [], "global_notes": "No reliable score-based repair action.", "uncertain": true}
+\end{verbatim}
+
+\paragraph{F.5 Parsing and invalid-output handling.}
+Invalid JSON outputs are repaired using a deterministic parser when possible. If the output cannot be parsed, the prediction is marked invalid. Failure codes outside the taxonomy are mapped to the nearest taxonomy code only when an exact synonym exists; otherwise they are counted as false positives. Predictions without temporal spans receive no localization credit. Hallucinated failures without visual evidence are counted as false positives. Repair actions outside the supported repair-plan vocabulary are marked invalid for repair-plan scoring and non-adapter-executable for adapter scoring.
+
+\section{Blind Human Repair Evaluation Protocol}
+\label{app:human_repair}
+Raters are shown the specification and one output video, without method names or diagnosis records. They answer whether the video satisfies the specification overall, whether the target failure is resolved, whether the repair introduces new artifacts, and how useful the patch is on a 1--5 scale. Human Pass@$K$ is the fraction of samples judged successful after at most $K$ repair attempts.
+
+\begin{table}[H]
+\centering
+\caption{Blind human repair evaluation rubric for patch usefulness.}
+\label{tab:human_rubric}
+\begin{tabular}{cl}
+\toprule
+Score & Criterion \\
+\midrule
+1 & The patch does not address the target failure. \\
+2 & The patch is related to the failure but is not actionable or is largely insufficient. \\
+3 & The patch is actionable but incomplete or requires substantial manual interpretation. \\
+4 & The patch directly addresses the target failure with minor ambiguity. \\
+5 & The patch directly resolves the target failure and preserves surrounding valid content. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A repaired video is marked as pass if the target failure is resolved and no severe new artifact is introduced. Human Pass@K is the fraction of samples judged successful after at most $K$ repair attempts. New artifacts are marked when raters observe a visible degradation introduced by repair that was not present in the original generated video. Each repaired video is rated by 3 independent raters. We report the majority-vote pass/fail label, the mean patch-usefulness score, and the majority-vote new-artifact label.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Error analysis on ambiguous and real-normal samples. The table focuses on no-op behavior and wrong-target repair planning. Best values are boldfaced for interpretable comparison columns; the no\_op\_uncertain rate is reported descriptively rather than bold-ranked.}
+\label{tab:no_op_wrong_target_analysis}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccc}
+\toprule
+Method & no\_op\_uncertain rate & Correct no-op rate & Missed necessary repair & Wrong-target patch & Over-confident patch \\
+\midrule
+Score-only & 0.286 & 0.524 & 0.119 & 0.171 & 0.321 \\
+VLM structured report & 0.219 & 0.476 & \textbf{0.096} & 0.229 & 0.396 \\
+VLM temporal proposal + patch & 0.257 & 0.518 & 0.108 & 0.200 & 0.350 \\
+VideoGenDoctor-diagnosis & 0.552 & \textbf{0.738} & 0.142 & 0.095 & 0.181 \\
+VideoGenDoctor-full & 0.514 & 0.724 & 0.156 & \textbf{0.081} & \textbf{0.164} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Qualitative case-study summary. Cases are sampled from controlled, real-failure, and ambiguous stress subsets.}
+\label{tab:case_study_summary}
+\begin{tabular}{lccc}
+\toprule
+Case type & \#Cases & Majority-judged successful / appropriate & Typical outcome \\
+\midrule
+Successful structured repair plan & 24 & 18 & localized repair plan resolves target failure \\
+Ambiguous case with abstention & 24 & 16 & no\_op\_uncertain avoids over-repair \\
+Over-repair / wrong-target failure & 24 & 7 & concrete patch targets wrong object or span \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Bootstrap Confidence Intervals}
+\label{app:bootstrap}
+We use 10,000 video-level bootstrap resamples and report percentile 95\% confidence intervals. For the controlled fixture, resampling is performed over 324 videos. For the real-failure subset, resampling is performed over 240 videos. For blind human repair evaluation, resampling is performed over the stratified human-rated subset. For paired comparisons, we resample videos with replacement and compute the distribution of metric differences between two methods. Small point-estimate differences are not treated as meaningful unless the paired confidence interval excludes zero.
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Leave-one-code-family-out rule ablation. For the held-out family, dedicated family-specific rules are disabled; only generic embedding drift, optical-flow anomaly, scene-change peaks, and structured VLM verification are retained.}
+\label{tab:leave_one_code_family}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccc}
+\toprule
+Held-out family & Macro-F1 & tIoU@0.5 & Top-3 hit & Main degradation source \\
+\midrule
+Identity & 0.782 & 0.579 & 0.536 & face/body-specific anchors removed \\
+Camera & 0.754 & 0.546 & 0.501 & camera-flow templates disabled \\
+Motion & 0.721 & 0.512 & 0.468 & jitter / segment-break rules disabled \\
+Alignment & 0.801 & 0.603 & 0.558 & prop detector and placement rules disabled \\
+Style & 0.836 & 0.641 & 0.590 & compression/style detectors disabled \\
+Scene & 0.748 & 0.528 & 0.487 & background-anchor rules disabled \\
+\midrule
+Average & 0.774 & 0.568 & 0.523 & -- \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+The large degradation under leave-one-code-family-out ablation confirms that VideoGenDoctor should not be interpreted as an unconstrained open-ended failure discovery system. The experiment clarifies which portions of the performance depend on family-specific detectors and which portions remain supported by generic evidence signals and VLM verification.
+
+\section{Real-Failure Construction Manifest}
+\label{app:real_failure_manifest}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Generator configuration metadata for the real-failure and real-normal subsets. Hosted or version-changing endpoints are logged with access date and endpoint identifier.}
+\label{tab:generator_config}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccccccc}
+\toprule
+Generator & Checkpoint / endpoint & fps & Frames & Resolution & Steps & Guidance & Scheduler & Seed range & Reference source / prompt rule \\
+\midrule
+CogVideoX & CogVideoX1.5-5B & 16 & 128 & 768$\times$432 & 50 & 6.0 & DPMSolver & 10000--10059 & ShotIR-to-prompt template v1 \\
+Wan & Wan2.1-T2V-14B & 16 & 128 & 768$\times$432 & 50 & 5.0 & FlowMatchEuler & 18000--18059 & ShotIR-to-prompt template v1 \\
+Stable Video Diffusion & SVD-XT-1.1 & 14 & 112 & 768$\times$432 & 40 & 7.5 & EulerDiscrete & 26000--26059 & reference frame from ShotIR anchor \\
+HunyuanVideo & HunyuanVideo-1.5 & 16 & 128 & 768$\times$432 & 50 & 7.0 & FlowMatchEuler & 34000--34059 & multi-shot prompt template v1 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+When a generator does not expose one of these configuration fields, the corresponding manifest value is set to \texttt{null} rather than omitted. For hosted or version-changing endpoints, we log the endpoint identifier, access date, raw request payload, and raw response metadata.
+
+To make the real-failure subset auditable and reproducible, each generated video is accompanied by a JSON manifest. The manifest records the generator identity, checkpoint, input specification, generation configuration, output location, screening decision, verified failure codes, temporal evidence spans, and annotator identifiers. This protocol turns the real-failure subset from an informal collection of generated examples into a traceable evaluation resource.
+
+Each manifest entry contains the following fields: \texttt{generator}, \texttt{checkpoint}, \texttt{prompt\_id}, \texttt{input\_type}, \texttt{shotir\_spec}, \texttt{shotir\_to\_prompt\_converted\_text}, \texttt{reference\_frame\_id}, \texttt{seed}, \texttt{resolution}, \texttt{fps}, \texttt{num\_frames}, \texttt{sampling\_steps}, \texttt{guidance\_scale}, \texttt{output\_path}, \texttt{screening\_status}, \texttt{verified\_codes}, \texttt{evidence\_spans}, and \texttt{annotator\_ids}. The \texttt{screening\_status} field takes one of four values: \texttt{generated}, \texttt{retained\_candidate}, \texttt{verified}, or \texttt{excluded\_ambiguous}. Only entries marked as \texttt{verified} are included in the reported real-failure evaluation.
+
+\begin{verbatim}
+{
+  "video_id": "real_wan_00037",
+  "generator": "Wan",
+  "checkpoint": "Wan2.1-T2V-14B",
+  "prompt_id": "shotir_prompt_037",
+  "input_type": "text / ShotIR-to-prompt",
+  "shotir_spec": {
+    "shot_id": "S037",
+    "duration_sec": 8.0,
+    "characters": [
+      {
+        "id": "person_A",
+        "description": "young man wearing a blue hoodie",
+        "identity_anchor": "ref_person_A_004"
+      }
+    ],
+    "required_props": [
+      {
+        "id": "red_water_bottle",
+        "description": "red water bottle held in the right hand",
+        "expected_presence": "visible throughout the shot"
+      }
+    ],
+    "camera": {
+      "shot_type": "medium shot",
+      "movement": "slow left-to-right tracking",
+      "viewpoint": "front three-quarter view"
+    },
+    "action_order": [
+      "person_A enters the park path",
+      "person_A jogs while holding the red water bottle",
+      "person_A slows down near the bench"
+    ],
+    "style": {
+      "lighting": "natural daylight",
+      "visual_style": "realistic video"
+    },
+    "scene": {
+      "location": "urban park path",
+      "background_anchor": "trees and bench remain stable"
+    }
+  },
+  "shotir_to_prompt_converted_text": "A realistic 8-second medium shot of a young man wearing a blue hoodie jogging on an urban park path while holding a red water bottle in his right hand. The camera performs a slow left-to-right tracking movement from a front three-quarter view. The trees and bench in the background should remain stable. Natural daylight. The man enters the path, jogs with the red water bottle, and slows down near the bench.",
+  "reference_frame_id": null,
+  "seed": 18473,
+  "resolution": "768x432",
+  "fps": 16,
+  "num_frames": 128,
+  "sampling_steps": 50,
+  "guidance_scale": 7.5,
+  "output_path": "real_failures/wan/real_wan_00037.mp4",
+  "screening_status": "verified",
+  "verified_codes": [
+    "AL_PROP_MISSING",
+    "CA_MOVE_WRONG",
+    "MO_SEGMENT_BREAK"
+  ],
+  "evidence_spans": [
+    {
+      "failure_code": "AL_PROP_MISSING",
+      "target": "red_water_bottle",
+      "start_sec": 3.25,
+      "end_sec": 6.75,
+      "evidence_keyframes": [
+        "frame_052@3.25s",
+        "frame_080@5.00s",
+        "frame_108@6.75s"
+      ],
+      "annotator_confidence": 0.91,
+      "notes": "The specified red water bottle is not visible after the character begins jogging."
+    },
+    {
+      "failure_code": "CA_MOVE_WRONG",
+      "target": "camera_movement",
+      "start_sec": 0.00,
+      "end_sec": 4.00,
+      "evidence_keyframes": [
+        "frame_000@0.00s",
+        "frame_032@2.00s",
+        "frame_064@4.00s"
+      ],
+      "annotator_confidence": 0.84,
+      "notes": "The camera remains mostly static rather than performing the requested left-to-right tracking movement."
+    },
+    {
+      "failure_code": "MO_SEGMENT_BREAK",
+      "target": "temporal_continuity",
+      "start_sec": 5.50,
+      "end_sec": 5.94,
+      "evidence_keyframes": [
+        "frame_088@5.50s",
+        "frame_095@5.94s"
+      ],
+      "annotator_confidence": 0.78,
+      "notes": "A visible discontinuity occurs near the transition to the final action."
+    }
+  ],
+  "annotator_ids": [
+    "ann_02",
+    "ann_05"
+  ]
+}
+\end{verbatim}
+
+For privacy and release safety, file paths may be anonymized, but the manifest must preserve all fields required to reproduce the generation configuration, reconstruct the ShotIR-to-prompt conversion, and audit the verified evidence spans. When a generator does not expose a configuration field such as \texttt{guidance\_scale}, the field is set to \texttt{null} rather than omitted.
+
+\end{document}
