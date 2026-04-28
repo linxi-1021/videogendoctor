@@ -114,18 +114,16 @@
 
 \begin{document}
 
-\title{VideoGenDoctor: Structured Failure Diagnosis, Evidence Localization,\\and Repair Planning for Controllable Video Generation}
+\title{VideoGenDoctor: Auditable Diagnosis and Repair Planning\\for Controllable Video Generation}
 
 \author{Anonymous Submission}
 
 \maketitle
 
 \begin{abstract}
-Controllable video generation increasingly relies on structured conditions such as character identity, camera trajectory, required props, temporal actions, and multi-shot specifications. Existing evaluation pipelines mostly return scalar quality or alignment scores, which are insufficient for debugging because they rarely identify what failed, where it failed, which evidence supports the diagnosis, or how the next generation attempt should be repaired.
+Controllable video generation is increasingly specified through character identities, camera trajectories, required props, temporal actions, and multi-shot scripts. Scalar quality or alignment scores are useful for ranking models, but they provide weak debugging signals because they rarely identify the failure, its temporal evidence, affected target, or a concrete next repair.
 
-We present VideoGenDoctor, a structured framework for failure diagnosis, evidence localization, and repair planning. Given a generated video and its prompt or structured specification, VideoGenDoctor converts failures into code--span--target--plan records grounded in temporal evidence and representative keyframes. The default implementation combines lightweight feature-based screening, optional VLM verification, and a patch compiler that maps localized failures to repair plans.
-
-We position VideoGenDoctor-Bench-v0 as a controlled diagnostic fixture rather than a broad open-world benchmark. It contains 324 videos, 9 deterministic perturbation types, and 2,016 human-verified evidence spans covering 12 observed failure codes from a 38-code taxonomy. On this fixture, VideoGenDoctor-diagnosis reaches macro-F1 0.9110 and tIoU@0.5 0.7316; Rule+GPT-4V reaches 0.9276 and 0.7688. In automatic closed-loop evaluation, VideoGenDoctor-full improves Pass@1/2 from 24.07\%/35.80\% for Score-only feedback to 64.81\%/83.64\%. Rule+GPT-4V + repair loop remains the strongest absolute scorer on the controlled fixture, but at 2.75$\times$ relative cost; we therefore treat VideoGenDoctor-full as the default operating point and use the GPT-4V front end as a high-cost reference. On a 240-video failure-enriched subset from four controllable video generators, the default VideoGenDoctor pipeline improves front-end diagnosis macro-F1 from 0.7992 to 0.8264 and tIoU@0.5 from 0.5431 to 0.5982 over direct structured VLM reporting, while also improving downstream repair utility under the same repair protocol. These results support structured, auditable repair records as a practical interface for controlled diagnosis and repair planning, while leaving broad open-world generality as future validation.
+We present VideoGenDoctor, a framework that converts generation failures into code--span--target--plan records grounded in temporal evidence and representative keyframes. The default implementation combines lightweight feature-based screening, optional VLM verification, and a patch compiler that maps localized diagnoses to repair plans. We evaluate it on VideoGenDoctor-Bench-v0, a controlled diagnostic fixture with 324 videos, 9 deterministic perturbation types, and 2,016 human-verified evidence spans covering 12 observed failure codes from a 38-code taxonomy. VideoGenDoctor-diagnosis reaches macro-F1 0.9110 and tIoU@0.5 0.7316; the higher-cost Rule+GPT-4V reference reaches 0.9276 and 0.7688. In closed-loop evaluation, VideoGenDoctor-full improves automatic Pass@1/2 from 24.07\%/35.80\% for Score-only feedback to 64.81\%/83.64\%. On a 240-video failure-enriched subset from four controllable video generators, the default pipeline improves diagnosis macro-F1 from 0.7992 to 0.8264 and tIoU@0.5 from 0.5431 to 0.5982 over direct structured VLM reporting. The results support auditable repair records as a practical interface for controlled diagnosis and repair planning, while leaving broad open-world generality for future validation.
 \end{abstract}
 
 
