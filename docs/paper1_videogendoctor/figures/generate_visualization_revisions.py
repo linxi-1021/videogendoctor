@@ -18,10 +18,10 @@ PALETTE = {
     "score": "#6B7280",
     "patch": "#4E79A7",
     "judge": "#D55E00",
-    "grid": "#E5E7EB",
-    "text": "#111827",
+    "grid": "#D9DEE7",
+    "text": "#111111",
     "muted": "#6B7280",
-    "bar": "#DCEAF4",
+    "bar": "#D7E6F5",
 }
 
 
@@ -29,16 +29,16 @@ def apply_style():
     """Publication defaults for NeurIPS-style vector figures."""
     plt.rcParams.update(
         {
-            "font.family": "serif",
-            "font.serif": ["Times New Roman", "Times", "DejaVu Serif"],
-            "mathtext.fontset": "stix",
-            "font.size": 10.5,
-            "axes.labelsize": 11,
-            "axes.titlesize": 11,
+            "font.family": "sans-serif",
+            "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
+            "mathtext.fontset": "stixsans",
+            "font.size": 11.5,
+            "axes.labelsize": 12.2,
+            "axes.titlesize": 12.2,
             "axes.titleweight": "semibold",
-            "xtick.labelsize": 10,
-            "ytick.labelsize": 10,
-            "legend.fontsize": 9,
+            "xtick.labelsize": 11.0,
+            "ytick.labelsize": 11.0,
+            "legend.fontsize": 10.0,
             "legend.frameon": False,
             "figure.dpi": 300,
             "savefig.dpi": 300,
@@ -48,13 +48,13 @@ def apply_style():
             "axes.spines.top": False,
             "axes.spines.right": False,
             "axes.edgecolor": "#333333",
-            "axes.linewidth": 0.8,
-            "axes.grid": True,
+            "axes.linewidth": 0.9,
+            "axes.grid": False,
             "grid.color": PALETTE["grid"],
-            "grid.linewidth": 0.55,
-            "grid.alpha": 0.8,
-            "lines.linewidth": 1.9,
-            "lines.markersize": 5.5,
+            "grid.linewidth": 0.7,
+            "grid.alpha": 0.65,
+            "lines.linewidth": 2.2,
+            "lines.markersize": 6.0,
         }
     )
 
@@ -121,7 +121,7 @@ def confusion_matrix():
     )
     labels = codes + ["miss"]
 
-    fig, ax = plt.subplots(figsize=(6.8, 4.35))
+    fig, ax = plt.subplots(figsize=(7.6, 4.8))
     im = ax.imshow(counts, cmap="Blues", vmin=0, vmax=250, aspect="auto")
     ax.grid(False)
     ax.set_xticks(np.arange(len(labels)), labels=labels, rotation=40, ha="right")
@@ -139,7 +139,7 @@ def confusion_matrix():
             if value == 0:
                 continue
             color = "white" if value >= 150 or (j == len(labels) - 1 and value >= 8) else PALETTE["text"]
-            ax.text(j, i, str(value), ha="center", va="center", fontsize=8.4, fontweight="semibold", color=color)
+            ax.text(j, i, str(value), ha="center", va="center", fontsize=9.1, fontweight="semibold", color=color)
 
     cbar = fig.colorbar(im, ax=ax, fraction=0.028, pad=0.02)
     cbar.set_label("Count")
@@ -159,14 +159,14 @@ def temporal_evidence_profiles():
         ("temporal_evidence_profile", controlled, "(a) Controlled fixture: 2,016 verified spans", 520),
         ("temporal_evidence_real_profile", real, "(b) Real-failure subset: 1,536 verified spans", 350),
     ]:
-        fig, ax = plt.subplots(figsize=(6.8, 2.0))
+        fig, ax = plt.subplots(figsize=(7.6, 2.55))
         bars = ax.bar(x, values, color=PALETTE["bar"], edgecolor="white", linewidth=0.8, width=0.78, zorder=1)
         ax.plot(x, values, color=PALETTE["ours"], marker="o", linewidth=2.0, zorder=3)
         ax.set_xticks(x, bins)
         ax.set_ylabel("Verified spans")
         ax.set_xlabel("Time bin (seconds)")
         ax.set_ylim(0, ymax)
-        annotate_bars(ax, bars, fmt="{:.0f}", dy=0.012, fontsize=9)
+        annotate_bars(ax, bars, fmt="{:.0f}", dy=0.012, fontsize=10)
         ax.set_title(title, loc="left", pad=6, y=1.02)
         ax.grid(True, axis="y")
         ax.grid(False, axis="x")
@@ -192,7 +192,7 @@ def temporal_evidence_heatmap():
     shown = np.concatenate([data, totals], axis=1)
     labels = bins + ["sum"]
 
-    fig, ax = plt.subplots(figsize=(6.8, 2.45))
+    fig, ax = plt.subplots(figsize=(7.6, 2.9))
     im = ax.imshow(shown, cmap="Blues", vmin=0, vmax=90, aspect="auto")
     ax.grid(False)
     ax.set_xticks(np.arange(len(labels)), labels=labels)
@@ -208,7 +208,7 @@ def temporal_evidence_heatmap():
         for j in range(shown.shape[1]):
             val = int(shown[i, j])
             color = "white" if val >= 56 else PALETTE["text"]
-            ax.text(j, i, str(val), ha="center", va="center", fontsize=9, fontweight="semibold", color=color)
+            ax.text(j, i, str(val), ha="center", va="center", fontsize=9.8, fontweight="semibold", color=color)
     cbar = fig.colorbar(im, ax=ax, fraction=0.028, pad=0.02)
     cbar.set_label("Verified spans")
     cbar.ax.tick_params(labelsize=9)
@@ -225,7 +225,7 @@ def repair_comparison():
     human_p1 = np.array([58.33, 56.25, 50.69, 47.92, 18.75])
     human_p2 = np.array([76.39, 74.31, 67.36, 63.19, 27.78])
 
-    fig, axes = plt.subplots(1, 2, figsize=(6.8, 2.95), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.25), sharey=True)
     y = np.arange(len(methods))
     for ax, p1, p2, title, xlabel in [
         (axes[0], auto_p1, auto_p2, "(a) Automatic verifier outcomes", "Automatic pass rate (%)"),
@@ -243,7 +243,7 @@ def repair_comparison():
         ax.set_xlim(10, 106)
         ax.set_xticks([20, 40, 60, 80])
         ax.grid(True, axis="x")
-        ax.grid(True, axis="y", alpha=0.35)
+        ax.grid(False, axis="y")
         ax.text(98, -0.55, "Gain", fontsize=8.7, color=PALETTE["muted"], ha="left")
     axes[0].set_yticks(y, labels=methods)
     axes[0].invert_yaxis()
@@ -255,7 +255,7 @@ def repair_comparison():
         plt.Line2D([0], [0], marker="o", linestyle="None", markerfacecolor=PALETTE["text"],
                    markeredgecolor=PALETTE["text"], label="Pass@2"),
     ]
-    add_top_legend(fig, legend_handles, ncol=2, y=1.02, fontsize=8.8)
+    add_top_legend(fig, legend_handles, ncol=2, y=1.02, fontsize=9.6)
     fig.tight_layout(rect=[0, 0, 1, 0.94], w_pad=2.0)
     savefig("manuscript_fig3")
     plt.close(fig)
@@ -270,7 +270,7 @@ def cost_performance_pareto():
         ("Structured report", 1.16, 0.6810, 1.20, PALETTE["vlm"]),
     ]
 
-    fig, ax = plt.subplots(figsize=(6.2, 3.15))
+    fig, ax = plt.subplots(figsize=(7.6, 3.3))
     legend_handles = []
     for label, cost, pass2, latency, color in data:
         size = 55 + 70 * latency
@@ -297,8 +297,10 @@ def cost_performance_pareto():
     ax.set_ylabel("Human Pass@2 (higher is better)")
     ax.set_xlim(0.25, 2.95)
     ax.set_ylim(0.56, 0.82)
-    add_top_legend(fig, legend_handles, ncol=5, y=1.03, fontsize=8.4, columnspacing=0.95, handletextpad=0.35)
-    fig.tight_layout(rect=[0, 0, 1, 0.86])
+    ax.grid(True, axis="y")
+    ax.grid(False, axis="x")
+    add_top_legend(fig, legend_handles, ncol=5, y=1.03, fontsize=9.0, columnspacing=0.95, handletextpad=0.35)
+    fig.tight_layout(rect=[0, 0, 1, 0.88])
     savefig("cost_performance_pareto")
     plt.close(fig)
 
@@ -310,7 +312,7 @@ def threshold_sensitivity_simulated():
     fpr = np.array([0.158, 0.125, 0.100, 0.083, 0.067])
     unnecessary_patch = np.array([0.142, 0.111, 0.087, 0.071, 0.058])
 
-    fig, ax = plt.subplots(figsize=(5.7, 3.05))
+    fig, ax = plt.subplots(figsize=(7.6, 3.35))
     ax.plot(thresholds, macro_f1, marker="o", color=PALETTE["ours"], label="Macro-F1")
     ax.plot(thresholds, tiou, marker="s", color=PALETTE["open"], label="tIoU@0.5")
     ax2 = ax.twinx()
@@ -324,11 +326,11 @@ def threshold_sensitivity_simulated():
     ax2.set_ylabel("Risk metrics")
     ax.set_ylim(0.66, 0.93)
     ax2.set_ylim(0.04, 0.18)
-    ax.grid(True)
+    ax.grid(True, axis="y")
     ax2.grid(False)
     lines, labels = ax.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
-    add_top_legend(fig, lines + lines2, labels + labels2, ncol=4, y=1.02, fontsize=8.7, columnspacing=1.15, handletextpad=0.5)
+    add_top_legend(fig, lines + lines2, labels + labels2, ncol=4, y=1.02, fontsize=9.2, columnspacing=1.15, handletextpad=0.5)
     fig.tight_layout(rect=[0, 0, 1, 0.90])
     savefig("threshold_sensitivity")
     plt.close(fig)
@@ -356,7 +358,7 @@ def alpha_topk_sensitivity():
         [0.711, 0.736, 0.731],
     ])
 
-    fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.9), sharex=True, sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.25), sharex=True, sharey=True)
     panel_specs = [
         (axes[0], macro, "(a) Macro-F1"),
         (axes[1], pass2, "(b) Human Pass@2"),
@@ -400,7 +402,7 @@ def alpha_topk_sensitivity():
                     f"{data[i, j]:.3f}",
                     ha="center",
                     va="center",
-                    fontsize=9,
+                    fontsize=9.6,
                     color=color,
                     fontweight=weight,
                 )
@@ -409,7 +411,7 @@ def alpha_topk_sensitivity():
         ticks = np.linspace(vmin, vmax, 4)
         cbar.set_ticks(ticks)
         cbar.ax.set_yticklabels([f"{tick:.3f}" for tick in ticks])
-        cbar.ax.tick_params(labelsize=8)
+        cbar.ax.tick_params(labelsize=9)
         cbar.outline.set_linewidth(0.6)
 
     axes[0].set_ylabel(r"Stage-2 weight $\alpha$")
@@ -433,14 +435,14 @@ def adapter_executability():
     pass2 = np.array([0.28, 0.54, 0.73, 0.81])
     artifacts = np.array([0.04, 0.10, 0.14, 0.16])
 
-    fig, axes = plt.subplots(1, 2, figsize=(6.8, 2.8))
+    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.15))
     bars = axes[0].bar(levels, share, color=[PALETTE["score"], "#56B4E9", PALETTE["open"], PALETTE["ours"]],
                        edgecolor="white", linewidth=0.7)
     axes[0].set_ylabel("Plan share")
     axes[0].set_ylim(0, 0.5)
     axes[0].grid(True, axis="y")
     axes[0].grid(False, axis="x")
-    annotate_bars(axes[0], bars, fmt="{:.2f}", dy=0.015, fontsize=8.5)
+    annotate_bars(axes[0], bars, fmt="{:.2f}", dy=0.015, fontsize=9.2)
 
     x = np.arange(len(levels))
     width = 0.25
@@ -452,7 +454,7 @@ def adapter_executability():
     axes[1].grid(True, axis="y")
     axes[1].grid(False, axis="x")
     legend_handles, legend_labels = axes[1].get_legend_handles_labels()
-    add_top_legend(fig, legend_handles, legend_labels, ncol=3, y=1.02, fontsize=8.7)
+    add_top_legend(fig, legend_handles, legend_labels, ncol=3, y=1.02, fontsize=9.2)
     fig.tight_layout(rect=[0, 0, 1, 0.92])
     savefig("adapter_executability")
     plt.close(fig)
@@ -472,7 +474,7 @@ def extended_real_validation():
     fpr = np.array([0.100, 0.126, 0.142, 0.118, 0.135])
     ci = np.array([0.028, 0.034, 0.041, 0.036, 0.039])
 
-    fig, axes = plt.subplots(1, 2, figsize=(6.8, 2.85), gridspec_kw={"width_ratios": [2.1, 1.0]})
+    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.2), gridspec_kw={"width_ratios": [2.2, 1.0]})
     x = np.arange(len(slices))
     width = 0.24
     axes[0].bar(x - width, macro, width, yerr=ci * 0.7, capsize=2, label="Macro-F1",
@@ -494,7 +496,7 @@ def extended_real_validation():
         metric_labels + ["FPR"],
         ncol=4,
         y=1.02,
-        fontsize=8.6,
+        fontsize=9.0,
         columnspacing=0.95,
     )
     axes[1].bar(slices, fpr, yerr=ci * 0.35, capsize=2, color=PALETTE["upper"],
@@ -503,7 +505,7 @@ def extended_real_validation():
     axes[1].set_ylim(0.06, 0.17)
     axes[1].grid(True, axis="y")
     axes[1].grid(False, axis="x")
-    axes[1].tick_params(axis="x", rotation=25)
+    axes[1].tick_params(axis="x", rotation=20)
     fig.tight_layout(rect=[0, 0, 1, 0.92])
     savefig("extended_real_validation")
     plt.close(fig)
@@ -525,7 +527,7 @@ def multi_annotator_stability():
     pair_tiou = np.array([0.704, 0.628, 0.666])
     boundary = np.array([0.38, 0.52, 0.45])
 
-    fig, ax = plt.subplots(figsize=(5.7, 2.75))
+    fig, ax = plt.subplots(figsize=(7.6, 3.05))
     x = np.arange(len(subsets))
     width = 0.25
     ax.bar(x - width, fleiss, width, label="Fleiss' kappa", color=PALETTE["ours"], edgecolor="white", linewidth=0.5)
@@ -536,7 +538,7 @@ def multi_annotator_stability():
     ax.grid(True, axis="y")
     ax.grid(False, axis="x")
     handles, labels = ax.get_legend_handles_labels()
-    add_top_legend(fig, handles, labels, ncol=3, y=1.02, fontsize=8.7)
+    add_top_legend(fig, handles, labels, ncol=3, y=1.02, fontsize=9.2)
     fig.tight_layout(rect=[0, 0, 1, 0.92])
     savefig("multi_annotator_stability")
     plt.close(fig)

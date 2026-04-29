@@ -298,7 +298,7 @@ The controlled fixture covers twelve observed codes. Detailed per-code precision
 
 \begin{figure}[H]
 \centering
-\safeincludegraphics[width=0.95\textwidth]{../figures/confusion_matrix.pdf}
+\safeincludegraphics[width=\textwidth]{../figures/confusion_matrix.pdf}
 \caption{Per-code confusion matrix for the 12 observed taxonomy codes on the controlled fixture. The strongest off-diagonal confusions occur among camera and motion failures, while identity, prop-missing, compression-artifact, and scene-background failures remain comparatively concentrated on the diagonal.}
 \label{fig:confusion_matrix}
 \end{figure}
@@ -420,7 +420,7 @@ Threshold $\tau$ & Macro-F1 & tIoU@0.5 & Real-normal FPR & Unnecessary patch rat
 
 \begin{figure}[H]
 \centering
-\safeincludegraphics[width=0.92\textwidth]{../figures/threshold_sensitivity.pdf}
+\safeincludegraphics[width=\textwidth]{../figures/threshold_sensitivity.pdf}
 \caption{Threshold sensitivity of diagnosis and repair-risk metrics. The default threshold $\tau=0.50$ is marked with a vertical dashed line and gives the best diagnosis-localization trade-off, while more conservative thresholds reduce false positives and unnecessary patching.}
 \label{fig:threshold_sensitivity}
 \end{figure}
@@ -430,7 +430,7 @@ We also sweep the Stage-2 judge weight $\alpha$ and the number of candidate segm
 
 \begin{figure}[H]
 \centering
-\safeincludegraphics[width=0.95\textwidth]{../figures/alpha_topk_sensitivity.pdf}
+\safeincludegraphics[width=\textwidth]{../figures/alpha_topk_sensitivity.pdf}
 \caption{Sensitivity to Stage-2 judge weight $\alpha$ and top-$K$ candidate segments. Each cell reports the draft metric value for a particular $(\alpha,K)$ pair. The default setting, $\alpha=0.6$ and $K=3$, yields the strongest balance between diagnosis accuracy and downstream human repair success.}
 \label{fig:alpha_topk_sensitivity}
 \end{figure}
@@ -580,7 +580,7 @@ Rule+GPT-4V + repair loop & \textbf{0.9276} & \textbf{0.7688} & \textbf{0.7917} 
 
 \begin{figure}[H]
 \centering
-\safeincludegraphics[width=0.95\textwidth]{../figures/manuscript_fig3.pdf}
+\safeincludegraphics[width=\textwidth]{../figures/manuscript_fig3.pdf}
 \caption{Closed-loop repair comparison on the controlled fixture. Left: automatic verifier Pass@1/2 on all 324 controlled videos. Right: blind human Pass@1/2 on the stratified 144-video human-evaluation subset. Automatic pass rates may be coupled to the system verifier, while human pass rates provide an independent check of repair success.}
 \label{fig:repair_curve}
 \end{figure}
@@ -606,7 +606,7 @@ VLM structured report & 0.8869 & 0.6639 & 0.6810 & 1.16$\times$ & 1.20$\times$ \
 
 \begin{figure}[H]
 \centering
-\safeincludegraphics[width=0.92\textwidth]{../figures/cost_performance_pareto.pdf}
+\safeincludegraphics[width=\textwidth]{../figures/cost_performance_pareto.pdf}
 \caption{Pareto view of the cost-performance trade-off under the shared downstream repair protocol. The default VideoGenDoctor-full operating point improves human repair success over lower-cost rule variants and direct structured VLM reporting, while the higher-cost Rule+GPT-4V reference obtains the strongest Human Pass@2 at substantially higher relative cost.}
 \label{fig:cost_performance_pareto}
 \end{figure}
@@ -641,7 +641,7 @@ L3 native & 0.170 & 0.960 & 0.810 & 0.160 \\
 
 \begin{figure}[H]
 \centering
-\safeincludegraphics[width=0.95\textwidth]{../figures/adapter_executability.pdf}
+\safeincludegraphics[width=\textwidth]{../figures/adapter_executability.pdf}
 \caption{Adapter-executability stratification by repair-plan level. The left panel reports the share of generated plans by adapter level; the right panel compares adapter-executable rate, Human Pass@2, and new-artifact rate within each level.}
 \label{fig:adapter_executability}
 \end{figure}
@@ -668,7 +668,7 @@ Complex prompts & 0.793 $\pm$ 0.027 & 0.560 $\pm$ 0.023 & 0.641 $\pm$ 0.039 & 0.
 
 \begin{figure}[H]
 \centering
-\safeincludegraphics[width=0.95\textwidth]{../figures/extended_real_validation.pdf}
+\safeincludegraphics[width=\textwidth]{../figures/extended_real_validation.pdf}
 \caption{Draft stress validation on harder real-failure slices. Left: diagnosis, localization, and human repair metrics with uncertainty bars. Right: false-positive rate on matched real-normal controls for each slice.}
 \label{fig:extended_real_validation}
 \end{figure}
@@ -693,7 +693,7 @@ Combined & 120 & 768 & 3 & 0.813 & 0.666 / 0.45s \\
 
 \begin{figure}[H]
 \centering
-\safeincludegraphics[width=0.90\textwidth]{../figures/multi_annotator_stability.pdf}
+\safeincludegraphics[width=\textwidth]{../figures/multi_annotator_stability.pdf}
 \caption{Draft multi-annotator stability analysis. Code-level Fleiss' $\kappa$ is higher than temporal-boundary agreement, and the real-failure subset remains the most ambiguous split.}
 \label{fig:multi_annotator_stability}
 \end{figure}
