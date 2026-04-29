@@ -3,8 +3,8 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.legend_handler import HandlerPatch
-from matplotlib.patches import Patch, Rectangle
+from matplotlib.container import BarContainer
+from matplotlib.patches import Patch
 
 
 OUT_DIR = Path(__file__).resolve().parent
@@ -87,42 +87,42 @@ def annotate_bars(ax, bars, fmt="{:.0f}", dy=0.01, fontsize=8.5):
 
 
 def add_top_legend(fig, handles, labels=None, ncol=None, y=1.02, fontsize=8.8, columnspacing=1.0, handletextpad=0.45):
+    normalized_handles = [_normalize_legend_handle(handle) for handle in handles]
     fig.legend(
-        handles=handles,
+        handles=normalized_handles,
         labels=labels,
         loc="upper center",
-        ncol=ncol or len(handles),
+        ncol=ncol or len(normalized_handles),
         bbox_to_anchor=(0.5, y),
         frameon=False,
         columnspacing=columnspacing,
         handletextpad=handletextpad,
         borderaxespad=0.0,
         fontsize=fontsize,
-        handler_map={Patch: SquarePatchHandler()},
     )
 
 
-class SquarePatchHandler(HandlerPatch):
-    """Render rectangular legend patches as centered squares."""
+def _normalize_legend_handle(handle):
+    if isinstance(handle, BarContainer):
+        patch = handle.patches[0]
+        return _square_marker_handle(patch)
+    if isinstance(handle, Patch):
+        return _square_marker_handle(handle)
+    return handle
 
-    def create_artists(
-        self,
-        legend,
-        orig_handle,
-        xdescent,
-        ydescent,
-        width,
-        height,
-        fontsize,
-        trans,
-    ):
-        side = min(width, height)
-        x = -xdescent + (width - side) / 2
-        y = -ydescent + (height - side) / 2
-        patch = Rectangle((x, y), side, side)
-        self.update_prop(patch, orig_handle, legend)
-        patch.set_transform(trans)
-        return [patch]
+
+def _square_marker_handle(patch):
+    return plt.Line2D(
+        [0],
+        [0],
+        marker="s",
+        linestyle="None",
+        markerfacecolor=patch.get_facecolor(),
+        markeredgecolor=patch.get_edgecolor(),
+        markeredgewidth=patch.get_linewidth(),
+        markersize=7.5,
+        label=patch.get_label(),
+    )
 
 
 def confusion_matrix():
