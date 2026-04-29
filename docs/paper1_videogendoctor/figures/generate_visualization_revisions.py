@@ -225,7 +225,7 @@ def repair_comparison():
     human_p1 = np.array([58.33, 56.25, 50.69, 47.92, 18.75])
     human_p2 = np.array([76.39, 74.31, 67.36, 63.19, 27.78])
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.25), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(8.9, 3.2), sharey=True)
     y = np.arange(len(methods))
     for ax, p1, p2, title, xlabel in [
         (axes[0], auto_p1, auto_p2, "(a) Automatic verifier outcomes", "Automatic pass rate (%)"),
@@ -256,7 +256,7 @@ def repair_comparison():
                    markeredgecolor=PALETTE["text"], label="Pass@2"),
     ]
     add_top_legend(fig, legend_handles, ncol=2, y=1.02, fontsize=9.6)
-    fig.tight_layout(rect=[0, 0, 1, 0.94], w_pad=2.0)
+    fig.tight_layout(rect=[0, 0, 1, 0.94], w_pad=2.6)
     savefig("manuscript_fig3")
     plt.close(fig)
 
@@ -358,7 +358,7 @@ def alpha_topk_sensitivity():
         [0.711, 0.736, 0.731],
     ])
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.25), sharex=True, sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(8.8, 3.1), sharex=True, sharey=True)
     panel_specs = [
         (axes[0], macro, "(a) Macro-F1"),
         (axes[1], pass2, "(b) Human Pass@2"),
@@ -367,7 +367,7 @@ def alpha_topk_sensitivity():
     for ax, data, title in panel_specs:
         vmin = float(data.min() - 0.003)
         vmax = float(data.max() + 0.003)
-        im = ax.imshow(data, cmap="Blues", vmin=vmin, vmax=vmax, aspect="equal", interpolation="nearest")
+        im = ax.imshow(data, cmap="Blues", vmin=vmin, vmax=vmax, aspect="auto", interpolation="nearest")
         ax.grid(False)
         ax.set_xticks(range(len(topks)), labels=[str(k) for k in topks])
         ax.set_yticks(range(len(alphas)), labels=[f"{a:.1f}" for a in alphas])
@@ -416,7 +416,7 @@ def alpha_topk_sensitivity():
 
     axes[0].set_ylabel(r"Stage-2 weight $\alpha$")
     axes[1].tick_params(labelleft=False)
-    fig.tight_layout(pad=0.7, w_pad=1.0)
+    fig.tight_layout(pad=0.7, w_pad=1.4)
     savefig("alpha_topk_sensitivity")
     plt.close(fig)
 
@@ -474,7 +474,7 @@ def extended_real_validation():
     fpr = np.array([0.100, 0.126, 0.142, 0.118, 0.135])
     ci = np.array([0.028, 0.034, 0.041, 0.036, 0.039])
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.2), gridspec_kw={"width_ratios": [2.2, 1.0]})
+    fig, axes = plt.subplots(1, 2, figsize=(8.8, 3.15), gridspec_kw={"width_ratios": [2.15, 1.35]})
     x = np.arange(len(slices))
     width = 0.24
     axes[0].bar(x - width, macro, width, yerr=ci * 0.7, capsize=2, label="Macro-F1",
@@ -505,7 +505,7 @@ def extended_real_validation():
     axes[1].set_ylim(0.06, 0.17)
     axes[1].grid(True, axis="y")
     axes[1].grid(False, axis="x")
-    axes[1].tick_params(axis="x", rotation=20)
+    axes[1].tick_params(axis="x", rotation=15)
     fig.tight_layout(rect=[0, 0, 1, 0.92])
     savefig("extended_real_validation")
     plt.close(fig)
