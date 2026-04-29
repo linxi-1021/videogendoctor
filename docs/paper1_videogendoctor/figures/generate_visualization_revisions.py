@@ -310,8 +310,16 @@ def threshold_sensitivity_simulated():
     ax2.grid(False)
     lines, labels = ax.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
-    ax.legend(lines + lines2, labels + labels2, loc="lower center", ncol=2, bbox_to_anchor=(0.5, 0.02))
-    fig.tight_layout()
+    ax.legend(
+        lines + lines2,
+        labels + labels2,
+        loc="upper center",
+        ncol=4,
+        bbox_to_anchor=(0.5, 1.18),
+        columnspacing=1.2,
+        handletextpad=0.5,
+    )
+    fig.tight_layout(rect=[0, 0, 1, 0.90])
     savefig("threshold_sensitivity")
     plt.close(fig)
 
