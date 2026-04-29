@@ -3,6 +3,8 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.legend_handler import HandlerPatch
+from matplotlib.patches import Patch, Rectangle
 
 
 OUT_DIR = Path(__file__).resolve().parent
@@ -94,7 +96,31 @@ def add_top_legend(fig, handles, labels=None, ncol=None, y=1.02, fontsize=8.8, c
         handletextpad=handletextpad,
         borderaxespad=0.0,
         fontsize=fontsize,
+        handler_map={Patch: SquarePatchHandler()},
     )
+
+
+class SquarePatchHandler(HandlerPatch):
+    """Render rectangular legend patches as centered squares."""
+
+    def create_artists(
+        self,
+        legend,
+        orig_handle,
+        xdescent,
+        ydescent,
+        width,
+        height,
+        fontsize,
+        trans,
+    ):
+        side = min(width, height)
+        x = -xdescent + (width - side) / 2
+        y = -ydescent + (height - side) / 2
+        patch = Rectangle((x, y), side, side)
+        self.update_prop(patch, orig_handle, legend)
+        patch.set_transform(trans)
+        return [patch]
 
 
 def confusion_matrix():
