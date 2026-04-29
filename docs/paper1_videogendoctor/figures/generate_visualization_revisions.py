@@ -82,6 +82,21 @@ def annotate_bars(ax, bars, fmt="{:.0f}", dy=0.01, fontsize=8.5):
         )
 
 
+def add_top_legend(fig, handles, labels=None, ncol=None, y=1.02, fontsize=8.8, columnspacing=1.0, handletextpad=0.45):
+    fig.legend(
+        handles=handles,
+        labels=labels,
+        loc="upper center",
+        ncol=ncol or len(handles),
+        bbox_to_anchor=(0.5, y),
+        frameon=False,
+        columnspacing=columnspacing,
+        handletextpad=handletextpad,
+        borderaxespad=0.0,
+        fontsize=fontsize,
+    )
+
+
 def confusion_matrix():
     codes = [
         "ID_FACE", "ID_BODY", "CA_MOVE", "CA_SHOT", "CA_SHAKE", "MO_JITTER",
@@ -240,8 +255,8 @@ def repair_comparison():
         plt.Line2D([0], [0], marker="o", linestyle="None", markerfacecolor=PALETTE["text"],
                    markeredgecolor=PALETTE["text"], label="Pass@2"),
     ]
-    fig.legend(handles=legend_handles, loc="upper center", ncol=2, bbox_to_anchor=(0.5, 1.05))
-    fig.tight_layout(rect=[0, 0, 1, 0.93], w_pad=2.0)
+    add_top_legend(fig, legend_handles, ncol=2, y=1.02, fontsize=8.8)
+    fig.tight_layout(rect=[0, 0, 1, 0.94], w_pad=2.0)
     savefig("manuscript_fig3")
     plt.close(fig)
 
@@ -282,17 +297,7 @@ def cost_performance_pareto():
     ax.set_ylabel("Human Pass@2 (higher is better)")
     ax.set_xlim(0.25, 2.95)
     ax.set_ylim(0.56, 0.82)
-    ax.legend(
-        handles=legend_handles,
-        loc="upper center",
-        ncol=5,
-        bbox_to_anchor=(0.5, 1.23),
-        frameon=False,
-        columnspacing=1.0,
-        handletextpad=0.35,
-        borderaxespad=0.0,
-        fontsize=8.4,
-    )
+    add_top_legend(fig, legend_handles, ncol=5, y=1.03, fontsize=8.4, columnspacing=0.95, handletextpad=0.35)
     fig.tight_layout(rect=[0, 0, 1, 0.86])
     savefig("cost_performance_pareto")
     plt.close(fig)
@@ -323,15 +328,7 @@ def threshold_sensitivity_simulated():
     ax2.grid(False)
     lines, labels = ax.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
-    ax.legend(
-        lines + lines2,
-        labels + labels2,
-        loc="upper center",
-        ncol=4,
-        bbox_to_anchor=(0.5, 1.18),
-        columnspacing=1.2,
-        handletextpad=0.5,
-    )
+    add_top_legend(fig, lines + lines2, labels + labels2, ncol=4, y=1.02, fontsize=8.7, columnspacing=1.15, handletextpad=0.5)
     fig.tight_layout(rect=[0, 0, 1, 0.90])
     savefig("threshold_sensitivity")
     plt.close(fig)
@@ -454,8 +451,9 @@ def adapter_executability():
     axes[1].set_ylim(0, 1.0)
     axes[1].grid(True, axis="y")
     axes[1].grid(False, axis="x")
-    axes[1].legend(loc="upper left", ncol=1)
-    fig.tight_layout()
+    legend_handles, legend_labels = axes[1].get_legend_handles_labels()
+    add_top_legend(fig, legend_handles, legend_labels, ncol=3, y=1.02, fontsize=8.7)
+    fig.tight_layout(rect=[0, 0, 1, 0.92])
     savefig("adapter_executability")
     plt.close(fig)
 
@@ -487,7 +485,18 @@ def extended_real_validation():
     axes[0].set_ylim(0.50, 0.88)
     axes[0].grid(True, axis="y")
     axes[0].grid(False, axis="x")
-    axes[0].legend(ncol=3, loc="upper center", bbox_to_anchor=(0.52, -0.18))
+    metric_handles, metric_labels = axes[0].get_legend_handles_labels()
+    fpr_handle = plt.Line2D([0], [0], marker="s", linestyle="None", markerfacecolor=PALETTE["upper"],
+                            markeredgecolor="white", markeredgewidth=0.5, markersize=7, label="FPR")
+    add_top_legend(
+        fig,
+        metric_handles + [fpr_handle],
+        metric_labels + ["FPR"],
+        ncol=4,
+        y=1.02,
+        fontsize=8.6,
+        columnspacing=0.95,
+    )
     axes[1].bar(slices, fpr, yerr=ci * 0.35, capsize=2, color=PALETTE["upper"],
                 edgecolor="white", linewidth=0.5)
     axes[1].set_ylabel("FPR")
@@ -495,7 +504,7 @@ def extended_real_validation():
     axes[1].grid(True, axis="y")
     axes[1].grid(False, axis="x")
     axes[1].tick_params(axis="x", rotation=25)
-    fig.tight_layout(rect=[0, 0.07, 1, 1])
+    fig.tight_layout(rect=[0, 0, 1, 0.92])
     savefig("extended_real_validation")
     plt.close(fig)
 
@@ -526,7 +535,8 @@ def multi_annotator_stability():
     ax.set_ylim(0, 0.95)
     ax.grid(True, axis="y")
     ax.grid(False, axis="x")
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, 1.15), ncol=3)
+    handles, labels = ax.get_legend_handles_labels()
+    add_top_legend(fig, handles, labels, ncol=3, y=1.02, fontsize=8.7)
     fig.tight_layout(rect=[0, 0, 1, 0.92])
     savefig("multi_annotator_stability")
     plt.close(fig)
