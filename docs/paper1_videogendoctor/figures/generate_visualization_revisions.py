@@ -141,21 +141,21 @@ def temporal_evidence_profiles():
     real = np.array([188, 232, 262, 286, 286, 282])
 
     for name, values, title, ymax in [
-        ("temporal_evidence_profile", controlled, "(a) Controlled fixture: 2,016 verified spans", 480),
-        ("temporal_evidence_real_profile", real, "(b) Real-failure subset: 1,536 verified spans", 320),
+        ("temporal_evidence_profile", controlled, "(a) Controlled fixture: 2,016 verified spans", 520),
+        ("temporal_evidence_real_profile", real, "(b) Real-failure subset: 1,536 verified spans", 350),
     ]:
-        fig, ax = plt.subplots(figsize=(6.8, 1.75))
+        fig, ax = plt.subplots(figsize=(6.8, 2.0))
         bars = ax.bar(x, values, color=PALETTE["bar"], edgecolor="white", linewidth=0.8, width=0.78, zorder=1)
         ax.plot(x, values, color=PALETTE["ours"], marker="o", linewidth=2.0, zorder=3)
-        annotate_bars(ax, bars, fmt="{:.0f}", dy=0.015, fontsize=9)
         ax.set_xticks(x, bins)
         ax.set_ylabel("Verified spans")
         ax.set_xlabel("Time bin (seconds)")
         ax.set_ylim(0, ymax)
-        ax.set_title(title, loc="left", pad=2)
+        annotate_bars(ax, bars, fmt="{:.0f}", dy=0.012, fontsize=9)
+        ax.set_title(title, loc="left", pad=6, y=1.02)
         ax.grid(True, axis="y")
         ax.grid(False, axis="x")
-        fig.tight_layout(pad=0.5)
+        fig.tight_layout(pad=0.6, rect=(0, 0, 1, 0.95))
         savefig(name)
         plt.close(fig)
 
