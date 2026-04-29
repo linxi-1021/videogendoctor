@@ -11,19 +11,21 @@ OUT_DIR = Path(__file__).resolve().parent
 DATA_DIR = OUT_DIR.parent / "draft_results"
 DATA_DIR.mkdir(exist_ok=True)
 
-# Colorblind-safe palette adapted from Okabe-Ito, with a consistent role map.
+# Unified manuscript palette using a cool analogous base with warm split-complement accents.
 PALETTE = {
-    "ours": "#0072B2",
-    "open": "#009E73",
-    "upper": "#D55E00",
-    "vlm": "#CC79A7",
-    "score": "#6B7280",
-    "patch": "#4E79A7",
-    "judge": "#D55E00",
-    "grid": "#D9DEE7",
-    "text": "#111111",
-    "muted": "#6B7280",
-    "bar": "#D7E6F5",
+    "ours": "#1D4E89",
+    "open": "#2A9D8F",
+    "upper": "#E76F51",
+    "vlm": "#7A6F9B",
+    "score": "#6C757D",
+    "patch": "#4C78A8",
+    "judge": "#E76F51",
+    "grid": "#D8E0EA",
+    "text": "#1F2933",
+    "muted": "#667085",
+    "bar": "#DCEAF4",
+    "axis": "#3D4C5C",
+    "support": "#8FB8DE",
 }
 
 
@@ -49,7 +51,7 @@ def apply_style():
             "ps.fonttype": 42,
             "axes.spines.top": False,
             "axes.spines.right": False,
-            "axes.edgecolor": "#333333",
+            "axes.edgecolor": PALETTE["axis"],
             "axes.linewidth": 0.9,
             "axes.grid": False,
             "grid.color": PALETTE["grid"],
@@ -245,7 +247,7 @@ def temporal_evidence_heatmap():
 
 def repair_comparison():
     methods = ["VideoGenDoctor-full", "Patch+Judge", "VLM-to-patch", "Patch-only", "Score-only"]
-    colors = [PALETTE["open"], "#D55E00", "#8172E8", PALETTE["patch"], PALETTE["score"]]
+    colors = [PALETTE["open"], PALETTE["judge"], PALETTE["vlm"], PALETTE["patch"], PALETTE["score"]]
     auto_p1 = np.array([64.81, 62.96, 56.17, 52.47, 24.07])
     auto_p2 = np.array([83.64, 81.79, 74.38, 69.75, 35.80])
     human_p1 = np.array([58.33, 56.25, 50.69, 47.92, 18.75])
@@ -316,7 +318,7 @@ def cost_performance_pareto():
         )
 
     ax.plot([0.42, 0.73, 1.00, 2.75], [0.5988, 0.7160, 0.7639, 0.7917],
-            color="#7A7A7A", linewidth=1.1, linestyle="--", zorder=1)
+            color=PALETTE["muted"], linewidth=1.1, linestyle="--", zorder=1)
     ax.axvline(1.0, color=PALETTE["ours"], linewidth=0.8, alpha=0.45)
     ax.axhline(0.7639, color=PALETTE["ours"], linewidth=0.8, alpha=0.45)
     ax.set_xlabel("Relative cost (lower is better)")
@@ -462,7 +464,7 @@ def adapter_executability():
     artifacts = np.array([0.04, 0.10, 0.14, 0.16])
 
     fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.15))
-    bars = axes[0].bar(levels, share, color=[PALETTE["score"], "#56B4E9", PALETTE["open"], PALETTE["ours"]],
+    bars = axes[0].bar(levels, share, color=[PALETTE["score"], PALETTE["support"], PALETTE["open"], PALETTE["ours"]],
                        edgecolor="white", linewidth=0.7)
     axes[0].set_ylabel("Plan share")
     axes[0].set_ylim(0, 0.5)
