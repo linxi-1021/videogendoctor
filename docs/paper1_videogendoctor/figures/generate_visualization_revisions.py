@@ -358,7 +358,7 @@ def alpha_topk_sensitivity():
         [0.711, 0.736, 0.731],
     ])
 
-    fig, axes = plt.subplots(1, 2, figsize=(8.8, 3.1), sharex=True, sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(8.8, 3.35), sharex=True, sharey=True)
     panel_specs = [
         (axes[0], macro, "(a) Macro-F1"),
         (axes[1], pass2, "(b) Human Pass@2"),
