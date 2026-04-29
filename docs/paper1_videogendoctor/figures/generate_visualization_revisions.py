@@ -248,27 +248,31 @@ def repair_comparison():
 
 def cost_performance_pareto():
     data = [
-        ("Rule-only\n+ repair", 0.42, 0.5988, 0.58, PALETTE["score"]),
-        ("Rule+Open-VLM\n+ repair", 0.73, 0.7160, 0.87, PALETTE["open"]),
-        ("VideoGenDoctor\nfull", 1.00, 0.7639, 1.00, PALETTE["ours"]),
-        ("Rule+GPT-4V\n+ repair", 2.75, 0.7917, 2.31, PALETTE["upper"]),
-        ("VLM structured\nreport", 1.16, 0.6810, 1.20, PALETTE["vlm"]),
+        ("Rule-only", 0.42, 0.5988, 0.58, PALETTE["score"]),
+        ("Rule+Open-VLM", 0.73, 0.7160, 0.87, PALETTE["open"]),
+        ("VideoGenDoctor", 1.00, 0.7639, 1.00, PALETTE["ours"]),
+        ("Rule+GPT-4V", 2.75, 0.7917, 2.31, PALETTE["upper"]),
+        ("Structured report", 1.16, 0.6810, 1.20, PALETTE["vlm"]),
     ]
 
-    fig, ax = plt.subplots(figsize=(5.7, 3.0))
+    fig, ax = plt.subplots(figsize=(6.2, 3.15))
+    legend_handles = []
     for label, cost, pass2, latency, color in data:
         size = 55 + 70 * latency
         ax.scatter(cost, pass2, s=size, color=color, edgecolor="white", linewidth=0.9, zorder=3)
-        offset = (5, 4)
-        if "GPT" in label:
-            offset = (-78, -16)
-        elif "structured" in label:
-            offset = (5, -24)
-        elif "Rule-only" in label:
-            offset = (5, -16)
-        elif "VideoGenDoctor" in label:
-            offset = (6, 7)
-        ax.annotate(label, (cost, pass2), textcoords="offset points", xytext=offset, ha="left", fontsize=8.8)
+        legend_handles.append(
+            plt.Line2D(
+                [0],
+                [0],
+                marker="o",
+                linestyle="None",
+                markerfacecolor=color,
+                markeredgecolor="white",
+                markeredgewidth=0.9,
+                markersize=7.5,
+                label=label,
+            )
+        )
 
     ax.plot([0.42, 0.73, 1.00, 2.75], [0.5988, 0.7160, 0.7639, 0.7917],
             color="#7A7A7A", linewidth=1.1, linestyle="--", zorder=1)
@@ -278,9 +282,18 @@ def cost_performance_pareto():
     ax.set_ylabel("Human Pass@2 (higher is better)")
     ax.set_xlim(0.25, 2.95)
     ax.set_ylim(0.56, 0.82)
-    ax.text(1.04, 0.748, "default operating point", color=PALETTE["ours"], fontsize=8)
-    ax.text(1.65, 0.805, "higher-cost upper reference", color=PALETTE["upper"], fontsize=8)
-    fig.tight_layout()
+    ax.legend(
+        handles=legend_handles,
+        loc="upper center",
+        ncol=5,
+        bbox_to_anchor=(0.5, 1.23),
+        frameon=False,
+        columnspacing=1.0,
+        handletextpad=0.35,
+        borderaxespad=0.0,
+        fontsize=8.4,
+    )
+    fig.tight_layout(rect=[0, 0, 1, 0.86])
     savefig("cost_performance_pareto")
     plt.close(fig)
 
