@@ -346,26 +346,65 @@ def alpha_topk_sensitivity():
         [0.711, 0.736, 0.731],
     ])
 
-    fig, axes = plt.subplots(1, 2, figsize=(6.8, 2.8), sharex=True, sharey=True)
-    for ax, data, title in zip(axes, [macro, pass2], ["Macro-F1", "Human Pass@2"]):
-        im = ax.imshow(data, cmap="Blues", vmin=data.min() - 0.005, vmax=data.max() + 0.005, aspect="auto")
+    fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.9), sharex=True, sharey=True)
+    panel_specs = [
+        (axes[0], macro, "(a) Macro-F1"),
+        (axes[1], pass2, "(b) Human Pass@2"),
+    ]
+
+    for ax, data, title in panel_specs:
+        vmin = float(data.min() - 0.003)
+        vmax = float(data.max() + 0.003)
+        im = ax.imshow(data, cmap="Blues", vmin=vmin, vmax=vmax, aspect="equal", interpolation="nearest")
         ax.grid(False)
         ax.set_xticks(range(len(topks)), labels=[str(k) for k in topks])
         ax.set_yticks(range(len(alphas)), labels=[f"{a:.1f}" for a in alphas])
-        ax.set_xlabel("Top-K segments")
-        ax.set_title(title)
+        ax.set_xlabel("Top-$K$ segments")
+        ax.set_title(title, pad=6, fontweight="semibold")
         ax.set_xticks(np.arange(-0.5, len(topks), 1), minor=True)
         ax.set_yticks(np.arange(-0.5, len(alphas), 1), minor=True)
-        ax.grid(which="minor", color="white", linewidth=1.2)
+        ax.grid(which="minor", color="white", linewidth=1.7)
         ax.tick_params(which="minor", bottom=False, left=False)
+        ax.tick_params(axis="both", length=3.5, width=0.8)
+
+        # Mark the default operating point (alpha=0.6, K=3) with a thin outline.
+        ax.add_patch(
+            plt.Rectangle(
+                (0.5, 1.5),
+                1.0,
+                1.0,
+                fill=False,
+                edgecolor="#222222",
+                linewidth=1.5,
+                zorder=5,
+            )
+        )
+
         for i in range(data.shape[0]):
             for j in range(data.shape[1]):
-                color = "white" if data[i, j] > data.mean() else PALETTE["text"]
-                ax.text(j, i, f"{data[i, j]:.3f}", ha="center", va="center", fontsize=8.8, color=color)
-        cbar = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.035)
-        cbar.ax.tick_params(labelsize=8.5)
+                color = "white" if data[i, j] > (vmin + vmax) / 2 else PALETTE["text"]
+                weight = "semibold" if (i == 2 and j == 1) else "normal"
+                ax.text(
+                    j,
+                    i,
+                    f"{data[i, j]:.3f}",
+                    ha="center",
+                    va="center",
+                    fontsize=9,
+                    color=color,
+                    fontweight=weight,
+                )
+
+        cbar = fig.colorbar(im, ax=ax, fraction=0.035, pad=0.025)
+        ticks = np.linspace(vmin, vmax, 4)
+        cbar.set_ticks(ticks)
+        cbar.ax.set_yticklabels([f"{tick:.3f}" for tick in ticks])
+        cbar.ax.tick_params(labelsize=8)
+        cbar.outline.set_linewidth(0.6)
+
     axes[0].set_ylabel(r"Stage-2 weight $\alpha$")
-    fig.tight_layout()
+    axes[1].tick_params(labelleft=False)
+    fig.tight_layout(pad=0.7, w_pad=1.0)
     savefig("alpha_topk_sensitivity")
     plt.close(fig)
 
