@@ -255,33 +255,13 @@ Program repair localizes defects, classifies them, and generates patches. VideoG
 The pipeline has four stages. (1) The video is partitioned into fixed-stride segments; each segment is sampled into keyframes and four lightweight signals are extracted. (2) Thresholded rules map feature patterns to failure-code candidates with segment-level confidence scores. (3) An optional VLM judge answers structured yes/no questions on top-ranked candidates and produces calibrated confidence scores. (4) A patch compiler maps retained diagnosis records to repair actions: reference-frame injection, prop injection, camera override, segment regeneration, or style correction. A repair plan is \emph{valid} when it names a supported action, target, and evidence span; it is \emph{executable} only when the downstream generator or editor exposes the required control interface.
 
 \subsection{Failure Records and Patch Templates}
-The taxonomy groups \TaxonomyTotalCodes{} failure codes into six categories: Identity, Camera, Motion, Alignment, Style, and Scene. The controlled fixture evaluates \TaxonomyNumCodes{} observed codes; the real-generator subset covers additional naturally occurring codes. The remaining codes define an extensible namespace and are definitional rather than empirically validated (Appendices~\ref{app:moved_main_details} and~\ref{app:taxonomy}).
+The taxonomy groups \TaxonomyTotalCodes{} failure codes into six categories: Identity, Camera, Motion, Alignment, Style, and Scene. The controlled fixture evaluates \TaxonomyNumCodes{} observed codes; the real-generator subset covers additional naturally occurring codes. The remaining codes define an extensible namespace and are definitional rather than empirically validated (Appendices~\ref{app:moved_main_details} and~\ref{app:taxonomy}). Table~\ref{tab:code_patch_mapping} in Appendix~\ref{app:moved_main_details} lists representative failure-to-signal-to-patch mappings.
 
 Each predicted failure is a tuple
 \[
 r=(c,t_0,t_1,y,\tilde{\sigma},K,T,a),
 \]
 where $c$ is the taxonomy code, $(t_0,t_1)$ spans the evidence, $y$ names the affected target, $\tilde{\sigma}$ is the confidence, $K$ holds representative keyframes, $T$ stores optional track data, and $a$ is the compiled repair action. The schema is detector- and judge-agnostic.
-
-\begin{table}[H]
-\centering
-\footnotesize
-\caption{Failure types, the signals that detect them, and the repair actions they trigger.}
-\label{tab:code_patch_mapping}
-\begin{tabular}{p{0.29\textwidth}p{0.33\textwidth}p{0.26\textwidth}}
-\toprule
-\textbf{Failure type} & \textbf{Evidence signal} & \textbf{Repair action} \\
-\midrule
-Face identity drift & Face embedding drift across keyframes & Reference-frame injection \\
-Body / clothing drift & Character-region appearance drift & Reference-frame or character-anchor injection \\
-Camera movement deviation & Camera flow trace or trajectory mismatch & Camera movement override \\
-Frozen frames or action stalls & Near-zero flow or stalled pose track & Regenerate affected segment \\
-Missing required prop & Object presence check or VLM prop-absence judgment & Prop injection \\
-Style inconsistency & Style or color embedding drift across segments & Style correction \\
-Background inconsistency & Scene/background embedding drift & Background anchoring \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 \subsection{Candidate Diagnosis and Verification}
 The video is split into 2-second non-overlapping segments; six keyframes are sampled per segment. Four signals are extracted: semantic embedding drift (OpenCLIP~\cite{openclip2023}), optical flow (RAFT~\cite{raft2020} or Farneback~\cite{opencv2000,farneback2003}), face embedding drift (InsightFace~\cite{arcface2019}), and object/prop cues (YOLOv8~\cite{yolov8}, optional). For each segment $s$ and failure code $c$, a rule $\rho_c$ maps the feature vector to a score $\sigma_{s,c}\in[0,1]$. Top-ranked candidates inherit the segment's temporal bounds and the keyframes with highest per-frame anomaly scores.
@@ -310,21 +290,7 @@ VideoGenDoctor-Bench-v0 contains 324 videos built from 18 clean source clips acr
 We collect 240 naturally occurring failure videos from CogVideoX, Wan, Stable Video Diffusion, and HunyuanVideo~\cite{cogvideox2024,wan2025,svd2023,hunyuanvideo2025}. From 480 raw generations, videos are retained only when annotators confirm at least one visible specification violation. Sampling is balanced at 60 failures per generator, with generator-specific input adapters logged in per-video manifests: CogVideoX and Wan use ShotIR-to-prompt templates, SVD uses reference-frame conditioning, and HunyuanVideo uses a multi-shot prompt template. An additional 120 real-normal videos (30 per generator) are retained from the same raw pool to estimate false positives. Because the subset is failure-enriched by construction, it supports transfer analysis under verified failures but cannot estimate natural failure prevalence. Source composition, normal-set behavior, and stress tables are in Appendix~\ref{app:additional_experiment_tables}.
 
 \paragraph{Annotation.}
-A 120-video reliability subset with 768 candidate evidence spans is dual-annotated before adjudication. Code-level agreement reaches Cohen's $\kappa = \IAAcode$; span-level agreement is lower (tIoU = \IAAspan), reflecting inherent ambiguity in fine-grained temporal boundaries (Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:annotation_reliability}).
-
-\begin{table}[H]
-\centering\small
-\caption{Dataset statistics. The real-failure split is failure-enriched and cannot estimate natural prevalence.}
-\label{tab:dataset_statistics}
-\begin{tabular*}{0.95\textwidth}{@{\extracolsep{\fill}}lccccc@{}}
-\toprule
-\textbf{Split} & \textbf{\#Vid} & \textbf{\#Evidence} & \textbf{AvgDur} & \textbf{PerturbTypes} & \textbf{\#Codes} \\
-\midrule
-Controlled fixture & 324 & 2016 & 10.46s & 9 & 12 \\
-Real-failure subset & 240 & 1536 & 8.93s & -- & 18 \\
-\bottomrule
-\end{tabular*}
-\end{table}
+A 120-video reliability subset with 768 candidate evidence spans is dual-annotated before adjudication. Code-level agreement reaches Cohen's $\kappa = \IAAcode$; span-level agreement is lower (tIoU = \IAAspan), reflecting inherent ambiguity in fine-grained temporal boundaries. Dataset statistics and annotation details are in Appendix~\ref{app:additional_experiment_tables} (Tables~\ref{tab:dataset_statistics}--\ref{tab:annotation_reliability}).
 
 \subsection{Compared Methods and Metrics}
 We compare diagnosis variants (Prior-only, Rule-only, Rule+DummyJudge, Rule+Open-VLM, Rule+GPT-4V, VideoGenDoctor-diagnosis), repair variants (VideoGenDoctor-patch, Patch+Judge, VideoGenDoctor-full), and external VLM baselines (free-form reporting, structured reporting, self-consistency, temporal proposal + patch, VLM-to-patch, Score+LLM-to-patch). Direct VLM baselines share the same GPT-4V endpoint as Rule+GPT-4V to isolate prompt structure, output schema, and repair protocol from model backbone; Rule+Open-VLM provides an open-model reference. Diagnosis-only front ends are paired with the same downstream repair loop whenever human repair success is reported. Implementation details are in Appendix~\ref{app:additional_experiment_tables} (Table~\ref{tab:vlm_details}); strengthened VLM-agent baselines are in Appendix~\ref{app:moved_main_details} (Table~\ref{tab:strong_vlm_agent_baselines}).
@@ -362,14 +328,7 @@ VideoGenDoctor-diagnosis outperforms both free-form and structured direct VLM re
 \subsection{Per-Code Reliability and Evidence Localization}
 \label{sec:per_code}
 \label{sec:evidence_results}
-The controlled fixture covers twelve observed codes. Per-code F1 ranges from 0.861 (event-missing) to 0.958 (compression-artifact), with temporal localization following a similar pattern: frozen-frame and compression-artifact detection are most reliable (tIoU@0.5 above 0.77), while event-missing and camera-shake are hardest to localize precisely (tIoU@0.5 below 0.70). Full per-code precision, recall, F1, and tIoU are in Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:per_code_controlled}. The confusion matrix (Figure~\ref{fig:confusion_matrix}) confirms that camera and motion codes account for the majority of off-diagonal errors.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=\textwidth]{../figures/confusion_matrix.pdf}
-\caption{Per-code confusion matrix on the controlled fixture. Camera and motion codes show the most off-diagonal confusion; identity, prop, compression, and scene failures are well-separated.}
-\label{fig:confusion_matrix}
-\end{figure}
+The controlled fixture covers twelve observed codes. Per-code F1 ranges from 0.861 (event-missing) to 0.958 (compression-artifact), with temporal localization following a similar pattern: frozen-frame and compression-artifact detection are most reliable (tIoU@0.5 above 0.77), while event-missing and camera-shake are hardest to localize precisely (tIoU@0.5 below 0.70). Full per-code precision, recall, F1, tIoU, and the confusion matrix are in Appendix~\ref{app:additional_experiment_tables} (Table~\ref{tab:per_code_controlled}, Figure~\ref{fig:confusion_matrix}).
 
 \begin{table}[H]
 \centering\small
@@ -443,47 +402,13 @@ Real-failure subset & VideoGenDoctor default pipeline & \textbf{0.8264} & \textb
 \end{adjustbox}
 \end{table}
 
-All methods degrade on naturally occurring failures, confirming that the controlled fixture is not a substitute for open-world evaluation. The real-failure subset contains more overlapping artifacts, less isolated evidence, and weaker alignment between specification fields and visible deviations. Because this subset is failure-enriched and balanced by construction, these numbers measure transfer under verified failures rather than real-world prevalence. Per-code and per-generator results are reported in Appendix~\ref{app:additional_experiment_tables}, Tables~\ref{tab:real_per_code} and~\ref{tab:per_generator_results}.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=\textwidth]{../figures/controlled_vs_real_paired.pdf}
-\caption{Controlled-to-real transfer across four metrics. Solid bars: controlled fixture; hatched bars: real-failure subset. The degradation gap (annotated) is largest for tIoU@0.5 and smallest for patch usefulness.}
-\label{fig:controlled_vs_real_paired}
-\end{figure}
+All methods degrade on naturally occurring failures, confirming that the controlled fixture is not a substitute for open-world evaluation. Because this subset is failure-enriched and balanced by construction, these numbers measure transfer under verified failures rather than real-world prevalence. Per-code, per-generator, and visualization results are in Appendix~\ref{app:additional_experiment_tables} (Tables~\ref{tab:real_per_code}--\ref{tab:per_generator_results}, Figure~\ref{fig:controlled_vs_real_paired}).
 
 \subsection{Ablation and Generalization Checks}
 \label{sec:ablations}
 
 \paragraph{Feature signal contribution.}
-Table~\ref{tab:feature_ablation} ablates each feature signal from the default VideoGenDoctor-diagnosis configuration. Optical flow is the single most critical signal: removing it drops macro-F1 from \FeatFullMacroF{} to \FeatNoFlowMacroF{} and tIoU@0.5 from \FeatFullTIoU{} to \FeatNoFlowTIoU. CLIP embedding drift is next, particularly for scene and style codes. Face embedding removal mainly affects identity-code precision. The object detection signal has the smallest individual impact because YOLOv8 is only active for prop-related codes. Single-signal configurations (CLIP-only, flow-only, face-only) all perform substantially worse, confirming that the signals complement each other.
-
-\begin{table}[H]
-\centering\scriptsize
-\caption{Per-feature ablation of the default diagnosis configuration. Each row removes one signal or uses a single signal; Human Pass@2 is measured after pairing the ablated diagnosis front end with the shared repair loop.}
-\label{tab:feature_ablation}
-\begin{tabular}{lcccc}
-\toprule
-Configuration & Macro-F1 & tIoU@0.5 & Human Pass@2 & $\Delta$ Pass@2 \\
-\midrule
-Full (all signals) & \FeatFullMacroF & \FeatFullTIoU & \FeatFullHumanPassTwo & -- \\
-$-$ CLIP embedding & \FeatNoCLIPMacroF & \FeatNoCLIPTIoU & \FeatNoCLIPHumanPassTwo & $-$0.060 \\
-$-$ Optical flow & \FeatNoFlowMacroF & \FeatNoFlowTIoU & \FeatNoFlowHumanPassTwo & $-$0.092 \\
-$-$ Face embedding & \FeatNoFaceMacroF & \FeatNoFaceTIoU & \FeatNoFaceHumanPassTwo & $-$0.046 \\
-$-$ Object detection & \FeatNoObjMacroF & \FeatNoObjTIoU & \FeatNoObjHumanPassTwo & $-$0.027 \\
-CLIP only & \FeatCLIPOnlyMacroF & \FeatCLIPOnlyTIoU & \FeatCLIPOnlyHumanPassTwo & $-$0.181 \\
-Flow only & \FeatFlowOnlyMacroF & \FeatFlowOnlyTIoU & \FeatFlowOnlyHumanPassTwo & $-$0.299 \\
-Face only & \FeatFaceOnlyMacroF & \FeatFaceOnlyTIoU & \FeatFaceOnlyHumanPassTwo & $-$0.366 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=\textwidth]{../figures/feature_ablation_horizontal.pdf}
-\caption{Per-feature ablation. Optical flow is the single most critical signal; single-signal configurations (bottom three rows) all underperform substantially, confirming complementary contributions.}
-\label{fig:feature_ablation}
-\end{figure}
+Per-feature ablation confirms that optical flow is the single most critical signal (removing it drops macro-F1 from \FeatFullMacroF{} to \FeatNoFlowMacroF{} and tIoU@0.5 from \FeatFullTIoU{} to \FeatNoFlowTIoU), followed by CLIP embedding drift. Single-signal configurations all underperform substantially, confirming complementary contributions. Full results are in Appendix~\ref{app:additional_experiment_tables} (Table~\ref{tab:feature_ablation}, Figure~\ref{fig:feature_ablation}).
 
 \paragraph{Repair component ablation.}
 \begin{table}[H]
@@ -508,67 +433,13 @@ VideoGenDoctor-full & \cmark & \cmark & \cmark & \cmark & \cmark & \textbf{0.763
 \end{adjustbox}
 \end{table}
 
-Each record component (code, target, span, evidence keyframes, patch template, and verification) adds measurable repair value beyond code prediction alone. The jump from code-only (Pass@2 0.458) to code+span (0.625) and code+span+evidence (0.688) shows that temporal evidence is the largest single contributor after the code itself.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=\textwidth]{../figures/repair_ablation_bars.pdf}
-\caption{Repair ablation as grouped bars. Human Pass@2 (dark blue) and patch usefulness (light blue, scaled) rise additively as code, span, evidence, and verification are incorporated. New-artifact rates (annotated at bottom) trend downward as diagnosis quality improves.}
-\label{fig:repair_ablation_bars}
-\end{figure}
+Each record component adds measurable repair value beyond code prediction alone. The jump from code-only (Pass@2 0.458) to code+span (0.625) and code+span+evidence (0.688) shows that temporal evidence is the largest single contributor after the code itself. Full ablation visualizations are in Appendix~\ref{app:additional_experiment_tables} (Figure~\ref{fig:repair_ablation_bars}).
 
 \paragraph{Threshold sensitivity.}
-Table~\ref{tab:threshold_sensitivity} and Figure~\ref{fig:threshold_sensitivity} sweep the diagnosis retention threshold $\tau \in \{0.30,0.40,0.50,0.60,0.70\}$. Macro-F1 and tIoU@0.5 peak at $\tau=0.50$; false positives and unnecessary patching decrease monotonically with larger $\tau$. Aggressive low thresholds over-trigger repairs; conservative high thresholds suppress useful diagnoses.
-
-\begin{table}[H]
-\centering\scriptsize
-\caption{Threshold sensitivity. $\tau=0.50$ balances diagnosis coverage against false positives and unnecessary patching on real-normal videos.}
-\label{tab:threshold_sensitivity}
-\begin{tabular}{ccccc}
-\toprule
-Threshold $\tau$ & Macro-F1 & tIoU@0.5 & Real-normal FPR & Unnecessary patch rate \\
-\midrule
-0.30 & 0.902 & 0.716 & 0.158 & 0.142 \\
-0.40 & 0.910 & 0.728 & 0.125 & 0.111 \\
-0.50 & \textbf{0.911} & \textbf{0.732} & 0.100 & 0.087 \\
-0.60 & 0.904 & 0.719 & 0.083 & 0.071 \\
-0.70 & 0.886 & 0.694 & \textbf{0.067} & \textbf{0.058} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=\textwidth]{../figures/threshold_sensitivity.pdf}
-\caption{Threshold sensitivity curves. Dashed line at $\tau=0.50$ marks the operating point where macro-F1 and tIoU@0.5 peak before false positives rise sharply.}
-\label{fig:threshold_sensitivity}
-\end{figure}
+A threshold sweep over $\tau \in \{0.30,0.40,0.50,0.60,0.70\}$ shows macro-F1 and tIoU@0.5 peak at $\tau=0.50$; aggressive thresholds over-trigger repairs while conservative thresholds suppress useful diagnoses (Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:threshold_sensitivity}, Figure~\ref{fig:threshold_sensitivity}).
 
 \paragraph{Stage-2 weight and candidate budget.}
-Figure~\ref{fig:alpha_topk_sensitivity} sweeps the judge weight $\alpha$ and candidate budget $K$. $\alpha=0.6$ with $K=3$ gives the best operating point. Removing Stage-2 ($\alpha=0$) reduces both diagnosis and repair metrics; $\alpha=0.9$ introduces instability from VLM over-correction. Increasing $K$ from 1 to 3 helps, but 3 to 5 adds little while exposing the judge to more noisy candidates.
-
-\begin{figure}[H]
-\centering
-\safeincludegraphics[width=\textwidth]{../figures/alpha_topk_sensitivity.pdf}
-\caption{Sensitivity to judge weight $\alpha$ and candidate budget $K$. $\alpha=0.6$, $K=3$ balances diagnosis accuracy and repair success; $\alpha=0.9$ introduces instability from VLM over-correction.}
-\label{fig:alpha_topk_sensitivity}
-\end{figure}
-
-\begin{table}[H]
-\centering\scriptsize
-\caption{Paired bootstrap differences in blind human Pass@2. Verification adds a reliable gain (+0.111); the full-loop wrapper adds a small, non-decisive increment (+0.021).}
-\label{tab:paired_repair_test}
-\begin{tabular}{lccc}
-\toprule
-Comparison & $\Delta$ Human Pass@2 & 95\% CI & Interpretation \\
-\midrule
-Patch-only vs Score-only & 0.3541 & [0.250, 0.458] & substantial gain \\
-VLM-to-patch vs Patch-only & 0.0417 & [-0.054, 0.139] & small / not decisive \\
-Patch+Judge vs Patch-only & 0.1112 & [0.021, 0.215] & verification helps \\
-VideoGenDoctor-full vs Patch+Judge & 0.0208 & [-0.063, 0.104] & small / not decisive \\
-\bottomrule
-\end{tabular}
-\end{table}
+$\alpha=0.6$ with $K=3$ gives the best operating point. Removing Stage-2 ($\alpha=0$) reduces both diagnosis and repair metrics; $\alpha=0.9$ introduces instability from VLM over-correction (Appendix~\ref{app:additional_experiment_tables}, Figure~\ref{fig:alpha_topk_sensitivity}). Paired bootstrap comparisons confirm that verification adds a reliable gain (+0.111 in Human Pass@2) while the full-loop wrapper contributes a small, non-decisive increment (+0.021) (Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:paired_repair_test}).
 
 Leave-one-perturbation-out and leave-one-source-group-out evaluations confirm that performance drops under held-out operators---particularly missing-event, camera-shake, and temporal-discontinuity perturbations---but remains above prior-only and score-only baselines (Appendix~\ref{app:additional_experiment_tables}, Tables~\ref{tab:leave_one_perturbation}--\ref{tab:leave_one_source_group}). The system does not simply memorize perturbation templates, though unseen-operator generalization is weaker than in-distribution evaluation. Additional checks cover adapter executability, real-failure stress slices, and multi-annotator stability (Tables~\ref{tab:adapter_executability}--\ref{tab:multi_annotator_stability}).
 
@@ -613,6 +484,40 @@ The release package includes the reference implementation, report schema, taxono
 \section{Supplementary Main-Text Results}
 \label{app:moved_main_details}
 This appendix stores tables and figures moved out of the main text to keep the core narrative compact while preserving the audit trail for comparisons, taxonomy scope, fixture construction, temporal evidence profiles, strengthened VLM baselines, repair visualization, and cost-performance trade-offs.
+
+\begin{table}[H]
+\centering
+\footnotesize
+\caption{Failure types, the evidence signals that detect them, and the repair actions they trigger.}
+\label{tab:code_patch_mapping}
+\begin{tabular}{p{0.29\textwidth}p{0.33\textwidth}p{0.26\textwidth}}
+\toprule
+\textbf{Failure type} & \textbf{Evidence signal} & \textbf{Repair action} \\
+\midrule
+Face identity drift & Face embedding drift across keyframes & Reference-frame injection \\
+Body / clothing drift & Character-region appearance drift & Reference-frame or character-anchor injection \\
+Camera movement deviation & Camera flow trace or trajectory mismatch & Camera movement override \\
+Frozen frames or action stalls & Near-zero flow or stalled pose track & Regenerate affected segment \\
+Missing required prop & Object presence check or VLM prop-absence judgment & Prop injection \\
+Style inconsistency & Style or color embedding drift across segments & Style correction \\
+Background inconsistency & Scene/background embedding drift & Background anchoring \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering\small
+\caption{Dataset statistics for the controlled fixture and failure-enriched real-generator subset. The real-failure split cannot estimate natural failure prevalence.}
+\label{tab:dataset_statistics}
+\begin{tabular*}{0.95\textwidth}{@{\extracolsep{\fill}}lccccc@{}}
+\toprule
+\textbf{Split} & \textbf{\#Vid} & \textbf{\#Evidence} & \textbf{AvgDur} & \textbf{PerturbTypes} & \textbf{\#Codes} \\
+\midrule
+Controlled fixture & 324 & 2016 & 10.46s & 9 & 12 \\
+Real-failure subset & 240 & 1536 & 8.93s & -- & 18 \\
+\bottomrule
+\end{tabular*}
+\end{table}
 
 \begin{table}[H]
 \centering\small
@@ -743,7 +648,105 @@ VLM structured report & 0.8869 & 0.6639 & 0.6810 & 1.16$\times$ & 1.20$\times$ \
 % Begin inlined from appendix.tex
 \section{Additional Experimental Tables}
 \label{app:additional_experiment_tables}
-This appendix collects construction details, audit tables, stress analyses, and per-slice results that support the main experimental claims without interrupting the main narrative.
+This appendix collects construction details, audit tables, stress analyses, per-slice results, and visualizations that support the main experimental claims without interrupting the main narrative.
+
+\subsection{Diagnosis and Repair Visualizations}
+\label{app:diagnosis_repair_viz}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/confusion_matrix.pdf}
+\caption{Per-code confusion matrix on the controlled fixture. Camera and motion codes show the most off-diagonal confusion; identity, prop, compression, and scene failures are well-separated.}
+\label{fig:confusion_matrix}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/controlled_vs_real_paired.pdf}
+\caption{Controlled-to-real transfer across four metrics. Solid bars: controlled fixture; hatched bars: real-failure subset. The degradation gap is largest for tIoU@0.5 and smallest for patch usefulness.}
+\label{fig:controlled_vs_real_paired}
+\end{figure}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Per-feature ablation of the default diagnosis configuration. Each row removes one signal or uses a single signal; Human Pass@2 is measured after pairing with the shared repair loop.}
+\label{tab:feature_ablation}
+\begin{tabular}{lcccc}
+\toprule
+Configuration & Macro-F1 & tIoU@0.5 & Human Pass@2 & $\Delta$ Pass@2 \\
+\midrule
+Full (all signals) & \FeatFullMacroF & \FeatFullTIoU & \FeatFullHumanPassTwo & -- \\
+$-$ CLIP embedding & \FeatNoCLIPMacroF & \FeatNoCLIPTIoU & \FeatNoCLIPHumanPassTwo & $-$0.060 \\
+$-$ Optical flow & \FeatNoFlowMacroF & \FeatNoFlowTIoU & \FeatNoFlowHumanPassTwo & $-$0.092 \\
+$-$ Face embedding & \FeatNoFaceMacroF & \FeatNoFaceTIoU & \FeatNoFaceHumanPassTwo & $-$0.046 \\
+$-$ Object detection & \FeatNoObjMacroF & \FeatNoObjTIoU & \FeatNoObjHumanPassTwo & $-$0.027 \\
+CLIP only & \FeatCLIPOnlyMacroF & \FeatCLIPOnlyTIoU & \FeatCLIPOnlyHumanPassTwo & $-$0.181 \\
+Flow only & \FeatFlowOnlyMacroF & \FeatFlowOnlyTIoU & \FeatFlowOnlyHumanPassTwo & $-$0.299 \\
+Face only & \FeatFaceOnlyMacroF & \FeatFaceOnlyTIoU & \FeatFaceOnlyHumanPassTwo & $-$0.366 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/feature_ablation_horizontal.pdf}
+\caption{Per-feature ablation horizontal bar chart. Optical flow is the single most critical signal; single-signal configurations all underperform substantially.}
+\label{fig:feature_ablation}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/repair_ablation_bars.pdf}
+\caption{Repair ablation as grouped bars. Human Pass@2 and patch usefulness rise additively as code, span, evidence, and verification are incorporated.}
+\label{fig:repair_ablation_bars}
+\end{figure}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Threshold sensitivity. $\tau=0.50$ balances diagnosis coverage against false positives and unnecessary patching.}
+\label{tab:threshold_sensitivity}
+\begin{tabular}{ccccc}
+\toprule
+Threshold $\tau$ & Macro-F1 & tIoU@0.5 & Real-normal FPR & Unnecessary patch rate \\
+\midrule
+0.30 & 0.902 & 0.716 & 0.158 & 0.142 \\
+0.40 & 0.910 & 0.728 & 0.125 & 0.111 \\
+0.50 & \textbf{0.911} & \textbf{0.732} & 0.100 & 0.087 \\
+0.60 & 0.904 & 0.719 & 0.083 & 0.071 \\
+0.70 & 0.886 & 0.694 & \textbf{0.067} & \textbf{0.058} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/threshold_sensitivity.pdf}
+\caption{Threshold sensitivity curves. Dashed line at $\tau=0.50$ marks the operating point where macro-F1 and tIoU@0.5 peak.}
+\label{fig:threshold_sensitivity}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/alpha_topk_sensitivity.pdf}
+\caption{Sensitivity to judge weight $\alpha$ and candidate budget $K$. $\alpha=0.6$, $K=3$ balances diagnosis accuracy and repair success.}
+\label{fig:alpha_topk_sensitivity}
+\end{figure}
+
+\begin{table}[H]
+\centering\scriptsize
+\caption{Paired bootstrap differences in blind human Pass@2. Verification adds a reliable gain; the full-loop wrapper adds a small, non-decisive increment.}
+\label{tab:paired_repair_test}
+\begin{tabular}{lccc}
+\toprule
+Comparison & $\Delta$ Human Pass@2 & 95\% CI & Interpretation \\
+\midrule
+Patch-only vs Score-only & 0.3541 & [0.250, 0.458] & substantial gain \\
+VLM-to-patch vs Patch-only & 0.0417 & [-0.054, 0.139] & small / not decisive \\
+Patch+Judge vs Patch-only & 0.1112 & [0.021, 0.215] & verification helps \\
+VideoGenDoctor-full vs Patch+Judge & 0.0208 & [-0.063, 0.104] & small / not decisive \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Extended Experiment Analyses}
 \label{app:experiment_extensions}
