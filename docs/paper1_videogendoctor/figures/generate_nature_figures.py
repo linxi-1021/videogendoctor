@@ -140,7 +140,7 @@ def repair_ablation_bars():
 
     ax.set_xticks(x)
     ax.set_xticklabels(conditions, fontsize=8.5)
-    ax.set_ylim(0, 1.20)
+    ax.set_ylim(0, 1.15)
     ax.set_ylabel("Score")
     soften(ax)
 
@@ -153,8 +153,8 @@ def repair_ablation_bars():
         ax.text(bar.get_x() + bar.get_width() / 2, h + 0.012,
                 f"{patch_u[i]:.1f}", ha="center", va="bottom", fontsize=7.0, color=PAL["neutral_dark"])
     for i, na in enumerate(new_art):
-        ax.text(i, 1.08, f"Art:{na:.3f}", ha="center", va="bottom",
-                fontsize=7.0, color=PAL["delta_down"], style="italic")
+        ax.text(i, 0.012, f"Art:{na:.3f}", ha="center", va="bottom",
+                fontsize=6.5, color=PAL["delta_down"], style="italic")
 
     ax.legend(loc="upper left")
     ax.set_title("Repair ablation: additive contribution of diagnosis components", pad=14)
