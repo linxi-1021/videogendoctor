@@ -29,6 +29,7 @@
 \usepackage{enumitem}
 \usepackage{etoolbox}
 \usepackage{pifont}
+\usepackage{placeins}
 
 \definecolor{VGDPrimary}{HTML}{1D4E89}
 \definecolor{VGDTeal}{HTML}{2A9D8F}
@@ -470,6 +471,8 @@ The release package includes the reference implementation, report schema, taxono
 
 All newly generated data supporting the findings of this study---including VideoGenDoctor-Bench-v0 (324 controlled perturbation videos, 2,016 human-verified evidence spans), the 240-video failure-enriched real-generator subset (1,536 verified evidence spans), the 120-video real-normal subset, the full 38-code taxonomy, annotation records, prediction logs, and diagnostic reports---will be deposited in a public Zenodo repository upon acceptance and are available for review as part of the supplementary artifact package. The 18 clean source clips used to construct the controlled fixture are obtained from publicly available video datasets under permissive licences. The four production generators (CogVideoX, Wan, Stable Video Diffusion, HunyuanVideo) are publicly available models; checkpoint identifiers are recorded in per-video JSON manifests. No human-subject data or personally identifiable information were collected. The annotation protocol was approved by the institutional review board of Sichuan Agricultural University.
 \end{ack}
+
+\FloatBarrier
 
 {\small
 \bibliographystyle{plainnat}
