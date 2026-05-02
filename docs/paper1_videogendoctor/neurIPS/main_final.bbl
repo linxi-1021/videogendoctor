@@ -1,0 +1,133 @@
+\begin{thebibliography}{20}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Blattmann et~al.(2023)]{svd2023}
+Andreas Blattmann et~al.
+\newblock Stable video diffusion: Scaling latent video diffusion models to
+  large datasets, 2023.
+\newblock URL \url{https://arxiv.org/abs/2311.15127}.
+\newblock arXiv preprint arXiv:2311.15127.
+
+\bibitem[Bradski(2000)]{opencv2000}
+Gary Bradski.
+\newblock The opencv library.
+\newblock \emph{Dr. Dobb's Journal of Software Tools}, 2000.
+
+\bibitem[Chen et~al.(2024)]{internvl2024}
+Zhe Chen et~al.
+\newblock {InternVL}: Scaling up vision foundation models and aligning for
+  generic visual-linguistic tasks.
+\newblock \emph{CVPR}, 2024.
+
+\bibitem[Cherti et~al.(2023)]{openclip2023}
+Mehdi Cherti et~al.
+\newblock Reproducible scaling laws for contrastive language-image learning.
+\newblock \emph{CVPR}, 2023.
+
+\bibitem[Deng et~al.(2019)Deng, Guo, Xue, and Zafeiriou]{arcface2019}
+Jiankang Deng, Jia Guo, Niannan Xue, and Stefanos Zafeiriou.
+\newblock {ArcFace}: Additive angular margin loss for deep face recognition.
+\newblock \emph{CVPR}, 2019.
+
+\bibitem[Farneb{\"a}ck(2003)]{farneback2003}
+Gunnar Farneb{\"a}ck.
+\newblock Two-frame motion estimation based on polynomial expansion.
+\newblock In \emph{Scandinavian Conference on Image Analysis}, pages 363--370.
+  Springer, 2003.
+
+\bibitem[He et~al.(2024)]{videoscore2024}
+Xuan He et~al.
+\newblock {VideoScore}: Building automatic metrics to simulate fine-grained
+  human feedback for video generation.
+\newblock \emph{ACL}, 2024.
+
+\bibitem[Huang et~al.(2024)Huang, He, Yu, et~al.]{vbench2024}
+Ziqi Huang, Yinan He, Jiashuo Yu, et~al.
+\newblock {VBench}: Comprehensive benchmark suite for video generative models.
+\newblock \emph{CVPR}, 2024.
+
+\bibitem[Kuhn(1955)]{kuhn1955hungarian}
+Harold~W. Kuhn.
+\newblock The hungarian method for the assignment problem.
+\newblock \emph{Naval Research Logistics Quarterly}, 2\penalty0
+  (1--2):\penalty0 83--97, 1955.
+\newblock \doi{10.1002/nav.3800020109}.
+
+\bibitem[Liu et~al.(2023)Liu, Li, Wu, and Lee]{llava2023}
+Haotian Liu, Chunyuan Li, Qingyang Wu, and Yong~Jae Lee.
+\newblock Visual instruction tuning.
+\newblock \emph{NeurIPS}, 2023.
+
+\bibitem[Liu et~al.(2024)]{evalcrafter2024}
+Yaofang Liu et~al.
+\newblock {EvalCrafter}: Benchmarking and evaluating large video generation
+  models.
+\newblock \emph{CVPR}, 2024.
+
+\bibitem[{OpenAI}(2023)]{gpt4v2023}
+{OpenAI}.
+\newblock {GPT-4V(ision)} system card.
+\newblock Technical report, OpenAI, 2023.
+\newblock URL \url{https://openai.com/research/gpt-4v-system-card}.
+
+\bibitem[Sun et~al.(2025)Sun, Huang, Liu, Wu, Xu, Li, and
+  Liu]{t2vcompbench2024}
+Kaiyue Sun, Kaiyi Huang, Xian Liu, Yue Wu, Zihan Xu, Zhenguo Li, and Xihui Liu.
+\newblock {T2V-CompBench}: A comprehensive benchmark for compositional
+  text-to-video generation.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition (CVPR)}, pages 8406--8416, 2025.
+
+\bibitem[Teed and Deng(2020)]{raft2020}
+Zachary Teed and Jia Deng.
+\newblock {RAFT}: Recurrent all-pairs field transforms for optical flow.
+\newblock \emph{ECCV}, 2020.
+
+\bibitem[{Tencent Hunyuan Foundation Model Team}(2025)]{hunyuanvideo2025}
+{Tencent Hunyuan Foundation Model Team}.
+\newblock Hunyuanvideo 1.5 technical report, 2025.
+\newblock URL \url{https://arxiv.org/abs/2511.18870}.
+
+\bibitem[{Ultralytics}(2023)]{yolov8}
+{Ultralytics}.
+\newblock {YOLOv8}.
+\newblock Software repository, 2023.
+\newblock URL \url{https://github.com/ultralytics/ultralytics}.
+\newblock Version 8.0.
+
+\bibitem[{Wan-AI}(2025)]{wan2025}
+{Wan-AI}.
+\newblock Wan2.1-t2v-14b.
+\newblock Hugging Face model card, 2025.
+\newblock URL \url{https://huggingface.co/Wan-AI/Wan2.1-T2V-14B}.
+
+\bibitem[Wang et~al.(2023)Wang, Yuan, Wang, Chen, Xia, Luo, and
+  Shan]{motionctrl2024}
+Zhouxia Wang, Ziyang Yuan, Xintao Wang, Tianshui Chen, Menghan Xia, Ping Luo,
+  and Ying Shan.
+\newblock {MotionCtrl}: A unified and flexible motion controller for video
+  generation, 2023.
+\newblock URL \url{https://arxiv.org/abs/2312.03641}.
+\newblock arXiv preprint arXiv:2312.03641.
+
+\bibitem[Yang et~al.(2024)]{cogvideox2024}
+Zhuoyi Yang et~al.
+\newblock {CogVideoX}: Text-to-video diffusion models with an expert
+  transformer, 2024.
+\newblock URL \url{https://arxiv.org/abs/2408.06072}.
+\newblock arXiv preprint arXiv:2408.06072.
+
+\bibitem[Yuan et~al.(2024)Yuan, Zhang, Wang, Wei, Feng, Pan, Zhang, Liu,
+  Albanie, and Ni]{instructvideo2024}
+Hangjie Yuan, Shiwei Zhang, Xiang Wang, Yujie Wei, Tao Feng, Yining Pan, Yingya
+  Zhang, Ziwei Liu, Samuel Albanie, and Dong Ni.
+\newblock {InstructVideo}: Instructing video diffusion models with human
+  feedback.
+\newblock In \emph{Proceedings of the IEEE/CVF Conference on Computer Vision
+  and Pattern Recognition (CVPR)}, pages 6463--6474, 2024.
+
+\end{thebibliography}
