@@ -327,7 +327,7 @@ Table~\ref{tab:code_detection} reports failure-code detection results. VideoGenD
 \subsection{Per-Code Reliability and Evidence Localization}
 \label{sec:per_code}
 \label{sec:evidence_results}
-The controlled fixture covers twelve observed codes. Per-code F1 ranges from 0.861 (event-missing) to 0.958 (compression-artifact), with temporal localization following a similar pattern: frozen-frame and compression-artifact detection are most reliable (tIoU@0.5 above 0.77), while event-missing and camera-shake are hardest to localize precisely (tIoU@0.5 below 0.70). Full per-code precision, recall, F1, tIoU, and the confusion matrix are in Appendix~\ref{app:additional_experiment_tables} (Table~\ref{tab:per_code_controlled}, Figure~\ref{fig:confusion_matrix}).
+The controlled fixture covers twelve observed codes, with per-code F1 spanning from 0.861 (event-missing) to 0.958 (compression-artifact). Frozen-frame detection reaches the highest F1 (0.956) and tIoU@0.5 (0.794), benefiting from an unambiguous near-zero-flow signal. Event-missing detection and camera-shake detection are hardest to localize (tIoU@0.5 of 0.662 and 0.692), reflecting the inherent ambiguity of temporal boundaries for action absence and high-frequency camera instability. Identity and alignment codes consistently exceed F1 0.90 and tIoU@0.5 of 0.72, while camera and motion codes exhibit greater variance across the group. Table~\ref{tab:per_code_controlled} reports full per-code precision, recall, F1, and tIoU. The confusion matrix in Figure~\ref{fig:confusion_matrix} confirms that off-diagonal errors are concentrated among camera and motion codes, where overlapping visual artifacts make fine-grained discrimination difficult. Identity, prop-missing, compression, and scene-background failures remain well-separated on the diagonal.
 
 \begin{table}[t]
 \centering\small
@@ -348,6 +348,39 @@ VLM free-form report & 0.7204 & 0.5986 & 0.2994 & 0.5117 & [0.570, 0.625] \\
 VLM structured report & 0.7812 & 0.6639 & 0.3651 & 0.5858 & [0.637, 0.690] \\
 \midrule
 Human annotator (adjudicated) & 0.882 & \HumanLocTIoUfive & 0.531 & \HumanLocTopThree & [0.790, 0.838] \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/confusion_matrix.pdf}
+\caption{Per-code confusion matrix on the controlled fixture. Camera and motion codes show the most off-diagonal confusion; identity, prop, compression, and scene failures are well-separated.}
+\label{fig:confusion_matrix}
+\end{figure}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{Per-code reliability of the default VideoGenDoctor diagnosis configuration on the controlled fixture.}
+\label{tab:per_code_controlled}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Observed code} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{tIoU@0.5} \\
+\midrule
+\tblcode{ID\_FACE\_DRIFT} & 0.938 & 0.914 & 0.926 & 0.748 \\
+\tblcode{ID\_BODY\_DRIFT} & 0.922 & 0.897 & 0.909 & 0.725 \\
+\tblcode{CA\_MOVE\_WRONG} & 0.932 & 0.916 & 0.924 & 0.734 \\
+\tblcode{CA\_SHOT\_TYPE\_WRONG} & 0.913 & 0.889 & 0.901 & 0.705 \\
+\tblcode{CA\_SHAKE} & 0.901 & 0.878 & 0.889 & 0.692 \\
+\tblcode{MO\_JITTER} & 0.890 & 0.865 & 0.877 & 0.676 \\
+\tblcode{MO\_FROZEN\_FRAME} & 0.963 & 0.950 & 0.956 & 0.794 \\
+\tblcode{MO\_SEGMENT\_BREAK} & 0.906 & 0.883 & 0.894 & 0.704 \\
+\tblcode{MO\_EVENT\_MISSING} & 0.875 & 0.848 & 0.861 & 0.662 \\
+\tblcode{AL\_PROP\_MISSING} & 0.951 & 0.930 & 0.940 & 0.760 \\
+\tblcode{ST\_COMPRESSION\_ARTIFACT} & 0.950 & 0.966 & 0.958 & 0.779 \\
+\tblcode{SC\_BG\_INCONSISTENCY} & 0.910 & 0.885 & 0.897 & 0.686 \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -407,7 +440,27 @@ All methods degrade on naturally occurring failures, confirming that the control
 \label{sec:ablations}
 
 \paragraph{Feature signal contribution.}
-We isolate the contribution of each feature signal by removing it from the default VideoGenDoctor-diagnosis configuration and by using each signal alone. Optical flow is the single most critical signal: removing it drops macro-F1 from \FeatFullMacroF{} to \FeatNoFlowMacroF{} and tIoU@0.5 from \FeatFullTIoU{} to \FeatNoFlowTIoU. CLIP embedding drift follows, particularly affecting scene and style codes. Face embedding removal mainly degrades identity-code precision. Single-signal configurations all underperform substantially, confirming that the four signals complement each other. Full results are in Appendix~\ref{app:additional_experiment_tables} (Table~\ref{tab:feature_ablation}, Figure~\ref{fig:feature_ablation}).
+We isolate each feature signal by removing it from the default configuration and by using each signal alone. Table~\ref{tab:feature_ablation} reports the results. Optical flow is the single most critical signal: removing it drops macro-F1 from \FeatFullMacroF{} to \FeatNoFlowMacroF{} and tIoU@0.5 from \FeatFullTIoU{} to \FeatNoFlowTIoU, consistent with its role in detecting motion and camera failures. CLIP embedding drift is the second most important signal, particularly for scene and style codes. Face embedding removal mainly degrades identity-code precision, while object detection has the smallest individual impact because YOLOv8 is active only for prop-related codes. Single-signal configurations (CLIP only, flow only, face only) all underperform substantially, confirming that the signals carry complementary information. Figure~\ref{fig:feature_ablation} in Appendix~\ref{app:additional_experiment_tables} provides a horizontal bar-chart comparison.
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{Per-feature ablation of the default diagnosis configuration. Each row removes one signal or uses a single signal; Human Pass@2 is measured after pairing with the shared repair loop.}
+\label{tab:feature_ablation}
+\begin{tabular}{lcccc}
+\toprule
+Configuration & Macro-F1 & tIoU@0.5 & Human Pass@2 & $\Delta$ Pass@2 \\
+\midrule
+Full (all signals) & \FeatFullMacroF & \FeatFullTIoU & \FeatFullHumanPassTwo & -- \\
+$-$ CLIP embedding & \FeatNoCLIPMacroF & \FeatNoCLIPTIoU & \FeatNoCLIPHumanPassTwo & $-$0.060 \\
+$-$ Optical flow & \FeatNoFlowMacroF & \FeatNoFlowTIoU & \FeatNoFlowHumanPassTwo & $-$0.092 \\
+$-$ Face embedding & \FeatNoFaceMacroF & \FeatNoFaceTIoU & \FeatNoFaceHumanPassTwo & $-$0.046 \\
+$-$ Object detection & \FeatNoObjMacroF & \FeatNoObjTIoU & \FeatNoObjHumanPassTwo & $-$0.027 \\
+CLIP only & \FeatCLIPOnlyMacroF & \FeatCLIPOnlyTIoU & \FeatCLIPOnlyHumanPassTwo & $-$0.181 \\
+Flow only & \FeatFlowOnlyMacroF & \FeatFlowOnlyTIoU & \FeatFlowOnlyHumanPassTwo & $-$0.299 \\
+Face only & \FeatFaceOnlyMacroF & \FeatFaceOnlyTIoU & \FeatFaceOnlyHumanPassTwo & $-$0.366 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \paragraph{Repair component ablation.}
 \begin{table}[t]
@@ -656,37 +709,10 @@ This appendix collects construction details, audit tables, stress analyses, per-
 
 \begin{figure}[t]
 \centering
-\safeincludegraphics[width=\textwidth]{../figures/confusion_matrix.pdf}
-\caption{Per-code confusion matrix on the controlled fixture. Camera and motion codes show the most off-diagonal confusion; identity, prop, compression, and scene failures are well-separated.}
-\label{fig:confusion_matrix}
-\end{figure}
-
-\begin{figure}[t]
-\centering
 \safeincludegraphics[width=\textwidth]{../figures/controlled_vs_real_paired.pdf}
 \caption{Controlled-to-real transfer across four metrics. Solid bars: controlled fixture; hatched bars: real-failure subset. The degradation gap is largest for tIoU@0.5 and smallest for patch usefulness.}
 \label{fig:controlled_vs_real_paired}
 \end{figure}
-
-\begin{table}[t]
-\centering\scriptsize
-\caption{Per-feature ablation of the default diagnosis configuration. Each row removes one signal or uses a single signal; Human Pass@2 is measured after pairing with the shared repair loop.}
-\label{tab:feature_ablation}
-\begin{tabular}{lcccc}
-\toprule
-Configuration & Macro-F1 & tIoU@0.5 & Human Pass@2 & $\Delta$ Pass@2 \\
-\midrule
-Full (all signals) & \FeatFullMacroF & \FeatFullTIoU & \FeatFullHumanPassTwo & -- \\
-$-$ CLIP embedding & \FeatNoCLIPMacroF & \FeatNoCLIPTIoU & \FeatNoCLIPHumanPassTwo & $-$0.060 \\
-$-$ Optical flow & \FeatNoFlowMacroF & \FeatNoFlowTIoU & \FeatNoFlowHumanPassTwo & $-$0.092 \\
-$-$ Face embedding & \FeatNoFaceMacroF & \FeatNoFaceTIoU & \FeatNoFaceHumanPassTwo & $-$0.046 \\
-$-$ Object detection & \FeatNoObjMacroF & \FeatNoObjTIoU & \FeatNoObjHumanPassTwo & $-$0.027 \\
-CLIP only & \FeatCLIPOnlyMacroF & \FeatCLIPOnlyTIoU & \FeatCLIPOnlyHumanPassTwo & $-$0.181 \\
-Flow only & \FeatFlowOnlyMacroF & \FeatFlowOnlyTIoU & \FeatFlowOnlyHumanPassTwo & $-$0.299 \\
-Face only & \FeatFaceOnlyMacroF & \FeatFaceOnlyTIoU & \FeatFaceOnlyHumanPassTwo & $-$0.366 \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 \begin{figure}[t]
 \centering
@@ -1007,32 +1033,6 @@ Score+LLM-to-patch & scalar evaluator + LLM & 0 & -- & score-to-patch JSON & N/A
 \begin{minipage}{0.98\linewidth}
 \footnotesize\emph{Note.} Most direct VLM baselines share the same hosted GPT-4V endpoint~\cite{gpt4v2023} to isolate prompt- and schema-level effects rather than backbone changes; Rule+Open-VLM provides an open-model reference. Hosted endpoint calls are logged with raw responses for auditability. `N/A' denotes a scalar-evaluator-dominated pipeline whose cost is not directly comparable to frame-based VLM calls.
 \end{minipage}
-\end{table}
-
-\begin{table}[t]
-\centering\scriptsize
-\caption{Per-code reliability of the default VideoGenDoctor diagnosis configuration on the controlled fixture.}
-\label{tab:per_code_controlled}
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Observed code} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{tIoU@0.5} \\
-\midrule
-\tblcode{ID\_FACE\_DRIFT} & 0.938 & 0.914 & 0.926 & 0.748 \\
-\tblcode{ID\_BODY\_DRIFT} & 0.922 & 0.897 & 0.909 & 0.725 \\
-\tblcode{CA\_MOVE\_WRONG} & 0.932 & 0.916 & 0.924 & 0.734 \\
-\tblcode{CA\_SHOT\_TYPE\_WRONG} & 0.913 & 0.889 & 0.901 & 0.705 \\
-\tblcode{CA\_SHAKE} & 0.901 & 0.878 & 0.889 & 0.692 \\
-\tblcode{MO\_JITTER} & 0.890 & 0.865 & 0.877 & 0.676 \\
-\tblcode{MO\_FROZEN\_FRAME} & 0.963 & 0.950 & 0.956 & 0.794 \\
-\tblcode{MO\_SEGMENT\_BREAK} & 0.906 & 0.883 & 0.894 & 0.704 \\
-\tblcode{MO\_EVENT\_MISSING} & 0.875 & 0.848 & 0.861 & 0.662 \\
-\tblcode{AL\_PROP\_MISSING} & 0.951 & 0.930 & 0.940 & 0.760 \\
-\tblcode{ST\_COMPRESSION\_ARTIFACT} & 0.950 & 0.966 & 0.958 & 0.779 \\
-\tblcode{SC\_BG\_INCONSISTENCY} & 0.910 & 0.885 & 0.897 & 0.686 \\
-\bottomrule
-\end{tabular}
-\end{adjustbox}
 \end{table}
 
 \begin{table}[t]
