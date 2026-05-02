@@ -250,7 +250,7 @@ Program repair localizes defects, classifies them, and generates patches. VideoG
 \label{fig:system_overview}
 \end{figure}
 
-The pipeline has four stages. (1) The video is partitioned into fixed-stride segments; each segment is sampled into keyframes and four lightweight signals are extracted. (2) Thresholded rules map feature patterns to failure-code candidates with segment-level confidence scores. (3) An optional VLM judge answers structured yes/no questions on top-ranked candidates and produces calibrated confidence scores. (4) A patch compiler maps retained diagnosis records to repair actions: reference-frame injection, prop injection, camera override, segment regeneration, or style correction. A repair plan is \emph{valid} when it names a supported action, target, and evidence span; it is \emph{executable} only when the downstream generator or editor exposes the required control interface.
+Figure~\ref{fig:system_overview} illustrates the pipeline. It has four stages. (1) The video is partitioned into fixed-stride segments; each segment is sampled into keyframes and four lightweight signals are extracted. (2) Thresholded rules map feature patterns to failure-code candidates with segment-level confidence scores. (3) An optional VLM judge answers structured yes/no questions on top-ranked candidates and produces calibrated confidence scores. (4) A patch compiler maps retained diagnosis records to repair actions: reference-frame injection, prop injection, camera override, segment regeneration, or style correction. A repair plan is \emph{valid} when it names a supported action, target, and evidence span; it is \emph{executable} only when the downstream generator or editor exposes the required control interface.
 
 \subsection{Failure records and patch templates}
 The taxonomy groups \TaxonomyTotalCodes{} failure codes into six categories: Identity, Camera, Motion, Alignment, Style, and Scene. The controlled fixture evaluates \TaxonomyNumCodes{} observed codes; the real-generator subset covers additional naturally occurring codes. The remaining codes define an extensible namespace and are definitional rather than empirically validated (Appendices~\ref{app:moved_main_details} and~\ref{app:taxonomy}). Table~\ref{tab:code_patch_mapping} in Appendix~\ref{app:moved_main_details} lists representative failure-to-signal-to-patch mappings.
@@ -321,7 +321,7 @@ Human annotator (adjudicated) & \HumanDiagMacroF & \HumanDiagMicroF & [0.942, 0.
 \end{adjustbox}
 \end{table}
 
-VideoGenDoctor-diagnosis outperforms both free-form and structured direct VLM reporting on macro-F1; Rule+GPT-4V sets the upper reference. The human adjudicated row demonstrates that even expert annotators do not reach perfect F1 on the controlled fixture. The localization results below show a corresponding improvement in temporal grounding over VLM baselines.
+Table~\ref{tab:code_detection} reports failure-code detection results. VideoGenDoctor-diagnosis outperforms both free-form and structured direct VLM reporting on macro-F1; Rule+GPT-4V sets the upper reference. The human adjudicated row demonstrates that even expert annotators do not reach perfect F1 on the controlled fixture. Table~\ref{tab:evidence_localization} reports evidence localization results, showing a corresponding improvement in temporal grounding over VLM baselines.
 
 \subsection{Per-Code Reliability and Evidence Localization}
 \label{sec:per_code}
@@ -354,7 +354,7 @@ Human annotator (adjudicated) & 0.882 & \HumanLocTIoUfive & 0.531 & \HumanLocTop
 
 \subsection{Closed-Loop Repair and Human Validation}
 \label{sec:repair_results}
-Closed-loop repair is evaluated on the controlled fixture. Automatic Pass@1/2 is computed on all 324 videos using the system verifier, while blind human Pass@1/2 is computed on a stratified 144-video subset. Human raters see the specification and output video but not method names or diagnosis records, so the human metric is the primary check against verifier-coupled gains.
+Table~\ref{tab:closed_loop_repair} reports closed-loop repair results on the controlled fixture. Automatic Pass@1/2 is computed on all 324 videos using the system verifier, while blind human Pass@1/2 is computed on a stratified 144-video subset. Human raters see the specification and output video but not method names or diagnosis records, so the human metric is the primary check against verifier-coupled gains.
 
 \begin{table}[t]
 \centering\scriptsize
@@ -381,7 +381,7 @@ Random-patch and re-render-all baselines demonstrate that undirected repair is s
 
 \subsection{Controlled Fixture versus Real Generator Failures}
 \label{sec:real_failures}
-Figure~\ref{fig:repair_curve} in Appendix~\ref{app:moved_main_details} visualizes closed-loop repair; Figure~\ref{fig:controlled_vs_real_paired} in Appendix~\ref{app:additional_experiment_tables} shows the controlled-to-real transfer in a paired bar-chart format.
+Table~\ref{tab:controlled_vs_real} compares performance on the controlled and real-failure subsets. Figure~\ref{fig:repair_curve} in Appendix~\ref{app:moved_main_details} visualizes closed-loop repair; Figure~\ref{fig:controlled_vs_real_paired} in Appendix~\ref{app:additional_experiment_tables} shows the transfer in a paired bar-chart format.
 \begin{table}[t]
 \centering\small
 \caption{Controlled-to-real transfer. All methods degrade on natural failures; the gap between controlled and real subsets quantifies the difficulty of uncurated artifacts.}
@@ -431,7 +431,7 @@ VideoGenDoctor-full & \cmark & \cmark & \cmark & \cmark & \cmark & \textbf{0.763
 \end{adjustbox}
 \end{table}
 
-Each record component adds measurable repair value beyond code prediction alone. The jump from code-only (Pass@2 0.458) to code+span (0.625) and code+span+evidence (0.688) shows that temporal evidence is the largest single contributor after the code itself. Full visualizations are in Appendix~\ref{app:additional_experiment_tables} (Figure~\ref{fig:repair_ablation_bars}).
+Table~\ref{tab:repair_ablation} isolates the contribution of each diagnosis component to downstream repair. Each record component adds measurable repair value beyond code prediction alone. The jump from code-only (Pass@2 0.458) to code+span (0.625) and code+span+evidence (0.688) shows that temporal evidence is the largest single contributor after the code itself. Full visualizations are in Appendix~\ref{app:additional_experiment_tables} (Figure~\ref{fig:repair_ablation_bars}).
 
 We further examine sensitivity to three hyperparameters. First, sweeping the diagnosis retention threshold over $\tau \in \{0.30,\dots,0.70\}$ shows that macro-F1 and tIoU@0.5 peak at $\tau=0.50$; lower thresholds over-trigger repairs, while higher thresholds suppress useful diagnoses (Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:threshold_sensitivity}, Figure~\ref{fig:threshold_sensitivity}). Second, the Stage-2 judge weight $\alpha=0.6$ and candidate budget $K=3$ jointly give the best operating point. Removing Stage-2 ($\alpha=0$) reduces both diagnosis and repair metrics, while $\alpha=0.9$ introduces instability from VLM over-correction (Appendix~\ref{app:additional_experiment_tables}, Figure~\ref{fig:alpha_topk_sensitivity}). Third, paired bootstrap comparisons confirm that verification adds a reliable gain (+0.111 in Human Pass@2), while the full-loop wrapper contributes a small, non-decisive increment (+0.021) (Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:paired_repair_test}).
 
