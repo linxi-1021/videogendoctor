@@ -43,37 +43,31 @@ def apply_style():
         "svg.fonttype": "none",
         "pdf.fonttype": 42,
         "ps.fonttype": 42,
-        "font.size": 12,
-        "axes.labelsize": 13,
-        "axes.titlesize": 13,
-        "xtick.labelsize": 11,
-        "ytick.labelsize": 11,
-        "legend.fontsize": 10,
+        "font.size": 14,
+        "axes.labelsize": 15,
+        "axes.titlesize": 15,
+        "xtick.labelsize": 12,
+        "ytick.labelsize": 12,
+        "legend.fontsize": 11,
         "legend.frameon": False,
         "axes.spines.top": False,
         "axes.spines.right": False,
-        "axes.linewidth": 2.0,
-        "axes.edgecolor": PAL["neutral_mid"],
+        "axes.linewidth": 2.5,
+        "axes.edgecolor": PAL["neutral_dark"],
         "axes.facecolor": "white",
         "figure.facecolor": "white",
         "figure.dpi": 300,
         "savefig.dpi": 300,
         "savefig.bbox": "tight",
-        "axes.axisbelow": True,
-        "grid.color": "#E8ECF3",
-        "grid.linewidth": 0.8,
-        "grid.alpha": 0.95,
-        "lines.linewidth": 2.0,
-        "lines.markersize": 6.0,
+        "lines.linewidth": 2.5,
+        "lines.markersize": 7.0,
     })
 
 
 def soften(ax):
-    ax.spines["left"].set_color(PAL["neutral_mid"])
-    ax.spines["bottom"].set_color(PAL["neutral_mid"])
+    ax.spines["left"].set_color(PAL["neutral_dark"])
+    ax.spines["bottom"].set_color(PAL["neutral_dark"])
     ax.tick_params(colors=PAL["neutral_dark"])
-    ax.yaxis.grid(True, color="#E8ECF3", linewidth=0.8)
-    ax.set_axisbelow(True)
 
 
 def savefig(name):
@@ -115,7 +109,7 @@ def confusion_matrix():
             c = "white" if v > 0.55 else PAL["neutral_dark"]
             ax.text(j, i, f"{v:.2f}", ha="center", va="center", fontsize=7.5, color=c)
     cbar = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.02)
-    cbar.outline.set_color(PAL["neutral_mid"])
+    cbar.outline.set_color(PAL["neutral_dark"])
     ax.set_title("Per-code confusion matrix (controlled fixture)", pad=14)
     fig.tight_layout()
     savefig("confusion_matrix")
@@ -157,7 +151,7 @@ def repair_ablation_bars():
     for i, bar in enumerate(b2):
         h = bar.get_height()
         ax.text(bar.get_x() + bar.get_width() / 2, h + 0.012,
-                f"{patch_u[i]:.1f}", ha="center", va="bottom", fontsize=7.0, color=PAL["neutral_mid"])
+                f"{patch_u[i]:.1f}", ha="center", va="bottom", fontsize=7.0, color=PAL["neutral_dark"])
     for i, na in enumerate(new_art):
         ax.text(i, -0.055, f"Art:{na:.3f}", ha="center", va="top",
                 fontsize=6.5, color=PAL["delta_down"], style="italic")
@@ -244,7 +238,7 @@ def threshold_sensitivity():
     ax2.plot(tau, fpr, "D-.", color=PAL["delta_down"], linewidth=2.0, markersize=7, label="Real-normal FPR")
     ax2.plot(tau, patch_rate, "x:", color=PAL["violet"], linewidth=2.0, markersize=7, label="Unnecessary patch")
 
-    ax1.axvline(x=0.50, color=PAL["neutral_mid"], linestyle="--", linewidth=1.5, alpha=0.7)
+    ax1.axvline(x=0.50, color=PAL["neutral_dark"], linestyle="--", linewidth=1.5, alpha=0.7)
     ax1.set_xlabel("Threshold $\\tau$")
     ax1.set_ylabel("Diagnosis quality"); ax2.set_ylabel("Risk metric")
 
@@ -284,7 +278,7 @@ def alpha_topk_sensitivity():
 
     cbar = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.02)
     cbar.set_label("Human Pass@2")
-    cbar.outline.set_color(PAL["neutral_mid"])
+    cbar.outline.set_color(PAL["neutral_dark"])
     ax.set_title("Sensitivity to judge weight $\\alpha$ and candidate budget $K$", pad=14)
     fig.tight_layout()
     savefig("alpha_topk_sensitivity")
@@ -299,7 +293,7 @@ def cost_performance_pareto():
     sizes = [80, 100, 140, 110, 90]
 
     fig, ax = plt.subplots(figsize=(7.5, 5.0))
-    colors = [PAL["baseline_mid"], PAL["baseline_mid"], PAL["blue_main"], PAL["delta_down"], PAL["neutral_mid"]]
+    colors = [PAL["baseline_mid"], PAL["baseline_mid"], PAL["blue_main"], PAL["delta_down"], PAL["neutral_dark"]]
     ax.scatter(cost, perf, s=sizes, c=colors, edgecolors="white", linewidth=1.5, zorder=5)
     for i, m in enumerate(methods):
         ax.annotate(m, (cost[i], perf[i]), textcoords="offset points", xytext=(8, 6), fontsize=9, color=PAL["neutral_dark"])

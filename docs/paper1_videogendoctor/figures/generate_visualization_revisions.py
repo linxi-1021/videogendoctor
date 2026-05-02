@@ -12,45 +12,51 @@ DATA_DIR = OUT_DIR.parent / "draft_results"
 DATA_DIR.mkdir(exist_ok=True)
 
 PALETTE = {
-    "ours": "#8FB6D9",
-    "ours_dark": "#4F7FAE",
-    "green": "#B9D8BE",
-    "green_dark": "#6FA675",
-    "coral": "#E7B3A6",
-    "coral_dark": "#C57E6E",
-    "lavender": "#CEC4E6",
-    "lavender_dark": "#9887C0",
-    "sand": "#EBDAB8",
-    "sand_dark": "#C8A769",
-    "gray": "#D7DEE7",
-    "gray_dark": "#7F8B97",
+    "ours": "#0F4D92",
+    "ours_dark": "#0F4D92",
+    "green": "#2E9E44",
+    "green_dark": "#2E9E44",
+    "coral": "#E53935",
+    "coral_dark": "#E53935",
+    "lavender": "#9A4D8E",
+    "lavender_dark": "#9A4D8E",
+    "sand": "#D8D8D8",
+    "sand_dark": "#606060",
+    "gray": "#D8D8D8",
+    "gray_dark": "#606060",
     "panel": "#FBFCFE",
-    "grid": "#E6ECF3",
-    "axis": "#7A8794",
-    "text": "#28333D",
-    "muted": "#677380",
+    "axis": "#606060",
+    "text": "#272727",
+    "muted": "#606060",
     "highlight": "#EDF4FB",
+    # NMI pastel additions
+    "baseline_dark": "#484878",
+    "baseline_mid": "#7884B4",
+    "baseline_soft": "#B4C0E4",
+    "blue_main": "#0F4D92",
+    "teal": "#42949E",
+    "violet": "#9A4D8E",
 }
 
 HEATMAP_CMAP = LinearSegmentedColormap.from_list(
-    "soft_blues",
-    ["#F8FBFE", "#DFECF7", "#BED6EC", "#8FB6D9", "#4F7FAE"],
+    "nmi_blues",
+    ["#F5F7FC", "#D6E0F5", "#A8C0E8", "#6A90D4", "#0F4D92"],
 )
 
 
 def apply_style():
     plt.rcParams.update(
         {
-            "font.family": "serif",
-            "font.serif": ["Times New Roman", "DejaVu Serif"],
+            "font.family": "sans-serif",
+            "font.sans-serif": ["Arial"],
             "mathtext.fontset": "stix",
-            "font.size": 10.8,
-            "axes.labelsize": 11.3,
-            "axes.titlesize": 11.3,
-            "axes.titleweight": "semibold",
-            "xtick.labelsize": 10.0,
-            "ytick.labelsize": 10.0,
-            "legend.fontsize": 9.0,
+            "svg.fonttype": "none",
+            "font.size": 14,
+            "axes.labelsize": 15,
+            "axes.titlesize": 15,
+            "xtick.labelsize": 12,
+            "ytick.labelsize": 12,
+            "legend.fontsize": 11,
             "legend.frameon": False,
             "figure.dpi": 300,
             "savefig.dpi": 300,
@@ -60,15 +66,11 @@ def apply_style():
             "axes.spines.top": False,
             "axes.spines.right": False,
             "axes.edgecolor": PALETTE["axis"],
-            "axes.linewidth": 0.85,
+            "axes.linewidth": 2.5,
             "axes.facecolor": "white",
             "figure.facecolor": "white",
-            "axes.axisbelow": True,
-            "grid.color": PALETTE["grid"],
-            "grid.linewidth": 0.8,
-            "grid.alpha": 0.95,
-            "lines.linewidth": 2.0,
-            "lines.markersize": 5.5,
+            "lines.linewidth": 2.5,
+            "lines.markersize": 7.0,
         }
     )
 
@@ -80,15 +82,11 @@ def savefig(name):
         print(path)
 
 
-def soften_axes(ax, y_grid=True, x_grid=False):
+def soften_axes(ax, y_grid=False, x_grid=False):
     ax.spines["left"].set_color(PALETTE["axis"])
     ax.spines["bottom"].set_color(PALETTE["axis"])
     ax.tick_params(colors=PALETTE["text"])
     ax.grid(False)
-    if y_grid:
-        ax.yaxis.grid(True, color=PALETTE["grid"], linewidth=0.8)
-    if x_grid:
-        ax.xaxis.grid(True, color=PALETTE["grid"], linewidth=0.8)
 
 
 def annotate_bars(ax, bars, fmt="{:.2f}", padding=0.012, fontsize=8.3):
