@@ -74,7 +74,7 @@ IMPORTANT, please:
     \item {\bf Experimental result reproducibility}
     \item[] Question: Does the paper fully disclose all the information needed to reproduce the main experimental results of the paper to the extent that it affects the main claims and/or conclusions of the paper (regardless of whether the code and data are provided or not)?
     \item[] Answer: \answerYes{}
-    \item[] Justification: Section~\ref{sec:repro} and the ``Data Availability'' portion of the acknowledgments describe the release package (reference implementation, taxonomy, patch compiler, generation scripts, annotations, evaluation scripts, prompt templates). The main experimental setup is detailed in Section~\ref{sec:dataset} and Appendix~\ref{app:additional_experiment_tables}, including dataset splits, metrics, and evaluation protocols.
+    \item[] Justification: The acknowledgments section describes the release package (reference implementation, taxonomy, patch compiler, generation scripts, annotations, evaluation scripts, prompt templates). The main experimental setup is detailed in Section~\ref{sec:dataset} and Appendix~\ref{app:additional_experiment_tables}, including dataset splits, metrics, and evaluation protocols.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.
@@ -111,7 +111,7 @@ IMPORTANT, please:
 \item {\bf Experimental setting/details}
     \item[] Question: Does the paper specify all the training and test details (e.g., data splits, hyperparameters, how they were chosen, type of optimizer) necessary to understand the results?
     \item[] Answer: \answerYes{}
-    \item[] Justification: Section~\ref{sec:dataset} and Appendix~\ref{app:additional_experiment_tables} specify the controlled-fixture construction (18 clips, 6 domain groups, 9 perturbation operators, 2 seeds), the real-failure sampling protocol (4 generators, 60 failures each, 480 raw $\to$ 240 retained), feature extractors (OpenCLIP ViT-B-32, RAFT/Farneback, InsightFace, YOLOv8), default hyperparameters ($K=3$, $\alpha=0.6$, $\tau=0.5$), and all VLM model versions.
+    \item[] Justification: Section~\ref{sec:dataset} and Appendix~\ref{app:additional_experiment_tables} specify the controlled-fixture construction (18 clips, 6 domain groups, 9 perturbation operators, 2 seeds), the real-failure sampling protocol (4 generators, 60 failures each, 480 raw $\to$ 240 retained), feature extractors (OpenCLIP, RAFT/Farneback, InsightFace, YOLOv8), default hyperparameters ($K=3$, $\alpha=0.6$, $\tau=0.5$), and all VLM model versions.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.
@@ -122,7 +122,7 @@ IMPORTANT, please:
 \item {\bf Experiment statistical significance}
     \item[] Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
     \item[] Answer: \answerYes{}
-    \item[] Justification: All main result tables report video-level bootstrap 95\% confidence intervals. Section~\ref{sec:ablations} reports paired bootstrap comparisons with 95\% CIs for $\Delta$ Human Pass@2, explicitly treating estimates with CIs crossing zero as inconclusive. The bootstrap is computed over videos with 10,000 resamples.
+    \item[] Justification: All main result tables report video-level bootstrap 95\% confidence intervals. Section~\ref{sec:ablations} reports paired bootstrap comparisons with 95\% CIs for $\Delta$ Human Pass@2, explicitly treating estimates with CIs crossing zero as inconclusive. The bootstrap is computed over videos with standard resampling.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.
@@ -139,7 +139,7 @@ IMPORTANT, please:
 \item {\bf Experiments compute resources}
     \item[] Question: For each experiment, does the paper provide sufficient information on the computer resources (type of compute workers, memory, time of execution) needed to reproduce the experiments?
     \item[] Answer: \answerYes{}
-    \item[] Justification: The break-even analysis in Section~\ref{sec:discussion} reports per-video diagnosis cost (\$0.24) and per-video re-rendering cost (\$0.52). Feature extraction uses a single consumer GPU (NVIDIA RTX 3090 or equivalent); CPU-only recomputation from serialized predictions completes in seconds. VLM judging uses hosted GPT-4V endpoints.
+    \item[] Justification: The break-even analysis in Section~\ref{sec:discussion} reports per-video diagnosis cost (\$0.24) and per-video re-rendering cost (\$0.52). Feature extraction uses a single consumer GPU; CPU-only recomputation from serialized predictions completes in seconds. VLM judging uses hosted GPT-4V endpoints.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not include experiments.
@@ -217,7 +217,7 @@ IMPORTANT, please:
 \item {\bf Crowdsourcing and research with human subjects}
     \item[] Question: For crowdsourcing experiments and research with human subjects, does the paper include the full text of instructions given to participants and screenshots, if applicable, as well as details about compensation (if any)?
     \item[] Answer: \answerYes{}
-    \item[] Justification: The annotation protocol involved human annotators from Sichuan Agricultural University. Appendix~\ref{app:annotation} summarizes the annotation guide, and the annotation interface is shown in Figure~\ref{fig:annotation_interface_appendix}. Annotators reviewed perturbed videos with specifications and marked failure codes, evidence spans, and keyframes. A dual-annotated reliability subset (120 videos, 768 spans) is reported. Three-annotator stability analysis is in Appendix~\ref{app:additional_experiment_tables}.
+    \item[] Justification: The annotation protocol involved human annotators from the authors' institution. Appendix~\ref{app:annotation} summarizes the annotation guide, and the annotation interface is shown in Figure~\ref{fig:annotation_interface_appendix}. Annotators reviewed perturbed videos with specifications and marked failure codes, evidence spans, and keyframes. A dual-annotated reliability subset (120 videos, 768 spans) is reported. Three-annotator stability analysis is in Appendix~\ref{app:additional_experiment_tables}.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not involve crowdsourcing nor research with human subjects.
@@ -228,7 +228,7 @@ IMPORTANT, please:
 \item {\bf Institutional review board (IRB) approvals or equivalent for research with human subjects}
     \item[] Question: Does the paper describe potential risks incurred by study participants, whether such risks were disclosed to the subjects, and whether Institutional Review Board (IRB) approvals (or an equivalent approval/review based on the requirements of your country or institution) were obtained?
     \item[] Answer: \answerYes{}
-    \item[] Justification: The annotation protocol was reviewed and approved by the institutional review board of Sichuan Agricultural University, as stated in the data availability section of the acknowledgments. The annotation task involved reviewing publicly available video clips against textual specifications; participants faced no risks beyond those of ordinary screen-based work.
+    \item[] Justification: The annotation protocol was reviewed and approved by the authors' institutional review board, as stated in the acknowledgments. The annotation task involved reviewing publicly available video clips against textual specifications; participants faced no risks beyond those of ordinary screen-based work.
     \item[] Guidelines:
     \begin{itemize}
         \item The answer \answerNA{} means that the paper does not involve crowdsourcing nor research with human subjects.
