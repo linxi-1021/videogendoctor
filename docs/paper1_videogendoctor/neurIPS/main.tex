@@ -290,7 +290,7 @@ We collect 240 naturally occurring failure videos from CogVideoX, Wan, Stable Vi
 A 120-video reliability subset with 768 candidate evidence spans is dual-annotated before adjudication. Code-level agreement reaches Cohen's $\kappa = \IAAcode$; span-level agreement is lower (tIoU = \IAAspan), reflecting inherent ambiguity in fine-grained temporal boundaries. Dataset statistics and annotation details are in Appendix~\ref{app:additional_experiment_tables} (Tables~\ref{tab:dataset_statistics}--\ref{tab:annotation_reliability}).
 
 \subsection{Compared methods and metrics}
-We compare three groups of methods. \textbf{Diagnosis variants:} Prior-only, Rule-only, Rule+DummyJudge, Rule+Open-VLM, Rule+GPT-4V, and VideoGenDoctor-diagnosis. \textbf{Repair variants:} VideoGenDoctor-patch, Patch+Judge, and VideoGenDoctor-full. \textbf{External VLM baselines:} free-form VLM reporting, structured VLM reporting, self-consistency, temporal proposal + patch, VLM-to-patch, and Score+LLM-to-patch. Direct VLM baselines share the same GPT-4V endpoint as Rule+GPT-4V to isolate prompt structure, output schema, and repair protocol from model backbone; Rule+Open-VLM provides an open-model reference. Diagnosis-only front ends are paired with the same downstream repair loop whenever human repair success is reported. Implementation details are in Appendix~\ref{app:additional_experiment_tables} (Table~\ref{tab:vlm_details}); strengthened VLM-agent baselines are in Appendix~\ref{app:moved_main_details} (Table~\ref{tab:strong_vlm_agent_baselines}).
+We compare three groups of methods. \textbf{Diagnosis variants:} Prior-only (a frequency-based prior that predicts the most common failure codes per perturbation type without inspecting the video), Rule-only, Rule+DummyJudge, Rule+Open-VLM, Rule+GPT-4V, and VideoGenDoctor-diagnosis. \textbf{Repair variants:} VideoGenDoctor-patch (applies template-based patches directly from diagnosis output without verification), Patch+Judge, and VideoGenDoctor-full. \textbf{External VLM baselines:} free-form VLM reporting, structured VLM reporting, self-consistency, temporal proposal + patch, VLM-to-patch, and Score+LLM-to-patch. Direct VLM baselines share the same GPT-4V endpoint as Rule+GPT-4V to isolate prompt structure, output schema, and repair protocol from model backbone; Rule+Open-VLM provides an open-model reference. Diagnosis-only front ends are paired with the same downstream repair loop whenever human repair success is reported. Implementation details are in Appendix~\ref{app:additional_experiment_tables} (Table~\ref{tab:vlm_details}); strengthened VLM-agent baselines are in Appendix~\ref{app:moved_main_details} (Table~\ref{tab:strong_vlm_agent_baselines}).
 
 Metrics include macro-F1 and micro-F1 for failure-code detection; tIoU@0.3/0.5 and Top-$K$ keyframe hit rate for evidence localization; automatic and blind human Pass@1/2 for repair; patch usefulness (5-point Likert); new-artifact rate; and video-level bootstrap 95\% confidence intervals. Span-aware metrics use Hungarian matching~\cite{kuhn1955hungarian} with tIoU as the primary score and confidence as a tie-breaker. Invalid or missing spans receive no localization credit. Paired comparisons report bootstrap differences; small estimates with confidence intervals crossing zero are treated as inconclusive.
 
@@ -409,7 +409,7 @@ VideoGenDoctor-full & \textbf{0.6481} & [0.594, 0.699] & \textbf{0.8364} & [0.79
 \end{adjustbox}
 \end{table}
 
-Random-patch and re-render-all baselines demonstrate that undirected repair is substantially weaker than diagnosis-guided patching: re-render-all achieves Pass@2 of 0.543 (vs.\ 0.764 for VideoGenDoctor-full) at higher regeneration cost. The paired comparison in Section~\ref{sec:ablations} shows a small and non-decisive difference between Patch+Judge and VideoGenDoctor-full.
+Random-patch and re-render-all baselines demonstrate that undirected repair is substantially weaker than diagnosis-guided patching: re-render-all achieves Pass@2 of 0.543 (vs.\ 0.764 for VideoGenDoctor-full) at higher regeneration cost. The paired comparison in Section~\ref{sec:ablations} shows a small and non-decisive difference between Patch+Judge and VideoGenDoctor-full. Because the automatic stopping criterion depends on the system verifier, we measure agreement between the automatic verifier and blind human judgment on the 144-video subset; agreement reaches \VerifierHumanAgreement{} (Cohen's $\kappa = \VerifierHumanKappa$). The primary Pass@K claims are therefore based on blind human judgment, with automatic Pass@K serving as a scalable proxy for ablation sweeps.
 
 \subsection{Controlled fixture versus real generator failures}
 \label{sec:real_failures}
@@ -432,7 +432,7 @@ Real-failure subset & VideoGenDoctor default pipeline & \textbf{0.8264} & \textb
 \end{adjustbox}
 \end{table}
 
-All methods degrade on naturally occurring failures, confirming that the controlled fixture is not a substitute for open-world evaluation. Because this subset is failure-enriched and balanced by construction, these numbers measure transfer under verified failures rather than real-world prevalence. Per-code breakdowns on the real-failure subset, per-generator results, and the paired bar-chart comparison are in Appendix~\ref{app:additional_experiment_tables} (Tables~\ref{tab:real_per_code}--\ref{tab:per_generator_results}, Figure~\ref{fig:controlled_vs_real_paired}).
+All methods degrade on naturally occurring failures. VideoGenDoctor drops from macro-F1 0.911 to 0.826 ($-$9.3\%) and from tIoU@0.5 0.732 to 0.598 ($-$18.3\%), confirming that real artifacts are substantially harder than deterministic perturbations. The larger drop in localization reflects the diffuse, overlapping evidence patterns in uncurated videos. On the 120 real-normal videos, the default pipeline achieves a false-positive rate of 0.100, with unnecessary patch rate of 0.087. Because the real-failure subset is failure-enriched and balanced by construction, these numbers measure transfer under verified failures rather than real-world prevalence. Per-code breakdowns on the real-failure subset, per-generator results, and the paired bar-chart comparison are in Appendix~\ref{app:additional_experiment_tables} (Tables~\ref{tab:real_per_code}--\ref{tab:per_generator_results}, Figure~\ref{fig:controlled_vs_real_paired}).
 
 \subsection{Ablation and generalization checks}
 \label{sec:ablations}
@@ -485,7 +485,42 @@ VideoGenDoctor-full & \cmark & \cmark & \cmark & \cmark & \cmark & \textbf{0.763
 
 Table~\ref{tab:repair_ablation} isolates the contribution of each diagnosis component to downstream repair. Each record component adds measurable repair value beyond code prediction alone. The jump from code-only (Pass@2 0.458) to code+span (0.625) and code+span+evidence (0.688) shows that temporal evidence is the largest single contributor after the code itself. Full visualizations are in Appendix~\ref{app:additional_experiment_tables} (Figure~\ref{fig:repair_ablation_bars}).
 
-We further examine sensitivity to three hyperparameters. First, sweeping the diagnosis retention threshold over $\tau \in \{0.30,\dots,0.70\}$ shows that macro-F1 and tIoU@0.5 peak at $\tau=0.50$; lower thresholds over-trigger repairs, while higher thresholds suppress useful diagnoses (Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:threshold_sensitivity}, Figure~\ref{fig:threshold_sensitivity}). Second, the Stage-2 judge weight $\alpha=0.6$ and candidate budget $K=3$ jointly give the best operating point. Removing Stage-2 ($\alpha=0$) reduces both diagnosis and repair metrics, while $\alpha=0.9$ introduces instability from VLM over-correction (Appendix~\ref{app:additional_experiment_tables}, Figure~\ref{fig:alpha_topk_sensitivity}). Third, paired bootstrap comparisons confirm that verification adds a reliable gain (+0.111 in Human Pass@2), while the full-loop wrapper contributes a small, non-decisive increment (+0.021) (Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:paired_repair_test}).
+We further examine sensitivity to three hyperparameters. First, Table~\ref{tab:threshold_sensitivity} sweeps the diagnosis retention threshold over $\tau \in \{0.30,\dots,0.70\}$. Macro-F1 and tIoU@0.5 peak at $\tau=0.50$; lower thresholds increase real-normal false positives from 0.100 to 0.158, while higher thresholds suppress useful diagnoses (macro-F1 drops to 0.886 at $\tau=0.70$). Figure~\ref{fig:threshold_sensitivity} in Appendix~\ref{app:additional_experiment_tables} visualizes the full sweep curves.
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{Threshold sensitivity for retaining diagnosis records. $\tau=0.50$ balances coverage against false positives.}
+\label{tab:threshold_sensitivity}
+\begin{tabular}{ccccc}
+\toprule
+Threshold $\tau$ & Macro-F1 & tIoU@0.5 & Real-normal FPR & Unnecessary patch rate \\
+\midrule
+0.30 & 0.902 & 0.716 & 0.158 & 0.142 \\
+0.40 & 0.910 & 0.728 & 0.125 & 0.111 \\
+0.50 & \textbf{0.911} & \textbf{0.732} & 0.100 & 0.087 \\
+0.60 & 0.904 & 0.719 & 0.083 & 0.071 \\
+0.70 & 0.886 & 0.694 & \textbf{0.067} & \textbf{0.058} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Second, the Stage-2 judge weight $\alpha=0.6$ and candidate budget $K=3$ jointly give the best operating point. Removing Stage-2 ($\alpha=0$) reduces both diagnosis and repair metrics, while $\alpha=0.9$ introduces instability from VLM over-correction (Appendix~\ref{app:additional_experiment_tables}, Figure~\ref{fig:alpha_topk_sensitivity}). Third, Table~\ref{tab:paired_repair_test} reports paired bootstrap comparisons: verification adds a reliable gain (+0.111 in Human Pass@2, 95\% CI [0.021, 0.215]), while the full-loop wrapper contributes a small, non-decisive increment (+0.021, 95\% CI [$-$0.063, 0.104]).
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{Paired bootstrap differences in blind human Pass@2.}
+\label{tab:paired_repair_test}
+\begin{tabular}{lccc}
+\toprule
+Comparison & $\Delta$ Human Pass@2 & 95\% CI & Interpretation \\
+\midrule
+Patch-only vs Score-only & 0.3541 & [0.250, 0.458] & substantial gain \\
+VLM-to-patch vs Patch-only & 0.0417 & [-0.054, 0.139] & small / not decisive \\
+Patch+Judge vs Patch-only & 0.1112 & [0.021, 0.215] & verification helps \\
+VideoGenDoctor-full vs Patch+Judge & 0.0208 & [-0.063, 0.104] & small / not decisive \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 Finally, leave-one-perturbation-out and leave-one-source-group-out evaluations confirm that performance drops under held-out operators---particularly missing-event, camera-shake, and temporal-discontinuity perturbations---but remains above prior-only and score-only baselines (Appendix~\ref{app:additional_experiment_tables}, Tables~\ref{tab:leave_one_perturbation}--\ref{tab:leave_one_source_group}). The system does not simply memorize perturbation templates, though unseen-operator generalization is weaker than in-distribution evaluation. Additional checks on adapter executability, real-failure stress slices, and multi-annotator stability are in Appendix~\ref{app:additional_experiment_tables} (Tables~\ref{tab:adapter_executability}--\ref{tab:multi_annotator_stability}).
 
@@ -726,23 +761,6 @@ This appendix collects construction details, audit tables, stress analyses, per-
 \label{fig:repair_ablation_bars}
 \end{figure}
 
-\begin{table}[t]
-\centering\scriptsize
-\caption{Threshold sensitivity. $\tau=0.50$ balances diagnosis coverage against false positives and unnecessary patching.}
-\label{tab:threshold_sensitivity}
-\begin{tabular}{ccccc}
-\toprule
-Threshold $\tau$ & Macro-F1 & tIoU@0.5 & Real-normal FPR & Unnecessary patch rate \\
-\midrule
-0.30 & 0.902 & 0.716 & 0.158 & 0.142 \\
-0.40 & 0.910 & 0.728 & 0.125 & 0.111 \\
-0.50 & \textbf{0.911} & \textbf{0.732} & 0.100 & 0.087 \\
-0.60 & 0.904 & 0.719 & 0.083 & 0.071 \\
-0.70 & 0.886 & 0.694 & \textbf{0.067} & \textbf{0.058} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
 \begin{figure}[t]
 \centering
 \safeincludegraphics[width=\textwidth]{../figures/threshold_sensitivity.pdf}
@@ -756,22 +774,6 @@ Threshold $\tau$ & Macro-F1 & tIoU@0.5 & Real-normal FPR & Unnecessary patch rat
 \caption{Sensitivity to judge weight $\alpha$ and candidate budget $K$. $\alpha=0.6$, $K=3$ balances diagnosis accuracy and repair success.}
 \label{fig:alpha_topk_sensitivity}
 \end{figure}
-
-\begin{table}[t]
-\centering\scriptsize
-\caption{Paired bootstrap differences in blind human Pass@2. Verification adds a reliable gain; the full-loop wrapper adds a small, non-decisive increment.}
-\label{tab:paired_repair_test}
-\begin{tabular}{lccc}
-\toprule
-Comparison & $\Delta$ Human Pass@2 & 95\% CI & Interpretation \\
-\midrule
-Patch-only vs Score-only & 0.3541 & [0.250, 0.458] & substantial gain \\
-VLM-to-patch vs Patch-only & 0.0417 & [-0.054, 0.139] & small / not decisive \\
-Patch+Judge vs Patch-only & 0.1112 & [0.021, 0.215] & verification helps \\
-VideoGenDoctor-full vs Patch+Judge & 0.0208 & [-0.063, 0.104] & small / not decisive \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 \subsection{Extended experiment analyses}
 \label{app:experiment_extensions}

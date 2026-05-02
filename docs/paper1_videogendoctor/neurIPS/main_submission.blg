@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main_submission.aux
+Reallocating 'name_of_file' (item size: 1) to 9 items.
+The style file: plainnat.bst
+Reallocating 'name_of_file' (item size: 1) to 11 items.
+Database file #1: references.bib
+You've used 21 entries,
+            2773 wiz_defined-function locations,
+            686 strings with 9087 characters,
+and the built_in function-call counts, 12232 in all, are:
+= -- 926
+> -- 1177
+< -- 9
++ -- 399
+- -- 378
+* -- 1053
+:= -- 1986
+add.period$ -- 66
+call.type$ -- 21
+change.case$ -- 184
+chr.to.int$ -- 21
+cite$ -- 42
+duplicate$ -- 430
+empty$ -- 772
+format.name$ -- 401
+if$ -- 2470
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 13
+newline$ -- 115
+num.names$ -- 84
+pop$ -- 430
+preamble$ -- 1
+purify$ -- 162
+quote$ -- 0
+skip$ -- 391
+stack$ -- 0
+substring$ -- 93
+swap$ -- 39
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 231
+warning$ -- 0
+while$ -- 68
+width$ -- 0
+write$ -- 267
