@@ -269,14 +269,14 @@ The optional Stage-2 judge receives the top-$K$ candidates ($K=3$), their keyfra
 \]
 with $\alpha=0.6$. All judge calls log the model, prompt, raw response, latency, and output path.
 
-\subsection{Evidence Localization and Repair Planning}
+\subsection{Evidence localization and repair planning}
 Each retained record packs an evidence object $E=(t_0,t_1,K,T)$ for auditability. The patch compiler emits either ShotIR field-level diffs (when a structured specification is available) or generator-agnostic repair plans, preserving the triggering code, evidence span, target, and rationale. In closed-loop mode, a video is considered fixed when all failure confidences drop below $\tau=0.5$, or after $K_{\max}=3$ iterations. Because this stopping criterion depends on the system verifier, Section~\ref{sec:repair_results} reports independent blind human validation as the primary metric.
 
 \section{Experiments}
 \label{sec:setup}
 \label{sec:experiments}
 
-\subsection{Benchmark and Evaluation Protocol}
+\subsection{Benchmark and evaluation protocol}
 \label{sec:dataset}
 VideoGenDoctor is evaluated as a diagnosis-and-repair system, not a video generator. The experiments target the three questions from the introduction: failure-code correctness, evidence localization, and repair usefulness under blind human judgment.
 
@@ -289,12 +289,12 @@ We collect 240 naturally occurring failure videos from CogVideoX, Wan, Stable Vi
 \paragraph{Annotation.}
 A 120-video reliability subset with 768 candidate evidence spans is dual-annotated before adjudication. Code-level agreement reaches Cohen's $\kappa = \IAAcode$; span-level agreement is lower (tIoU = \IAAspan), reflecting inherent ambiguity in fine-grained temporal boundaries. Dataset statistics and annotation details are in Appendix~\ref{app:additional_experiment_tables} (Tables~\ref{tab:dataset_statistics}--\ref{tab:annotation_reliability}).
 
-\subsection{Compared Methods and Metrics}
+\subsection{Compared methods and metrics}
 We compare three groups of methods. \textbf{Diagnosis variants:} Prior-only, Rule-only, Rule+DummyJudge, Rule+Open-VLM, Rule+GPT-4V, and VideoGenDoctor-diagnosis. \textbf{Repair variants:} VideoGenDoctor-patch, Patch+Judge, and VideoGenDoctor-full. \textbf{External VLM baselines:} free-form VLM reporting, structured VLM reporting, self-consistency, temporal proposal + patch, VLM-to-patch, and Score+LLM-to-patch. Direct VLM baselines share the same GPT-4V endpoint as Rule+GPT-4V to isolate prompt structure, output schema, and repair protocol from model backbone; Rule+Open-VLM provides an open-model reference. Diagnosis-only front ends are paired with the same downstream repair loop whenever human repair success is reported. Implementation details are in Appendix~\ref{app:additional_experiment_tables} (Table~\ref{tab:vlm_details}); strengthened VLM-agent baselines are in Appendix~\ref{app:moved_main_details} (Table~\ref{tab:strong_vlm_agent_baselines}).
 
 Metrics include macro-F1 and micro-F1 for failure-code detection; tIoU@0.3/0.5 and Top-$K$ keyframe hit rate for evidence localization; automatic and blind human Pass@1/2 for repair; patch usefulness (5-point Likert); new-artifact rate; and video-level bootstrap 95\% confidence intervals. Span-aware metrics use Hungarian matching~\cite{kuhn1955hungarian} with tIoU as the primary score and confidence as a tie-breaker. Invalid or missing spans receive no localization credit. Paired comparisons report bootstrap differences; small estimates with confidence intervals crossing zero are treated as inconclusive.
 
-\subsection{Failure-Code Detection}
+\subsection{Failure-code detection}
 \label{sec:f1_results}
 \begin{table}[t]
 \centering\small
@@ -322,7 +322,7 @@ Human annotator (adjudicated) & \HumanDiagMacroF & \HumanDiagMicroF & [0.942, 0.
 
 Table~\ref{tab:code_detection} reports failure-code detection results. VideoGenDoctor-diagnosis outperforms both free-form and structured direct VLM reporting on macro-F1; Rule+GPT-4V sets the upper reference. The human adjudicated row demonstrates that even expert annotators do not reach perfect F1 on the controlled fixture. Table~\ref{tab:evidence_localization} reports evidence localization results, showing a corresponding improvement in temporal grounding over VLM baselines.
 
-\subsection{Per-Code Reliability and Evidence Localization}
+\subsection{Per-code reliability and evidence localization}
 \label{sec:per_code}
 \label{sec:evidence_results}
 The controlled fixture covers twelve observed codes, with per-code F1 spanning from 0.861 (event-missing) to 0.958 (compression-artifact). Frozen-frame detection reaches the highest F1 (0.956) and tIoU@0.5 (0.794), benefiting from an unambiguous near-zero-flow signal. Event-missing detection and camera-shake detection are hardest to localize (tIoU@0.5 of 0.662 and 0.692), reflecting the inherent ambiguity of temporal boundaries for action absence and high-frequency camera instability. Identity and alignment codes consistently exceed F1 0.90 and tIoU@0.5 of 0.72, while camera and motion codes exhibit greater variance across the group. Table~\ref{tab:per_code_controlled} reports full per-code precision, recall, F1, and tIoU. The confusion matrix in Figure~\ref{fig:confusion_matrix} confirms that off-diagonal errors are concentrated among camera and motion codes, where overlapping visual artifacts make fine-grained discrimination difficult. Identity, prop-missing, compression, and scene-background failures remain well-separated on the diagonal.
@@ -384,7 +384,7 @@ Human annotator (adjudicated) & 0.882 & \HumanLocTIoUfive & 0.531 & \HumanLocTop
 \end{adjustbox}
 \end{table}
 
-\subsection{Closed-Loop Repair and Human Validation}
+\subsection{Closed-loop repair and human validation}
 \label{sec:repair_results}
 Table~\ref{tab:closed_loop_repair} reports closed-loop repair results on the controlled fixture. Automatic Pass@1/2 is computed on all 324 videos using the system verifier, while blind human Pass@1/2 is computed on a stratified 144-video subset. Human raters see the specification and output video but not method names or diagnosis records, so the human metric is the primary check against verifier-coupled gains.
 
@@ -411,7 +411,7 @@ VideoGenDoctor-full & \textbf{0.6481} & [0.594, 0.699] & \textbf{0.8364} & [0.79
 
 Random-patch and re-render-all baselines demonstrate that undirected repair is substantially weaker than diagnosis-guided patching: re-render-all achieves Pass@2 of 0.543 (vs.\ 0.764 for VideoGenDoctor-full) at higher regeneration cost. The paired comparison in Section~\ref{sec:ablations} shows a small and non-decisive difference between Patch+Judge and VideoGenDoctor-full.
 
-\subsection{Controlled Fixture versus Real Generator Failures}
+\subsection{Controlled fixture versus real generator failures}
 \label{sec:real_failures}
 Table~\ref{tab:controlled_vs_real} compares performance on the controlled and real-failure subsets. Figure~\ref{fig:repair_curve} in Appendix~\ref{app:moved_main_details} visualizes closed-loop repair; Figure~\ref{fig:controlled_vs_real_paired} in Appendix~\ref{app:additional_experiment_tables} shows the transfer in a paired bar-chart format.
 \begin{table}[t]
@@ -434,7 +434,7 @@ Real-failure subset & VideoGenDoctor default pipeline & \textbf{0.8264} & \textb
 
 All methods degrade on naturally occurring failures, confirming that the controlled fixture is not a substitute for open-world evaluation. Because this subset is failure-enriched and balanced by construction, these numbers measure transfer under verified failures rather than real-world prevalence. Per-code breakdowns on the real-failure subset, per-generator results, and the paired bar-chart comparison are in Appendix~\ref{app:additional_experiment_tables} (Tables~\ref{tab:real_per_code}--\ref{tab:per_generator_results}, Figure~\ref{fig:controlled_vs_real_paired}).
 
-\subsection{Ablation and Generalization Checks}
+\subsection{Ablation and generalization checks}
 \label{sec:ablations}
 
 \paragraph{Feature signal contribution.}
@@ -533,7 +533,7 @@ All newly generated data supporting the findings of this study---including Video
 \appendix
 
 
-\section{Supplementary Main-Text Results}
+\section{Supplementary main-text results}
 \label{app:moved_main_details}
 This appendix stores tables and figures moved out of the main text to keep the core narrative compact while preserving the audit trail for comparisons, taxonomy scope, fixture construction, temporal evidence profiles, strengthened VLM baselines, repair visualization, and cost-performance trade-offs.
 
@@ -698,11 +698,11 @@ VLM structured report & 0.8869 & 0.6639 & 0.6810 & 1.16$\times$ & 1.20$\times$ \
 
 
 % Begin inlined from appendix.tex
-\section{Additional Experimental Tables}
+\section{Additional experimental tables}
 \label{app:additional_experiment_tables}
 This appendix collects construction details, audit tables, stress analyses, per-slice results, and visualizations that support the main experimental claims without interrupting the main narrative.
 
-\subsection{Diagnosis and Repair Visualizations}
+\subsection{Diagnosis and repair visualizations}
 \label{app:diagnosis_repair_viz}
 
 \begin{figure}[t]
@@ -773,7 +773,7 @@ VideoGenDoctor-full vs Patch+Judge & 0.0208 & [-0.063, 0.104] & small / not deci
 \end{tabular}
 \end{table}
 
-\subsection{Extended Experiment Analyses}
+\subsection{Extended experiment analyses}
 \label{app:experiment_extensions}
 
 \paragraph{Adapter executability.}
@@ -1130,7 +1130,7 @@ Average & 0.891 & 0.704 & 0.654 \\
 \end{tabular}
 \end{table}
 
-\section{Full Failure Taxonomy}
+\section{Full failure taxonomy}
 \label{app:taxonomy}
 Table~\ref{tab:full_taxonomy} reports the machine-readable taxonomy used by
 VideoGenDoctor v0.1. The v0.1 taxonomy contains \TaxonomyTotalCodes{} codes
@@ -1217,7 +1217,7 @@ schema and patch compiler.
 \endgroup
 
 
-\section{Judge Protocol}
+\section{Judge protocol}
 \label{app:judge}
 The Stage-2 judge receives the top-$K$ candidate segments produced by Stage-1. For each
 segment, the input includes the segment identifier, temporal bounds, keyframe paths, candidate
@@ -1247,7 +1247,7 @@ and $\alpha=0.6$ by default. All judge calls record the model name, prompt, raw 
 token count when available, and output path to support reproducibility.
 
 
-\section{Patch Template Examples}
+\section{Patch template examples}
 \label{app:patch}
 VideoGenDoctor compiles each diagnosis record into one or more patch actions. If a ShotIR
 specification is available, the compiler emits field-level diffs. If the generator does not
@@ -1314,7 +1314,7 @@ no\_op\_uncertain & -- & L0 & L0 available & abstain from concrete repair & no a
 
 In the reported Human Pass@K evaluation, the concretely executed actions are the L2/L3 subset exposed by the active backend, primarily reference-frame injection, segment rerendering or temporal smoothing, enhancement or deblocking, and mask- or reference-conditioned prop insertion when supported. L0/L1 rows remain structured repair-plan instructions and are not counted as executable patches.
 
-\section{Annotation Guide Summary}
+\section{Annotation guide summary}
 \label{app:annotation}
 Annotators review each perturbed video together with the original prompt or ShotIR
 specification and the auto-assigned candidate failure codes. For each candidate, annotators
@@ -1341,7 +1341,7 @@ The experiment fixture includes a dual-annotated reliability subset of 120 video
 naturally occurring real-failure samples. Larger multi-annotator validation with more than two
 independent annotators remains future work.
 
-\section{Example Diagnostic Report}
+\section{Example diagnostic report}
 \label{app:diagnostic_report}
 
 \begin{figure}[t]
@@ -1354,7 +1354,7 @@ independent annotators remains future work.
 
 
 
-\section{Direct VLM Baseline Prompt Templates}
+\section{Direct VLM baseline prompt templates}
 \label{app:vlm_baselines}
 
 The four direct VLM/LLM baselines differ only in their allowed information access and output schema. The free-form and structured VLM report baselines receive sampled frames and the specification. The VLM-to-patch baseline also receives sampled frames, the taxonomy names, and the repair-plan vocabulary, but not VideoGenDoctor's rule scores or patch compiler outputs. The Score+LLM-to-patch baseline receives scalar evaluator scores and the specification only; it does not receive sampled frames. These information boundaries are fixed before evaluation and are used for all samples.
@@ -1578,7 +1578,7 @@ Rules:
 \paragraph{F.5 Parsing and invalid-output handling.}
 Invalid JSON outputs are repaired using a deterministic parser when possible. If the output cannot be parsed, the prediction is marked invalid. Failure codes outside the taxonomy are mapped to the nearest taxonomy code only when an exact synonym exists; otherwise they are counted as false positives. Predictions without temporal spans receive no localization credit. Hallucinated failures without visual evidence are counted as false positives. Repair actions outside the supported repair-plan vocabulary are marked invalid for repair-plan scoring and non-adapter-executable for adapter scoring.
 
-\section{Blind Human Repair Evaluation Protocol}
+\section{Blind human repair evaluation protocol}
 \label{app:human_repair}
 Raters are shown the specification and one output video, without method names or diagnosis records. They answer whether the video satisfies the specification overall, whether the target failure is resolved, whether the repair introduces new artifacts, and how useful the patch is on a 1--5 scale. Human Pass@$K$ is the fraction of samples judged successful after at most $K$ repair attempts.
 
@@ -1635,7 +1635,7 @@ Over-repair / wrong-target failure & 24 & 7 & concrete patch targets wrong objec
 \end{tabular}
 \end{table}
 
-\section{Bootstrap Confidence Intervals}
+\section{Bootstrap confidence intervals}
 \label{app:bootstrap}
 We use 10,000 video-level bootstrap resamples and report percentile 95\% confidence intervals. For the controlled fixture, resampling is performed over 324 videos. For the real-failure subset, resampling is performed over 240 videos. For blind human repair evaluation, resampling is performed over the stratified human-rated subset. For paired comparisons, we resample videos with replacement and compute the distribution of metric differences between two methods. Small point-estimate differences are not treated as meaningful unless the paired confidence interval excludes zero.
 
@@ -1663,7 +1663,7 @@ Average & 0.774 & 0.568 & 0.523 & -- \\
 
 The large degradation under leave-one-code-family-out ablation confirms that VideoGenDoctor should not be interpreted as an unconstrained open-ended failure discovery system. The experiment clarifies which portions of the performance depend on family-specific detectors and which portions remain supported by generic evidence signals and VLM verification.
 
-\section{Real-Failure Construction Manifest}
+\section{Real-failure construction manifest}
 \label{app:real_failure_manifest}
 
 \begin{table}[t]
