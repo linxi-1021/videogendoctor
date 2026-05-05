@@ -5,11 +5,14 @@ VideoGenDoctor-Bench-v0. The full benchmark dataset is deposited on Zenodo.
 
 ## Contents
 
-| File | Description |
-|------|-------------|
+| Directory/File | Description |
+|----------------|-------------|
+| `demo/` | Sample predictions, labels, and closed-loop logs for testing evaluation scripts |
 | `source_manifest.jsonl` | Index of source videos and their ShotIR specs |
-| `video{1..6}.mp4` | Clean source clips for demo and testing |
 | `video{1..6}_shotir.json` | ShotIR specifications for each source clip |
+
+`video{1..6}.mp4` files are excluded from the repository (see `.gitignore`).
+The full video dataset is available on Zenodo.
 
 ## Full Benchmark Dataset (Zenodo)
 

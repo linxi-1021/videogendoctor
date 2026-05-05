@@ -1,0 +1,5 @@
+{"id":"demo_001","iteration":0,"passed":false,"duration_s":8.0,"time_s":12.5,"cost_usd":0.004}
+{"id":"demo_001","iteration":1,"passed":true,"duration_s":8.0,"time_s":14.2,"cost_usd":0.005}
+{"id":"demo_002","iteration":0,"passed":false,"duration_s":10.0,"time_s":15.0,"cost_usd":0.005}
+{"id":"demo_002","iteration":1,"passed":true,"duration_s":10.0,"time_s":16.8,"cost_usd":0.006}
+{"id":"demo_003","iteration":0,"passed":true,"duration_s":6.0,"time_s":9.0,"cost_usd":0.003}

@@ -5,6 +5,7 @@
 PYTHON     ?= python
 VIDEO      ?= assets/demo/demo.mp4
 SHOTIR     ?= assets/demo/demo_shotir.json
+DEMO_DATA  ?= data/demo
 OUT        ?= out
 METRICS    ?= $(OUT)/metrics
 LATEX_DIR  ?= docs/paper1_videogendoctor/latex
@@ -64,35 +65,21 @@ dataset_v0:
 	@echo "Dataset: out/dataset_v0/manifest.jsonl"
 
 # ------------------------------------------------------------
-metrics: _ensure_demo_outputs
-	@echo "=== Running metric scripts ==="
+metrics:
+	@echo "=== Running metric scripts on demo data ==="
 	@mkdir -p $(METRICS)
 	$(PYTHON) infra/scripts/eval_failure_codes.py \
-		--pred out/demo_preds.jsonl \
-		--label out/demo_labels.jsonl \
+		--pred $(DEMO_DATA)/demo_preds.jsonl \
+		--label $(DEMO_DATA)/demo_labels.jsonl \
 		--out $(METRICS)
 	$(PYTHON) infra/scripts/eval_evidence_localization.py \
-		--pred out/demo_preds.jsonl \
-		--label out/demo_labels.jsonl \
+		--pred $(DEMO_DATA)/demo_preds.jsonl \
+		--label $(DEMO_DATA)/demo_labels.jsonl \
 		--out $(METRICS)
 	$(PYTHON) infra/scripts/eval_closed_loop.py \
-		--logs out/demo_cl_logs.jsonl \
+		--logs $(DEMO_DATA)/demo_cl_logs.jsonl \
 		--out $(METRICS)
 	@echo "Metrics written to $(METRICS)"
-
-_ensure_demo_outputs:
-	@$(PYTHON) -c "
-import json, pathlib
-for name, content in [
-  ('out/demo_preds.jsonl',  {'id':'demo_001','top_failures':[{'code':'MO_JITTER','confidence':0.75,'evidence':{'t0':0.0,'t1':2.0,'keyframes':[]}}]}),
-  ('out/demo_labels.jsonl', {'id':'demo_001','failure_codes':['MO_JITTER'],'top_failures':[{'code':'MO_JITTER','confidence':1.0,'evidence':{'t0':0.0,'t1':2.0,'keyframes':[]}}]}),
-  ('out/demo_cl_logs.jsonl',{'id':'demo_001','iteration':0,'passed':True,'duration_s':8.0,'time_s':12.5,'cost_usd':0.004}),
-]:
-  p = pathlib.Path(name)
-  p.parent.mkdir(exist_ok=True)
-  if not p.exists():
-    p.write_text(json.dumps(content)+'\n')
-"
 
 # ------------------------------------------------------------
 paper_tables:
