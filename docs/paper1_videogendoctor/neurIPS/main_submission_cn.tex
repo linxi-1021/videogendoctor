@@ -1,4 +1,4 @@
-
+﻿
 % VideoGenDoctor 论文 — NeurIPS 2026 中文翻译版本
 % 翻译自 main_submission.tex，保留所有 LaTeX 结构与引用
 \documentclass{article}
@@ -771,12 +771,18 @@ VLM 结构化报告 & 0.8869 & 0.6639 & 0.6810 & 1.16$\times$ & 1.20$\times$ \\
 \subsection{诊断与修复可视化}
 \label{app:diagnosis_repair_viz}
 
+\paragraph{受控到真实迁移。}
+图~\ref{fig:controlled_vs_real_paired} 在四个核心指标上比较了 VideoGenDoctor 和结构化 VLM 基线在受控测试集（实心柱）与真实故障子集（斜线柱）上的表现。tIoU@0.5 的退化差距最大（--18.3\%），反映了未经策划视频中证据模式的分散和重叠特征；补丁实用性的退化差距最小（--7.1\%），表明修复计划质量的退化比定位精度的退化更温和。
+
 \begin{figure}[t]
 \centering
 \safeincludegraphics[width=\textwidth]{../figures/controlled_vs_real_paired.pdf}
 \caption{跨四个指标的受控到真实迁移。实心柱：受控测试集；斜线柱：真实故障子集。tIoU@0.5 的退化差距最大，补丁实用性的退化差距最小。}
 \label{fig:controlled_vs_real_paired}
 \end{figure}
+
+\paragraph{特征消融。}
+图~\ref{fig:feature_ablation} 将表~\ref{tab:feature_ablation} 中的逐特征消融结果可视化为按贡献排序的水平柱状图。移除光流导致宏 F1 和 tIoU@0.5 的最大降幅，其次是 CLIP 嵌入和人脸嵌入。单独信号配置（仅 CLIP、仅光流、仅人脸）聚集在显著较低的性能水平，确认了这些信号携带互补信息且没有单一信号可以替代完整集合。
 
 \begin{figure}[t]
 \centering
@@ -785,6 +791,9 @@ VLM 结构化报告 & 0.8869 & 0.6639 & 0.6810 & 1.16$\times$ & 1.20$\times$ \\
 \label{fig:feature_ablation}
 \end{figure}
 
+\paragraph{修复消融。}
+图~\ref{fig:repair_ablation_bars} 展示了每个诊断记录组件对下游修复成功的加法式贡献。人工 Pass@2 从 0.278（仅评分）上升到 0.458（仅代码补丁）、0.625（代码+区间）、0.688（代码+区间+证据），最终达到 0.764（VideoGenDoctor-full）。从仅代码补丁到增加时间区间的跃升是单一最大增量，突显了时间定位在故障代码预测之外的额外价值。
+
 \begin{figure}[t]
 \centering
 \safeincludegraphics[width=\textwidth]{../figures/repair_ablation_bars.pdf}
@@ -792,12 +801,18 @@ VLM 结构化报告 & 0.8869 & 0.6639 & 0.6810 & 1.16$\times$ & 1.20$\times$ \\
 \label{fig:repair_ablation_bars}
 \end{figure}
 
+\paragraph{阈值敏感性。}
+图~\ref{fig:threshold_sensitivity} 将宏 F1、tIoU@0.5 和真实正常假阳性率绘制为诊断保留阈值 $\tau$ 的函数。宏 F1 和 tIoU@0.5 在 $\tau=0.50$（虚线）处达到峰值，该点在覆盖率与假阳性之间取得平衡。较低阈值将 FPR 膨胀至 0.158；较高阈值抑制了有用诊断，使宏 F1 降至 0.886。
+
 \begin{figure}[t]
 \centering
 \safeincludegraphics[width=\textwidth]{../figures/threshold_sensitivity.pdf}
 \caption{阈值敏感性曲线。$\tau=0.50$ 处的虚线标记了宏 F1 和 tIoU@0.5 达到峰值的操作点。}
 \label{fig:threshold_sensitivity}
 \end{figure}
+
+\paragraph{Alpha 和 Top-K 敏感性。}
+图~\ref{fig:alpha_topk_sensitivity} 考察了第二阶段法官权重 $\alpha$ 和候选预算 $K$ 的联合敏感性。默认配置 $\alpha=0.6$, $K=3$ 提供了诊断精度与修复成功率之间的最佳平衡。移除第二阶段（$\alpha=0$）同时降低诊断和修复指标，而 $\alpha=0.9$ 则在 VLM 有效视觉范围之外的代码上引入了过度校正的不稳定性。
 
 \begin{figure}[t]
 \centering
@@ -887,6 +902,9 @@ L3 原生 & 0.170 & 0.960 & 0.810 & 0.160 \\
 \label{fig:multi_annotator_stability}
 \end{figure}
 
+\paragraph{算子-模板对齐。}
+表~\ref{tab:operator_alignment} 记录了每种扰动算子与其可观测线索、检测它的规则或特征信号、触发的故障代码以及映射的修复计划模板之间的对应关系。九个受控测试集算子覆盖了全部六个分类法组。每种对齐类型对应一个特定的修复动作，确保受控评估充分覆盖从诊断到修复的完整路径。
+
 \begin{table}[t]
 \centering\scriptsize
 \caption{受控测试集的算子-模板对齐分析。该表明确指出哪些可观测线索、规则信号、故障代码和修复计划模板是通过构造对齐的。}
@@ -913,6 +931,9 @@ L3 原生 & 0.170 & 0.960 & 0.810 & 0.160 \\
 \begin{table}[t]
 \centering\scriptsize
 \caption{故障富集真实生成器子集的源组成。我们从 480 段原始生成中筛选，保留 240 段具有标注者验证的可见故障的样本。每个生成器采样平衡为 60 段保留故障，生成器特定的提示或条件适配器记录在构造清单中。该子集仅用作初始迁移检验，不用于估计自然的故障发生率。我们使用公开可识别的生成器检查点，使子集构造可审计且可复现。}
+\paragraph{真实故障源组成。}
+表~\ref{tab:real_failure_source} 详细列出了用于构造真实故障子集的四个生产级生成器。采样按每个生成器 60 段保留故障进行平衡，生成器特定适配器记录在逐视频 JSON 清单中。
+
 \label{tab:real_failure_source}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{0.16\textwidth}p{0.18\textwidth}p{0.22\textwidth}cccc}
@@ -933,6 +954,9 @@ HunyuanVideo & HunyuanVideo-1.5 & 文本 / 多镜头提示 & 60 & 60 & 9.5秒 & 
 \begin{table}[t]
 \centering\scriptsize
 \caption{真实故障与真实正常评估。真实正常子集包含 120 段从相同 480 段原始生成池中保留但被判定为无明显故障的视频。每当列出面向诊断的前端时，补丁相关列是在将该前端与共享下游修复回路配对后计算的。最佳值加粗；越高越好，除真实正常 FPR 和不必要补丁率越低越好。}
+\paragraph{真实故障与真实正常评估。}
+表~\ref{tab:real_normal_control} 报告了 240 段真实故障视频上的召回率和 120 段真实正常对照上的假阳性率。VideoGenDoctor-full 取得了最低的 FPR（0.100）和不必要补丁率（0.087）。仅评分反馈取得了最高的 FPR（0.258）。
+
 \label{tab:real_normal_control}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccccc}
@@ -954,6 +978,9 @@ VideoGenDoctor-full & 0.858 & \textbf{0.100} & \textbf{0.087} & \textbf{0.913} &
 \begin{table}[t]
 \centering\scriptsize
 \caption{72 个模糊规格说明违规案例的压力分析。这些样本包含可能但不可仲裁的规格说明偏差。每当列出面向诊断的前端时，补丁相关列是在将该前端与共享下游修复回路配对后计算的。最佳值加粗；对于与放弃声明相关的列越高越好，对于假具体补丁、错误目标补丁、过度修复和新伪影越低越好。}
+\paragraph{模糊规格说明违规案例。}
+表~\ref{tab:ambiguous_violation_cases} 报告了 72 个可能但不可仲裁的规格说明违规样本的压力测试结果。VideoGenDoctor-diagnosis 取得了最高的适当放弃声明率（0.639），而 VLM 结构化报告产生了最高的假具体补丁率（0.611）。VideoGenDoctor-full 取得了最低的错误目标补丁率（0.111）。
+
 \label{tab:ambiguous_violation_cases}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcccccc}
@@ -973,6 +1000,9 @@ VideoGenDoctor-full & 0.472 & 0.625 & \textbf{0.250} & \textbf{0.111} & \textbf{
 \begin{table}[t]
 \centering\scriptsize
 \caption{48 个低质量或不可仲裁案例的压力分析。这些样本以全局退化、内容不清晰或证据不足以进行可靠代码级标注为特征。每当列出面向诊断的前端时，补丁相关列是在将该前端与共享下游修复回路配对后计算的。最佳值加粗；质量门控放弃声明越高越好，其余列越低越好。}
+\paragraph{低质量与不可仲裁案例。}
+表~\ref{tab:low_quality_cases} 评估了管线在 48 个以全局退化为主的样本上的表现。VideoGenDoctor-diagnosis 取得了最高的质量门控放弃声明率（0.667）。VideoGenDoctor-full 取得了最低的假具体补丁率（0.125）。
+
 \label{tab:low_quality_cases}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccccc}
@@ -992,6 +1022,9 @@ VideoGenDoctor-full & 0.625 & \textbf{0.125} & \textbf{0.042} & \textbf{0.083} &
 \begin{table}[t]
 \centering\scriptsize
 \caption{受控测试集和真实故障子集中已观测的故障代码分布。完整分类法包含 38 个代码，但经验声明仅限于以下已观测的代码。}
+\paragraph{已观测故障代码分布。}
+表~\ref{tab:code_distribution} 列出了在受控和真实故障评估集中观测到的 18 个分类法代码。正文经验声明仅限于这些已观测的代码；完整 38 代码分类法中其余 20 个代码为定义性的。
+
 \label{tab:code_distribution}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{0.30\textwidth}p{0.14\textwidth}ccc}
@@ -1026,6 +1059,9 @@ VideoGenDoctor-full & 0.625 & \textbf{0.125} & \textbf{0.042} & \textbf{0.083} &
 \begin{table}[t]
 \centering\scriptsize
 \caption{标注可靠性。在仲裁前对可靠性子集进行双人标注。}
+\paragraph{标注可靠性。}
+表~\ref{tab:annotation_reliability} 报告了 120 段视频可靠性子集上的双人标注一致性。合并子集上的代码级一致率达到 Cohen's $\kappa=0.831$，区间级一致性遵循相似模式。
+
 \label{tab:annotation_reliability}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{0.28\textwidth}ccccc}
@@ -1043,6 +1079,9 @@ VideoGenDoctor-full & 0.625 & \textbf{0.125} & \textbf{0.042} & \textbf{0.083} &
 \begin{table}[t]
 \centering\scriptsize
 \caption{基于 VLM 的法官和外部诊断/修复基线的实现细节。}
+\paragraph{VLM 实现细节。}
+表~\ref{tab:vlm_details} 记录了所有基于 VLM 的配置的实现细节：模型端点、采样帧数、分辨率、提示词类型和相对成本。大多数直接 VLM 基线共享相同的托管 GPT-4V 端点；Rule+Open-VLM 使用 Qwen2-VL-7B-Instruct 作为开放模型参考。
+
 \label{tab:vlm_details}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}cc>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}}
@@ -1069,6 +1108,9 @@ Score+LLM-to-patch & 标量评估器 + LLM & 0 & -- & 评分到补丁 JSON & N/A
 \begin{table}[t]
 \centering\scriptsize
 \caption{真实故障子集上的逐代码可靠性。该子集比受控测试集更具挑战性，尤其在运动、相机和场景级故障上。}
+\paragraph{真实故障逐代码可靠性。}
+表~\ref{tab:real_per_code} 报告了真实故障子集上 18 个已观测代码的各项指标。冻结帧检测仍然是最强的代码（F1 0.876）。最困难的代码是动作顺序错误（F1 0.769）和事件缺失（F1 0.784）。
+
 \label{tab:real_per_code}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{0.31\textwidth}ccccc}
@@ -1101,6 +1143,9 @@ Score+LLM-to-patch & 标量评估器 + LLM & 0 & -- & 评分到补丁 JSON & N/A
 \begin{table}[t]
 \centering\scriptsize
 \caption{真实故障和真实正常子集上的逐生成器结果。FPR 基于每个生成器 30 段真实正常样本计算。}
+\paragraph{逐生成器结果。}
+表~\ref{tab:per_generator_results} 按生成器分解了真实故障性能。Stable Video Diffusion 取得了最强的宏 F1（0.842）。HunyuanVideo 是最具挑战性的生成器（宏 F1 0.809）。每个生成器的主要故障组与输入模态一致。
+
 \label{tab:per_generator_results}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcccclc}
@@ -1121,6 +1166,9 @@ HunyuanVideo & 0.809 & 0.579 & 0.684 & 0.117 & Camera, Motion, Alignment & 30 \\
 \begin{table}[t]
 \centering\scriptsize
 \caption{留一扰动评估。每个保留的扰动算子被排除在阈值调优之外，然后仅用于测试。}
+\paragraph{留一扰动评估。}
+表~\ref{tab:leave_one_perturbation} 通过在阈值调优中逐一保留每种扰动算子来评估泛化能力。平均宏 F1 降至 0.870（完整配置为 0.911），确认了管线并非简单地记忆扰动模板。
+
 \label{tab:leave_one_perturbation}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccc}
@@ -1146,6 +1194,9 @@ HunyuanVideo & 0.809 & 0.579 & 0.684 & 0.117 & Camera, Motion, Alignment & 30 \\
 \begin{table}[t]
 \centering\scriptsize
 \caption{跨六个受控测试集领域组的留一源组评估。}
+\paragraph{留一源组评估。}
+表~\ref{tab:leave_one_source_group} 通过逐一保留六个领域组来评估跨领域鲁棒性。平均宏 F1 0.891 和 tIoU@0.5 0.704 表明合理的领域泛化能力。
+
 \label{tab:leave_one_source_group}
 \begin{tabular}{lccc}
 \toprule
@@ -1294,6 +1345,9 @@ VideoGenDoctor 将每条诊断记录编译为一个或多个补丁动作。如�
 \begin{table}[t]
 \centering\scriptsize
 \caption{补丁到生成器的适配器细节。只有当修复计划可以在无需手动重写的情况下自动翻译为目标生成器或编辑器输入时，才计为适配器可执行。L0/L1 行表示放弃声明或提示重写指令，而非可执行补丁。}
+\paragraph{补丁到生成器的适配器细节。}
+表~\ref{tab:patch_adapter_details} 记录了完整的适配器可用性矩阵：对每个修复计划动作，列出了对应的 ShotIR 字段、适配器可执行性级别（L0--L3）、具体生成器/编辑器输入以及回退行为。
+
 \label{tab:patch_adapter_details}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{0.18\textwidth}p{0.14\textwidth}p{0.10\textwidth}p{0.15\textwidth}p{0.24\textwidth}p{0.12\textwidth}}
@@ -1326,6 +1380,9 @@ no\_op\_uncertain & -- & L0 & L0 可用 & 放弃具体修复 & 无动作 \\
 \centering
 \safeincludegraphics[width=\textwidth]{../figures/annotation_interface_appendix.png}
 \caption{VideoGenDoctor-Bench-v0 中用于人工验证的标注界面。该工具暴露样本导航器、原始视频与扰动视频的并排审查、时间证据标记、结构化故障验证卡片以及用于仲裁的自由文本备注。}
+\paragraph{标注界面。}
+图~\ref{fig:annotation_interface_appendix} 展示了用于 VideoGenDoctor-Bench-v0 人工验证的标注工具。界面提供了样本导航器、原始与扰动视频的并排播放、时间证据标记以及结构化故障验证卡片。
+
 \label{fig:annotation_interface_appendix}
 \end{figure}
 
@@ -1340,6 +1397,9 @@ no\_op\_uncertain & -- & L0 & L0 可用 & 放弃具体修复 & 无动作 \\
 \centering
 \safeincludegraphics[width=\textwidth]{../figures/report.png}
 \caption{对一段扰动视频的 VideoGenDoctor 诊断报告示例。该报告汇总了全局分数、带置信度和时间区间的排序故障记录、代表性关键帧、从保留故障代码推导出的补丁提示，以及用于定位审查和修复的片段级证据。}
+\paragraph{诊断报告示例。}
+图~\ref{fig:diagnostic_report} 展示了默认 VideoGenDoctor 管线生成的典型诊断报告。报告包含全局分数、故障记录排名列表（含代码、置信度、区间、关键帧）、补丁提示及片段级证据摘要。
+
 \label{fig:diagnostic_report}
 \end{figure}
 
@@ -1575,6 +1635,9 @@ Rules:
 \begin{table}[t]
 \centering
 \caption{补丁实用性的盲法人工修复评估准则。}
+\paragraph{补丁实用性评分准则。}
+表~\ref{tab:human_rubric} 定义了评审员用于评估补丁实用性的 5 点 Likert 量表。分数 1--2 表示不足或不可操作；分数 3--5 表示可操作到解决级别。评审员在评估前使用 20 个校准样本进行培训。
+
 \label{tab:human_rubric}
 \begin{tabular}{cl}
 \toprule
@@ -1594,6 +1657,9 @@ Rules:
 \begin{table}[t]
 \centering\scriptsize
 \caption{模糊样本和真实正常样本的误差分析。表格聚焦于无需操作行为和错误目标修复计划。最佳值在可解释比较列中加粗；no\_op\_uncertain 率作为描述性报告而非加粗排名。}
+\paragraph{无需操作与错误目标分析。}
+表~\ref{tab:no_op_wrong_target_analysis} 考察了在模糊和真实正常样本上的错误模式。VideoGenDoctor-diagnosis 取得了最高的正确无需操作率（0.738）。VideoGenDoctor-full 取得了最低的错误目标补丁率（0.081）。VLM 结构化报告产生了最高的过度自信补丁率（0.396）。
+
 \label{tab:no_op_wrong_target_analysis}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccccc}
@@ -1613,6 +1679,9 @@ VideoGenDoctor-full & 0.514 & 0.724 & 0.156 & \textbf{0.081} & \textbf{0.164} \\
 \begin{table}[t]
 \centering\scriptsize
 \caption{定性案例研究汇总。案例从受控、真实故障和模糊压力子集中采样。}
+\paragraph{定性案例研究汇总。}
+表~\ref{tab:case_study_summary} 总结了三类定性案例研究。成功的结构化修复计划（18/24 成功）展示了预期的诊断到修复路径。带有适当放弃声明的模糊案例（16/24）避免了过度修复。过度修复/错误目标失败（7/24）代表主要故障模式。
+
 \label{tab:case_study_summary}
 \begin{tabular}{lccc}
 \toprule
@@ -1632,6 +1701,9 @@ VideoGenDoctor-full & 0.514 & 0.724 & 0.156 & \textbf{0.081} & \textbf{0.164} \\
 \begin{table}[t]
 \centering\scriptsize
 \caption{留一代码族规则消融。对于保留的族，该族专用的规则被禁用；仅保留通用的嵌入漂移、光流异常、场景变化峰值和结构化 VLM 验证。}
+\paragraph{留一代码族规则消融。}
+表~\ref{tab:leave_one_code_family} 评估了当整个代码族的专用规则被禁用时的表现。平均宏 F1 大幅降至 0.774（从 0.911），确认了族特定检测器承载了大部分诊断信号。运动族移除导致最大退化（宏 F1 0.721）。
+
 \label{tab:leave_one_code_family}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lcccc}
@@ -1659,6 +1731,9 @@ Scene（场景） & 0.748 & 0.528 & 0.487 & 背景锚点规则被禁用 \\
 \begin{table}[t]
 \centering\scriptsize
 \caption{真实故障和真实正常子集的生成器配置元数据。托管或版本变化的端点记录有访问日期和端点标识符。}
+\paragraph{生成器配置元数据。}
+表~\ref{tab:generator_config} 报告了用于生成真实故障和真实正常子集的精确生成器配置参数。CogVideoX 和 Wan 使用相同 ShotIR-to-prompt 模板（v1）；Stable Video Diffusion 使用参考帧；HunyuanVideo 使用多镜头提示模板（v1）。
+
 \label{tab:generator_config}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{lccccccccc}
