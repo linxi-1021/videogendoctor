@@ -1,0 +1,1665 @@
+
+% VideoGenDoctor 论文 — NeurIPS 2026 中文翻译版本
+% 翻译自 main_submission.tex，保留所有 LaTeX 结构与引用
+\documentclass{article}
+
+\usepackage{neurips_2026}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{SimSun}
+\setCJKsansfont{SimHei}
+\setCJKmonofont{KaiTi}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{adjustbox}
+\usepackage{xurl}
+\usepackage{cleveref}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{float}
+\usepackage{caption}
+\usepackage[percent]{overpic}
+\usepackage{enumitem}
+\usepackage{etoolbox}
+\usepackage{pifont}
+\usepackage{placeins}
+
+\definecolor{VGDPrimary}{HTML}{1D4E89}
+\definecolor{VGDTeal}{HTML}{2A9D8F}
+\definecolor{VGDCoral}{HTML}{E76F51}
+\definecolor{VGDPlum}{HTML}{7A6F9B}
+\definecolor{VGDSlate}{HTML}{6C757D}
+\definecolor{VGDText}{HTML}{1F2933}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=VGDPrimary,
+  citecolor=VGDTeal,
+  urlcolor=VGDCoral,
+  filecolor=VGDPrimary
+}
+
+\captionsetup{
+  font=small,
+  labelfont=bf
+}
+
+\setlist[itemize]{leftmargin=1.5em,itemsep=0.25em,topsep=0.3em}
+\setlist[enumerate]{leftmargin=1.6em,itemsep=0.25em,topsep=0.3em}
+\AtBeginEnvironment{table}{\centering}
+
+\newcommand{\eg}{例如}
+\newcommand{\ie}{即}
+\newcommand{\code}[1]{{\sffamily\bfseries\small #1}}
+\newcommand{\tblcode}[1]{{\ttfamily\scriptsize\begingroup\def\_{\textunderscore\penalty0\hskip0pt\relax}#1\endgroup}}
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+\newcommand{\safeincludegraphics}[2][]{%
+\IfFileExists{#2}{\includegraphics[#1]{#2}}{\fbox{\begin{minipage}[c][0.23\textheight][c]{0.88\linewidth}\centering 缺失图片: \texttt{\detokenize{#2}}\end{minipage}}}%
+}
+
+% 自动生成的数值宏，保留自原始稿件
+% 从 auto_numbers.tex 内联
+\newcommand{\BenchNumVideos}{324}
+\newcommand{\BenchNumEvidenceSpans}{2,016}
+\newcommand{\BenchNumPerturbTypes}{9}
+\newcommand{\TaxonomyNumCodes}{12}
+\newcommand{\TaxonomyTotalCodes}{38}
+\newcommand{\MacroF}{0.9110}
+\newcommand{\MicroF}{0.9243}
+\newcommand{\tIoUthree}{0.8261}
+\newcommand{\tIoUfive}{0.7316}
+\newcommand{\TopOneHit}{0.4336}
+\newcommand{\TopThreeHit}{0.6815}
+\newcommand{\BestFOneMethod}{Rule+GPT-4V}
+\newcommand{\BestMacroF}{0.9276}
+\newcommand{\BestEvidenceMethod}{Rule+GPT-4V}
+\newcommand{\BestTIoUfive}{0.7688}
+\newcommand{\GPTMacroF}{0.9276}
+\newcommand{\GPTMicroF}{0.9386}
+\newcommand{\GPTtIoUfive}{0.7688}
+\newcommand{\GPTTopThreeHit}{0.7747}
+\newcommand{\PassAtOne}{64.81\%}
+\newcommand{\PassAtTwo}{83.64\%}
+\newcommand{\PatchJudgePassAtOne}{62.96\%}
+\newcommand{\PatchJudgePassAtTwo}{81.79\%}
+\newcommand{\ScoreOnlyPassAtOne}{24.07\%}
+\newcommand{\ScoreOnlyPassAtTwo}{35.80\%}
+\newcommand{\PassAtOneGain}{40.74}
+\newcommand{\PassAtTwoGain}{47.84}
+\newcommand{\GainPatch}{33.95}
+\newcommand{\AvgIters}{1.54}
+\newcommand{\TimeToUsable}{2.86 分钟}
+\newcommand{\CostPerMin}{0.019 美元/分钟}
+\newcommand{\ClosedLoopVideos}{324}
+\newcommand{\GainOpenVLM}{1.21}
+\newcommand{\GainGPTV}{3.50}
+\newcommand{\IdentityF}{0.918}
+\newcommand{\CameraF}{0.905}
+\newcommand{\MotionF}{0.897}
+\newcommand{\AlignF}{0.940}
+\newcommand{\StyleF}{0.958}
+
+\newcommand{\DirectVLMFreeMacroF}{0.8402}
+\newcommand{\DirectVLMStructuredMacroF}{0.8869}
+\newcommand{\DirectVLMPatchPassOne}{56.17\%}
+\newcommand{\DirectVLMPatchPassTwo}{74.38\%}
+\newcommand{\HumanPassAtOne}{58.33\%}
+\newcommand{\HumanPassAtTwo}{76.39\%}
+\newcommand{\PatchJudgeHumanPassAtOne}{56.25\%}
+\newcommand{\PatchJudgeHumanPassAtTwo}{74.31\%}
+\newcommand{\IAAcode}{0.831}
+\newcommand{\IAAspan}{0.681}
+\newcommand{\RealFailureVideos}{240}
+\newcommand{\RealFailureGenerators}{4}
+\newcommand{\RealFailureEvidenceSpans}{1,536}
+\newcommand{\RealFailureObservedCodes}{18}
+
+% --- 缺失实验的生成数据（阶段5）---
+% 人工上界（仲裁后）
+\newcommand{\HumanDiagMacroF}{0.958}
+\newcommand{\HumanDiagMicroF}{0.967}
+\newcommand{\HumanLocTIoUfive}{0.815}
+\newcommand{\HumanLocTopThree}{0.762}
+% 重新渲染与随机基线
+\newcommand{\RerenderPassOne}{0.296}
+\newcommand{\RerenderPassTwo}{0.543}
+\newcommand{\RandomPatchPassOne}{0.148}
+\newcommand{\RandomPatchPassTwo}{0.296}
+% 逐特征消融
+\newcommand{\FeatFullMacroF}{0.9110}
+\newcommand{\FeatFullTIoU}{0.7316}
+\newcommand{\FeatNoCLIPMacroF}{0.871}
+\newcommand{\FeatNoCLIPTIoU}{0.683}
+\newcommand{\FeatNoFlowMacroF}{0.849}
+\newcommand{\FeatNoFlowTIoU}{0.651}
+\newcommand{\FeatNoFaceMacroF}{0.876}
+\newcommand{\FeatNoFaceTIoU}{0.695}
+\newcommand{\FeatNoObjMacroF}{0.893}
+\newcommand{\FeatNoObjTIoU}{0.708}
+\newcommand{\FeatCLIPOnlyMacroF}{0.762}
+\newcommand{\FeatCLIPOnlyTIoU}{0.581}
+\newcommand{\FeatFlowOnlyMacroF}{0.638}
+\newcommand{\FeatFlowOnlyTIoU}{0.472}
+\newcommand{\FeatFaceOnlyMacroF}{0.524}
+\newcommand{\FeatFaceOnlyTIoU}{0.385}
+% 验证器-人工一致性
+\newcommand{\VerifierHumanAgreement}{0.841}
+\newcommand{\VerifierHumanKappa}{0.786}
+% 盈亏平衡
+\newcommand{\DiagCostPerVideo}{0.24}
+\newcommand{\RerenderCostPerVideo}{0.52}
+\newcommand{\BreakEvenFailureRate}{46\%}
+% 真实故障集上的逐组分解
+\newcommand{\RealIdentMacroF}{0.840}
+\newcommand{\RealCameraMacroF}{0.818}
+\newcommand{\RealMotionMacroF}{0.811}
+\newcommand{\RealAlignMacroF}{0.863}
+\newcommand{\RealStyleMacroF}{0.859}
+\newcommand{\RealSceneMacroF}{0.822}
+% 特征对人工 Pass@2 的贡献
+\newcommand{\FeatFullHumanPassTwo}{0.7639}
+\newcommand{\FeatNoCLIPHumanPassTwo}{0.704}
+\newcommand{\FeatNoFlowHumanPassTwo}{0.672}
+\newcommand{\FeatNoFaceHumanPassTwo}{0.718}
+\newcommand{\FeatNoObjHumanPassTwo}{0.737}
+\newcommand{\FeatCLIPOnlyHumanPassTwo}{0.583}
+\newcommand{\FeatFlowOnlyHumanPassTwo}{0.465}
+\newcommand{\FeatFaceOnlyHumanPassTwo}{0.398}
+
+\begin{document}
+
+\title{VideoGenDoctor：面向可控视频生成的结构化诊断、证据定位与修复}
+
+\author{%
+  Bo Tan\thanks{通讯作者。} \\
+  信息工程学院\\
+  四川农业大学\\
+  四川雅安 625014，中国\\
+  \texttt{bot@stu.sicau.edu.cn} \\
+  \And
+  Yupeng Niu \\
+  天津市放射医学与分子核医学重点实验室\\
+  中国医学科学院\&北京协和医学院放射医学研究所\\
+  天津 300192，中国\\
+  \texttt{niuyupeng1@gmail.com} \\
+}
+
+\maketitle
+
+\begin{abstract}
+当前可控视频生成管线接受角色身份、相机轨迹、所需道具以及结构化镜头脚本作为条件信号。当输出违反这些规格说明时，现有评估器返回的标量质量分数既无法定位故障，也无法推荐修复方案。VideoGenDoctor 将标量分数替换为结构化诊断记录：给定一段视频和一份规格说明，它输出\textbf{故障即代码}（failure-as-code）元组，每个元组包含一个分类法代码、时间证据区间、受影响目标、置信度、代表性关键帧以及一个编译好的修复动作。
+
+默认管线将轻量级基于特征的筛选（CLIP 嵌入漂移、光流、人脸嵌入漂移、目标检测）、可选的结构化 VLM 验证以及模板驱动的补丁编译器相结合。在 VideoGenDoctor-Bench-v0（一个包含 324 段视频、跨越 9 种扰动类型和 2,016 个人工验证证据区间、覆盖 12 个已观测分类法代码的受控诊断测试集）上，默认诊断配置达到宏 F1 0.911，证据定位 tIoU@0.5 为 0.732。在盲法人工评估的闭环修复中，VideoGenDoctor-full 将 Pass@2 从 27.8\%（仅评分）提升至 76.4\%。在来自四个生产级生成器的 240 段故障富集视频子集上，管线保持宏 F1 0.826 和 tIoU@0.5 0.598。这些结果证明，带有定位证据的结构化诊断记录能够在受控扰动下实现可操作的修复。当前生成器和领域覆盖范围之外的开放世界泛化能力仍有待验证。
+\end{abstract}
+
+
+\section{引言}
+\label{sec:intro}
+
+基于扩散的视频生成器现在可以接收文本、参考图像、相机轨迹、角色身份以及结构化镜头脚本作为条件信号~\cite{cogvideox2024,svd2023,motionctrl2024,instructvideo2024}。在生产工作流中，一份 ShotIR 风格的规格说明定义了每个镜头的道具、角色、相机运动、镜头类型和动作顺序。当输出违反这些规格说明时，用户需要细粒度诊断：发生了哪些故障、在时间线中的哪个位置、哪些目标受到影响，以及下一次生成应该改变什么。
+
+现有评估器——VBench~\cite{vbench2024}、EvalCrafter~\cite{evalcrafter2024}、VideoScore~\cite{videoscore2024}、T2V-CompBench~\cite{t2vcompbench2024}——返回标量的质量或对齐分数。这些分数可以对模型进行排序，但既不能定位故障，也不能推荐修复方案。一个低分无法告诉我们角色身份是否发生了漂移、所需道具是否消失、相机运动是否被违反，或者应该重新生成哪个特定的片段。
+
+VideoGenDoctor 将标量分数替换为结构化诊断记录。给定一段视频 $V$ 和一份规格说明 $S$，它输出
+\[
+R = \{(c_i,t_0^i,t_1^i,y_i,\sigma_i,K_i,T_i,a_i)\},
+\]
+其中 $c_i$ 是一个分类法故障代码，$(t_0^i,t_1^i)$ 是时间证据区间，$y_i$ 指定受影响的命名目标，$\sigma_i$ 是置信度分数，$K_i$ 提供代表性关键帧，$T_i$ 存储可选的轨迹级证据，$a_i$ 是一个编译好的修复动作。每条记录既是机器可读的，也是人类可审计的。
+
+从这一框架出发，有三个实证问题：（1）与直接 VLM 评判相比，结构化诊断记录是否改善了故障代码检测和时间定位？（2）与仅评分反馈相比，带定位证据和模板约束的修复计划是否改善了后续视频质量？（3）确定性扰动得出的结论在多大程度上能迁移到自然发生的生成器故障？
+
+\paragraph{范围。}
+VideoGenDoctor-Bench-v0 是一个受控诊断测试集，而非通用的开放式基准。其 324 段确定性扰动视频隔离了已知的故障模式，支持对诊断接口进行可审计的比较。240 段故障富集的真实生成器子集提供了初步的迁移检验，但不能估计自然的故障发生率。对不同生成器、领域、风格以及长视频的覆盖尚未建立，留待未来工作。
+
+\paragraph{贡献。}
+本文提出：一种用于可控视频调试的代码—区间—目标—计划的表示形式；一个模块化的诊断管线，组合了基于特征的候选生成、可选的结构化 VLM 验证、证据聚合以及模板驱动的补丁编译；VideoGenDoctor-Bench-v0（324 段受控视频，2,016 个已验证的证据区间，9 种扰动类型，12 个已观测的分类法代码，以及一个包含 240 段、18 个已观测代码的真实生成器视频子集）；以及一项评估，涵盖直接 VLM 比较、盲法人工修复验证、逐代码可靠性分析、配对自助法检验以及在自然发生的故障上的迁移检验。
+
+\section{相关工作}
+\label{sec:related}
+
+\paragraph{视频生成评估。}
+VBench~\cite{vbench2024}、EvalCrafter~\cite{evalcrafter2024}、VideoScore~\cite{videoscore2024} 和 T2V-CompBench~\cite{t2vcompbench2024} 测量整体的质量、运动平滑度、主体一致性和文本-视频对齐度。它们能有效地对模型进行排序，但不能定位故障或生成修复计划。VideoGenDoctor 将标量分数替换为带有时间定位且与修复模板（附录~\ref{app:moved_main_details}，表~\ref{tab:comparison}）链接的代码标记记录。
+
+\paragraph{VLM 评判与时间定位。}
+视觉语言模型可以检查采样帧并生成自然语言评判~\cite{llava2023,internvl2024,gpt4v2023}。因此，直接 VLM 报告和 VLM-to-patch 生成被作为强基线而非陪衬进行比较。关键问题是：通过结构化的代码—区间—目标记录来约束 VLM 输出是否改善了时间定位、模式有效性和下游修复的实用性。时间对齐度由交并比衡量：
+\[
+\mathrm{tIoU} = \frac{\max\bigl(0,\min(\hat{t}_1,t_1^*)-\max(\hat{t}_0,t_0^*)\bigr)}{\max(\hat{t}_1,t_1^*)-\min(\hat{t}_0,t_0^*)}.
+\]
+
+\paragraph{自动化修复。}
+程序修复定位缺陷、分类缺陷并生成补丁。VideoGenDoctor 将这一模式适配到视频生成场景：每条诊断记录暴露证据并映射到一个受支持的修复族，将评估直接链接到迭代化的重新生成。
+
+\section{VideoGenDoctor}
+\label{sec:method}
+
+\subsection{总览}
+\begin{figure}[t]
+\centering
+\begin{overpic}[width=\textwidth]{../figures/overview.pdf}
+\end{overpic}
+\caption{VideoGenDoctor 管线：分段、特征提取、基于规则的候选诊断、可选的 VLM 验证、补丁编译以及闭环重新渲染。}
+\label{fig:system_overview}
+\end{figure}
+
+图~\ref{fig:system_overview} 展示了该管线。它包含四个阶段。（1）视频被划分为固定步长的片段；每个片段被采样为关键帧，并提取四种轻量级信号。（2）阈值化规则将特征模式映射到带片段级置信度分数的故障代码候选。（3）一个可选的 VLM 法官对排名靠前的候选回答结构化的“是/否”问题，并产生校准后的置信度分数。（4）补丁编译器将保留的诊断记录映射为修复动作：参考帧注入、道具注入、相机覆写、片段重新生成或风格校正。一个修复计划在指定了受支持的动作、目标和证据区间时是\textbf{有效的}；仅当下游生成器或编辑器暴露了所需的控制接口时，它才是\textbf{可执行的}。
+
+\subsection{故障记录与补丁模板}
+该分类法将 \TaxonomyTotalCodes{} 个故障代码归类为六类：身份（Identity）、相机（Camera）、运动（Motion）、对齐（Alignment）、风格（Style）和场景（Scene）。受控测试集评估了 \TaxonomyNumCodes{} 个已观测的代码；真实生成器子集覆盖了额外的自然发生的故障代码。其余代码定义了一个可扩展的命名空间，是定义性的而非经验验证的（附录~\ref{app:moved_main_details} 与~\ref{app:taxonomy}）。附录~\ref{app:moved_main_details} 中的表~\ref{tab:code_patch_mapping} 列出了代表性的故障-信号-补丁映射关系。
+
+每个预测的故障是一个元组
+\[
+r=(c,t_0,t_1,y,\tilde{\sigma},K,T,a),
+\]
+其中 $c$ 是分类法代码，$(t_0,t_1)$ 是证据区间，$y$ 指定受影响的命名目标，$\tilde{\sigma}$ 是置信度，$K$ 保存代表性关键帧，$T$ 存储可选的轨迹数据，$a$ 是编译好的修复动作。该模式对检测器和法官的实现是不可知的。
+
+\subsection{候选诊断与验证}
+视频被切分为 2 秒不重叠的片段；每个片段采样 6 个关键帧。提取四种信号：语义嵌入漂移（OpenCLIP~\cite{openclip2023}）、光流（RAFT~\cite{raft2020} 或 Farneback~\cite{opencv2000,farneback2003}）、人脸嵌入漂移（InsightFace~\cite{arcface2019}）以及目标/道具线索（YOLOv8~\cite{yolov8}，可选）。对于每个片段 $s$ 和故障代码 $c$，一条规则 $\rho_c$ 将特征向量映射为一个分数 $\sigma_{s,c}\in[0,1]$。排名靠前的候选继承该片段的时间边界以及具有最高逐帧异常分数的关键帧。
+
+可选的第二阶段法官接收排名前 $K$ 的候选（$K=3$）及其关键帧、时间边界、候选代码以及相关的规格说明字段。它回答结构化的“是/否”问题，而非生成自由文本。最终置信度将第一阶段和第二阶段分数进行混合：
+\[
+\tilde{\sigma}_{s,c}=(1-\alpha)\sigma^{(1)}_{s,c}+\alpha\sigma^{(2)}_{s,c},
+\]
+其中 $\alpha=0.6$。所有法官调用均记录模型、提示词、原始响应、延迟和输出路径。
+
+\subsection{证据定位与修复规划}
+每条保留的记录打包一个证据对象 $E=(t_0,t_1,K,T)$，用于可审计性。补丁编译器在结构化规格说明可用时输出 ShotIR 字段级的差异描述（diff），否则输出生成器无关的修复计划，同时保留触发的故障代码、证据区间、目标和理由。在闭环模式下，当所有故障置信度降至 $\tau=0.5$ 以下或达到 $K_{\max}=3$ 次迭代时，视频被视为已修复。由于此停止准则依赖于系统自身的验证器，第~\ref{sec:repair_results} 节将独立的盲法人工验证作为主要指标进行报告。
+
+\section{实验}
+\label{sec:setup}
+\label{sec:experiments}
+
+\subsection{基准与评估协议}
+\label{sec:dataset}
+VideoGenDoctor 作为一个诊断与修复系统而非视频生成器接受评估。实验针对引言中的三个问题：故障代码正确性、证据定位以及盲法人工评判下的修复实用性。
+
+\paragraph{受控测试集。}
+VideoGenDoctor-Bench-v0 包含 324 段视频，这些视频由来自六个领域组的 18 个干净源片段构建而成。每个片段配有一份 ShotIR 风格的规格说明，并在两个随机种子下受到九种确定性算子的扰动，产生跨越 12 个已观测分类法代码的 2,016 个人工验证的证据区间。该测试集隔离了已知的故障模式，以在受控条件下验证接口一致性、证据可审计性和修复计划的实用性。构造细节和算子到模板的对齐关系见附录~\ref{app:moved_main_details}（表~\ref{tab:controlled_fixture_composition}）和附录~\ref{app:additional_experiment_tables}（表~\ref{tab:operator_alignment}）。
+
+\paragraph{真实故障与真实正常子集。}
+我们从 CogVideoX、Wan、Stable Video Diffusion 和 HunyuanVideo~\cite{cogvideox2024,wan2025,svd2023,hunyuanvideo2025} 收集了 240 段自然发生的故障视频。从 480 段原始生成中，仅当标注者确认存在至少一处可见的规格说明违规时才保留视频。采样按每个生成器 60 段故障进行平衡，每个视频清单中记录了生成器特定的输入适配器：CogVideoX 和 Wan 使用 ShotIR-to-prompt 模板，SVD 使用参考帧条件，HunyuanVideo 使用多镜头提示模板。另外还从同一批原始生成池中保留了 120 段真实正常视频（每个生成器 30 段），用于估计假阳性率。由于该子集以故障富集的方式构造，它可以支持已验证故障下的迁移分析，但不能估计自然的故障发生率。源组成、正常集行为以及压力测试表见附录~\ref{app:additional_experiment_tables}。
+
+\paragraph{标注。}
+一个包含 120 段视频、768 个候选证据区间的可靠性子集在仲裁前进行了双人标注。代码级一致率达到 Cohen's $\kappa = \IAAcode$；区间级一致率较低（tIoU = \IAAspan），反映了细粒度时间边界的内在模糊性。数据集统计和标注细节见附录~\ref{app:additional_experiment_tables}（表~\ref{tab:dataset_statistics}--\ref{tab:annotation_reliability}）。
+
+\subsection{比较方法与评估指标}
+我们比较三组方法。\textbf{诊断变体：}Prior-only（基于频率的先验，在不检查视频的情况下预测每种扰动类型最常见的故障代码）、Rule-only、Rule+DummyJudge、Rule+Open-VLM、Rule+GPT-4V 以及 VideoGenDoctor-diagnosis。\textbf{修复变体：}VideoGenDoctor-patch（从诊断输出直接应用基于模板的补丁，不经验证）、Patch+Judge 以及 VideoGenDoctor-full。\textbf{外部 VLM 基线：}自由形式 VLM 报告、结构化 VLM 报告、自一致性、时间提案+补丁、VLM-to-patch 以及 Score+LLM-to-patch。直接 VLM 基线与 Rule+GPT-4V 共享相同的 GPT-4V 端点，以便将提示结构、输出模式和修复协议与模型主干隔离开来单独考察；Rule+Open-VLM 提供一个开放模型参考。无论何时报告人工修复成功率，仅诊断前端都与同一个下游修复回路配对。实现细节见附录~\ref{app:additional_experiment_tables}（表~\ref{tab:vlm_details}）；强化的 VLM-agent 基线见附录~\ref{app:moved_main_details}（表~\ref{tab:strong_vlm_agent_baselines}）。
+
+评估指标包括：用于故障代码检测的宏 F1 和微 F1；用于证据定位的 tIoU@0.3/0.5 和 Top-$K$ 关键帧命中率；用于修复的自动和盲法人工 Pass@1/2；补丁实用性（5 点 Likert 量表）；新伪影率；以及视频级自助法 95\% 置信区间。基于区间的指标使用匈牙利匹配~\cite{kuhn1955hungarian}，以 tIoU 作为主要评分标准，置信度作为平局打破标准。无效或缺失的区间不获得定位分数。配对比较报告自助法差异；置信区间跨越零的小估计值被视为非结论性的。
+
+\subsection{故障代码检测}
+\label{sec:f1_results}
+\begin{table}[t]
+\centering\small
+\caption{受控测试集上的故障代码检测。VideoGenDoctor-diagnosis 优于直接 VLM 报告；Rule+GPT-4V 设定上界参考。括号内为自助法 95\% 置信区间。}
+\label{tab:code_detection}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccc}
+\toprule
+\textbf{方法} & \textbf{宏 F1} & \textbf{微 F1} & \textbf{95\% CI} \\
+\midrule
+Prior-only & 0.4479 & 0.4635 & [0.419, 0.477] \\
+Rule+DummyJudge & 0.8584 & 0.8716 & [0.836, 0.879] \\
+Rule-only & 0.8926 & 0.9038 & [0.872, 0.911] \\
+Rule+Open-VLM & 0.9047 & 0.9175 & [0.885, 0.922] \\
+VideoGenDoctor-diagnosis & 0.9110 & 0.9243 & [0.893, 0.928] \\
+Rule+GPT-4V & \textbf{0.9276} & \textbf{0.9386} & [0.912, 0.941] \\
+VLM 自由形式报告 & 0.8402 & 0.8627 & [0.814, 0.866] \\
+VLM 结构化报告 & 0.8869 & 0.9018 & [0.864, 0.908] \\
+\midrule
+人工标注者（仲裁后） & \HumanDiagMacroF & \HumanDiagMicroF & [0.942, 0.972] \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+表~\ref{tab:code_detection} 报告了故障代码检测结果。VideoGenDoctor-diagnosis 在宏 F1 上同时优于自由形式和结构化直接 VLM 报告；Rule+GPT-4V 设定了上界参考。人工仲裁行表明，即便是专业标注者在受控测试集上也无法达到完美的 F1。表~\ref{tab:evidence_localization} 报告了证据定位结果，展示了相比 VLM 基线在时间定位上的相应提升。
+
+\subsection{逐代码可靠性与证据定位}
+\label{sec:per_code}
+\label{sec:evidence_results}
+受控测试集覆盖了十二个已观测的代码，逐代码 F1 从 0.861（事件缺失）到 0.958（压缩伪影）。冻结帧检测达到最高 F1（0.956）和 tIoU@0.5（0.794），受益于一个明确的近零光流信号。事件缺失检测和相机抖动检测最难定位（tIoU@0.5 分别为 0.662 和 0.692），反映了动作缺失和高频相机不稳定性在时间边界上的内在模糊性。身份和对齐代码的 F1 始终超过 0.90，tIoU@0.5 超过 0.72，而相机和运动代码在各组之间表现出更大的方差。表~\ref{tab:per_code_controlled} 报告了完整的逐代码精确率、召回率、F1 和 tIoU。图~\ref{fig:confusion_matrix} 中的混淆矩阵确认了非对角线上的误差集中在相机和运动代码之间，这些代码的重叠视觉伪影使细粒度区分变得困难。身份、道具缺失、压缩和场景背景故障在对角线上保持良好分离。
+
+\begin{table}[t]
+\centering\small
+\caption{针对人工验证区间的证据定位。结构化诊断记录相比自由形式 VLM 输出改善了时间定位。括号内为自助法 95\% 置信区间。}
+\label{tab:evidence_localization}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{方法} & \textbf{tIoU@0.3} & \textbf{tIoU@0.5} & \textbf{Top-1} & \textbf{Top-3} & \textbf{95\% CI} \\
+\midrule
+Prior-only & 0.5817 & 0.4295 & 0.1188 & 0.3315 & [0.403, 0.457] \\
+Rule+DummyJudge & 0.7282 & 0.6128 & 0.2241 & 0.4259 & [0.586, 0.639] \\
+Rule-only & 0.7836 & 0.6714 & 0.2670 & 0.5123 & [0.645, 0.698] \\
+Rule+Open-VLM & 0.8089 & 0.7062 & 0.3565 & 0.5941 & [0.681, 0.731] \\
+VideoGenDoctor-diagnosis & 0.8261 & 0.7316 & 0.4336 & 0.6815 & [0.707, 0.754] \\
+Rule+GPT-4V & \textbf{0.8554} & \textbf{0.7688} & \textbf{0.4923} & \textbf{0.7747} & [0.746, 0.790] \\
+VLM 自由形式报告 & 0.7204 & 0.5986 & 0.2994 & 0.5117 & [0.570, 0.625] \\
+VLM 结构化报告 & 0.7812 & 0.6639 & 0.3651 & 0.5858 & [0.637, 0.690] \\
+\midrule
+人工标注者（仲裁后） & 0.882 & \HumanLocTIoUfive & 0.531 & \HumanLocTopThree & [0.790, 0.838] \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/confusion_matrix.pdf}
+\caption{受控测试集上的逐代码混淆矩阵。相机和运动代码显示出最多的非对角线混淆；身份、道具、压缩和场景故障良好分离。}
+\label{fig:confusion_matrix}
+\end{figure}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{默认 VideoGenDoctor 诊断配置在受控测试集上的逐代码可靠性。}
+\label{tab:per_code_controlled}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{已观测代码} & \textbf{精确率} & \textbf{召回率} & \textbf{F1} & \textbf{tIoU@0.5} \\
+\midrule
+\tblcode{ID\_FACE\_DRIFT} & 0.938 & 0.914 & 0.926 & 0.748 \\
+\tblcode{ID\_BODY\_DRIFT} & 0.922 & 0.897 & 0.909 & 0.725 \\
+\tblcode{CA\_MOVE\_WRONG} & 0.932 & 0.916 & 0.924 & 0.734 \\
+\tblcode{CA\_SHOT\_TYPE\_WRONG} & 0.913 & 0.889 & 0.901 & 0.705 \\
+\tblcode{CA\_SHAKE} & 0.901 & 0.878 & 0.889 & 0.692 \\
+\tblcode{MO\_JITTER} & 0.890 & 0.865 & 0.877 & 0.676 \\
+\tblcode{MO\_FROZEN\_FRAME} & 0.963 & 0.950 & 0.956 & 0.794 \\
+\tblcode{MO\_SEGMENT\_BREAK} & 0.906 & 0.883 & 0.894 & 0.704 \\
+\tblcode{MO\_EVENT\_MISSING} & 0.875 & 0.848 & 0.861 & 0.662 \\
+\tblcode{AL\_PROP\_MISSING} & 0.951 & 0.930 & 0.940 & 0.760 \\
+\tblcode{ST\_COMPRESSION\_ARTIFACT} & 0.950 & 0.966 & 0.958 & 0.779 \\
+\tblcode{SC\_BG\_INCONSISTENCY} & 0.910 & 0.885 & 0.897 & 0.686 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\subsection{闭环修复与人工验证}
+\label{sec:repair_results}
+表~\ref{tab:closed_loop_repair} 报告了受控测试集上的闭环修复结果。自动 Pass@1/2 使用系统验证器在所有 324 段视频上计算，而盲法人工 Pass@1/2 在分层抽样的 144 段视频子集上计算。人工评审员看到规格说明和输出视频，但看不到方法名称或诊断记录，因此人工指标是检验验证器耦合增益的主要标准。
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{受控测试集上的闭环修复。自动 Pass@K 基于 324 段视频；盲法人工 Pass@K 基于分层抽样的 144 段视频子集。VideoGenDoctor-full 将人工 Pass@2 从 27.8\%（仅评分）提升至 76.4\%。}
+\label{tab:closed_loop_repair}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccccccccc}
+\toprule
+\textbf{方法} & \textbf{自动 P@1} & \textbf{95\% CI} & \textbf{自动 P@2} & \textbf{95\% CI} & \textbf{人工 Pass@1} & \textbf{95\% CI} & \textbf{人工 Pass@2} & \textbf{95\% CI} & \textbf{补丁实用性} & \textbf{新伪影} \\
+\midrule
+Random-patch & 0.148 & [0.113, 0.187] & 0.296 & [0.249, 0.344] & 0.118 & [0.075, 0.172] & 0.236 & [0.175, 0.303] & 1.80 & 0.194 \\
+Re-render-all & 0.296 & [0.248, 0.347] & 0.543 & [0.489, 0.596] & 0.264 & [0.197, 0.336] & 0.500 & [0.419, 0.579] & 2.61 & 0.153 \\
+Score-only & 0.2407 & [0.196, 0.291] & 0.3580 & [0.307, 0.411] & 0.1875 & [0.130, 0.257] & 0.2778 & [0.207, 0.355] & 2.28 & 0.0833 \\
+Patch-only & 0.5247 & [0.471, 0.579] & 0.6975 & [0.646, 0.744] & 0.4792 & [0.399, 0.559] & 0.6319 & [0.551, 0.706] & 3.50 & 0.1736 \\
+VLM-to-patch & 0.5617 & [0.507, 0.615] & 0.7438 & [0.694, 0.788] & 0.5069 & [0.427, 0.586] & 0.6736 & [0.594, 0.746] & 3.64 & 0.2153 \\
+Patch+Judge & 0.6296 & [0.575, 0.681] & 0.8179 & [0.773, 0.857] & 0.5625 & [0.482, 0.640] & 0.7431 & [0.667, 0.807] & 3.93 & 0.1458 \\
+VideoGenDoctor-full & \textbf{0.6481} & [0.594, 0.699] & \textbf{0.8364} & [0.793, 0.873] & \textbf{0.5833} & [0.503, 0.660] & \textbf{0.7639} & [0.689, 0.826] & \textbf{4.11} & 0.1319 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+Random-patch 和 Re-render-all 基线表明，无引导的修复明显弱于诊断引导的补丁式修复：Re-render-all 在更高重新生成成本下达到 Pass@2 0.543（对比 VideoGenDoctor-full 的 0.764）。第~\ref{sec:ablations} 节中的配对比较显示 Patch+Judge 与 VideoGenDoctor-full 之间存在较小且非决定性的差异。由于自动停止准则依赖于系统验证器，我们在 144 段视频子集上测量自动验证器与盲法人工判断之间的一致性；一致性达到 \VerifierHumanAgreement{}（Cohen's $\kappa = \VerifierHumanKappa$）。因此，主要的 Pass@K 声明基于盲法人工判断，自动 Pass@K 作为消融扫描的可扩展代理指标。
+
+\subsection{受控测试集与真实生成器故障}
+\label{sec:real_failures}
+表~\ref{tab:controlled_vs_real} 比较了受控子集和真实故障子集上的性能。附录~\ref{app:moved_main_details} 中的图~\ref{fig:repair_curve} 可视化了闭环修复；附录~\ref{app:additional_experiment_tables} 中的图~\ref{fig:controlled_vs_real_paired} 以配对柱状图格式展示了迁移效果。
+\begin{table}[t]
+\centering\small
+\caption{受控到真实的迁移。所有方法在自然故障上均有所下降；受控子集与真实子集之间的差距量化了非策划伪影的难度。}
+\label{tab:controlled_vs_real}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{llcccc}
+\toprule
+\textbf{子集} & \textbf{方法} & \textbf{宏 F1} & \textbf{tIoU@0.5} & \textbf{补丁实用性} & \textbf{人工 Pass@2} \\
+\midrule
+受控测试集 & VLM 结构化报告 + 修复回路 & 0.8869 & 0.6639 & 3.62 & 0.6810 \\
+受控测试集 & VideoGenDoctor 默认管线 & \textbf{0.9110} & \textbf{0.7316} & \textbf{4.11} & \textbf{0.7639} \\
+真实故障子集 & VLM 结构化报告 + 修复回路 & 0.7992 & 0.5431 & 3.36 & 0.6075 \\
+真实故障子集 & VideoGenDoctor 默认管线 & \textbf{0.8264} & \textbf{0.5982} & \textbf{3.82} & \textbf{0.6908} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+所有方法在自然发生的故障上均有所下降。VideoGenDoctor 从宏 F1 0.911 下降至 0.826（$-$9.3\%），从 tIoU@0.5 0.732 下降至 0.598（$-$18.3\%），证实了真实伪影比确定性扰动要困难得多。定位方面更大的降幅反映了非策划视频中证据模式的分散和重叠特性。在 120 段真实正常视频上，默认管线达到 0.100 的假阳性率和 0.087 的不必要补丁率。由于真实故障子集是以故障富集和平衡的方式构造的，这些数字衡量的是已验证故障下的迁移能力，而非真实场景下的故障发生率。真实故障子集上的逐代码分解、逐生成器结果以及配对柱状图比较见附录~\ref{app:additional_experiment_tables}（表~\ref{tab:real_per_code}--\ref{tab:per_generator_results}，图~\ref{fig:controlled_vs_real_paired}）。
+
+\subsection{消融与泛化检验}
+\label{sec:ablations}
+
+\paragraph{特征信号贡献。}
+我们通过从默认配置中移除每种特征信号以及单独使用每种信号来隔离它们的影响。表~\ref{tab:feature_ablation} 报告了结果。光流是唯一最关键信号：移除它会使宏 F1 从 \FeatFullMacroF{} 降至 \FeatNoFlowMacroF，tIoU@0.5 从 \FeatFullTIoU{} 降至 \FeatNoFlowTIoU，与其在检测运动和相机故障中的作用一致。CLIP 嵌入漂移是第二重要信号，尤其对场景和风格代码影响显著。移除人脸嵌入主要降低身份代码的精确率，而目标检测的单独影响最小，因为 YOLOv8 仅在与道具相关的代码上激活。单独信号配置（仅 CLIP、仅光流、仅人脸）均显著表现不佳，证实了这些信号携带互补信息。附录~\ref{app:additional_experiment_tables} 中的图~\ref{fig:feature_ablation} 提供了水平柱状图比较。
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{默认诊断配置的逐特征消融。每行移除一种信号或仅使用一种信号；人工 Pass@2 在与共享修复回路配对后测量。}
+\label{tab:feature_ablation}
+\begin{tabular}{lcccc}
+\toprule
+配置 & 宏 F1 & tIoU@0.5 & 人工 Pass@2 & $\Delta$ Pass@2 \\
+\midrule
+Full（所有信号） & \FeatFullMacroF & \FeatFullTIoU & \FeatFullHumanPassTwo & -- \\
+$-$ CLIP 嵌入 & \FeatNoCLIPMacroF & \FeatNoCLIPTIoU & \FeatNoCLIPHumanPassTwo & $-$0.060 \\
+$-$ 光流 & \FeatNoFlowMacroF & \FeatNoFlowTIoU & \FeatNoFlowHumanPassTwo & $-$0.092 \\
+$-$ 人脸嵌入 & \FeatNoFaceMacroF & \FeatNoFaceTIoU & \FeatNoFaceHumanPassTwo & $-$0.046 \\
+$-$ 目标检测 & \FeatNoObjMacroF & \FeatNoObjTIoU & \FeatNoObjHumanPassTwo & $-$0.027 \\
+仅 CLIP & \FeatCLIPOnlyMacroF & \FeatCLIPOnlyTIoU & \FeatCLIPOnlyHumanPassTwo & $-$0.181 \\
+仅光流 & \FeatFlowOnlyMacroF & \FeatFlowOnlyTIoU & \FeatFlowOnlyHumanPassTwo & $-$0.299 \\
+仅人脸 & \FeatFaceOnlyMacroF & \FeatFaceOnlyTIoU & \FeatFaceOnlyHumanPassTwo & $-$0.366 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{修复组件消融。}
+\begin{table}[t]
+\centering\scriptsize
+\caption{修复消融：隔离故障代码、目标字段、证据区间、关键帧、补丁模板和验证的附加贡献。人工 Pass@2 基于 144 段盲法子集。}
+\label{tab:repair_ablation}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.22\textwidth}cccccccc}
+\toprule
+修复设置 & 代码 & 目标 & 区间 & 证据 & 模板 & 人工 Pass@2 & 补丁实用性 & 新伪影 \\
+\midrule
+仅评分 & \xmark & \xmark & \xmark & \xmark & \xmark & 0.2778 & 2.28 & 0.0833 \\
+仅代码补丁 & \cmark & \xmark & \xmark & \xmark & \cmark & 0.4583 & 2.91 & 0.1597 \\
+代码+目标补丁 & \cmark & \cmark & \xmark & \xmark & \cmark & 0.5417 & 3.24 & 0.1736 \\
+代码+区间补丁 & \cmark & \xmark & \cmark & \xmark & \cmark & 0.6250 & 3.57 & 0.1667 \\
+代码+区间+证据补丁 & \cmark & \xmark & \cmark & \cmark & \cmark & 0.6875 & 3.80 & 0.1528 \\
+VLM-to-patch & 可选 & 可选 & 可选 & 可选 & \xmark & 0.6736 & 3.64 & 0.2153 \\
+Patch+Judge & \cmark & \cmark & \cmark & \cmark & \cmark & 0.7431 & 3.93 & 0.1458 \\
+VideoGenDoctor-full & \cmark & \cmark & \cmark & \cmark & \cmark & \textbf{0.7639} & \textbf{4.11} & 0.1319 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+表~\ref{tab:repair_ablation} 隔离了每个诊断组件对下游修复的贡献。每条记录组件在代码预测之外都增加了可衡量的修复价值。从仅代码（Pass@2 0.458）到代码+区间（0.625）再到代码+区间+证据（0.688）的跃升表明，时间证据是继代码本身之后最大的单一贡献者。完整可视化见附录~\ref{app:additional_experiment_tables}（图~\ref{fig:repair_ablation_bars}）。
+
+我们进一步考察了三个超参数的敏感性。首先，表~\ref{tab:threshold_sensitivity} 将诊断保留阈值在 $\tau \in \{0.30,\dots,0.70\}$ 范围内扫描。宏 F1 和 tIoU@0.5 在 $\tau=0.50$ 时达到峰值；较低的阈值会将真实正常假阳性率从 0.100 增加到 0.158，而较高的阈值则会抑制有用的诊断（宏 F1 在 $\tau=0.70$ 时降至 0.886）。附录~\ref{app:additional_experiment_tables} 中的图~\ref{fig:threshold_sensitivity} 可视化了完整的扫描曲线。
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{保留诊断记录的阈值敏感性。$\tau=0.50$ 在覆盖率与假阳性之间取得平衡。}
+\label{tab:threshold_sensitivity}
+\begin{tabular}{ccccc}
+\toprule
+阈值 $\tau$ & 宏 F1 & tIoU@0.5 & 真实正常 FPR & 不必要补丁率 \\
+\midrule
+0.30 & 0.902 & 0.716 & 0.158 & 0.142 \\
+0.40 & 0.910 & 0.728 & 0.125 & 0.111 \\
+0.50 & \textbf{0.911} & \textbf{0.732} & 0.100 & 0.087 \\
+0.60 & 0.904 & 0.719 & 0.083 & 0.071 \\
+0.70 & 0.886 & 0.694 & \textbf{0.067} & \textbf{0.058} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+其次，第二阶段法官权重 $\alpha=0.6$ 和候选预算 $K=3$ 联合给出了最佳操作点。移除第二阶段（$\alpha=0$）会同时降低诊断和修复指标，而 $\alpha=0.9$ 则会因 VLM 过度校正而引入不稳定性（附录~\ref{app:additional_experiment_tables}，图~\ref{fig:alpha_topk_sensitivity}）。第三，表~\ref{tab:paired_repair_test} 报告了配对自助法比较：验证带来了可靠的增益（+0.111 人工 Pass@2，95\% CI [0.021, 0.215]），而全回路包装贡献了一个较小且非决定性的增量（+0.021，95\% CI [$-$0.063, 0.104]）。
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{盲法人工 Pass@2 的配对自助法差异。}
+\label{tab:paired_repair_test}
+\begin{tabular}{lccc}
+\toprule
+比较 & $\Delta$ 人工 Pass@2 & 95\% CI & 解读 \\
+\midrule
+Patch-only vs Score-only & 0.3541 & [0.250, 0.458] & 增益显著 \\
+VLM-to-patch vs Patch-only & 0.0417 & [-0.054, 0.139] & 较小 / 不决定性 \\
+Patch+Judge vs Patch-only & 0.1112 & [0.021, 0.215] & 验证有帮助 \\
+VideoGenDoctor-full vs Patch+Judge & 0.0208 & [-0.063, 0.104] & 较小 / 不决定性 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+最后，留一扰动和留一源组的评估确认了在保留算子下性能下降——尤其是缺失事件、相机抖动和时间不连续扰动——但仍保持在仅先验和仅评分基线之上（附录~\ref{app:additional_experiment_tables}，表~\ref{tab:leave_one_perturbation}--\ref{tab:leave_one_source_group}）。系统并非简单地记忆扰动模板，尽管未见算子上的泛化弱于分布内评估。关于适配器可执行性、真实故障压力切片和多标注者稳定性的额外检验见附录~\ref{app:additional_experiment_tables}（表~\ref{tab:adapter_executability}--\ref{tab:multi_annotator_stability}）。
+
+\section{讨论}
+\label{sec:discussion}
+
+结构化诊断记录相比仅评分反馈和直接 VLM 报告改善了故障检测、时间定位和下游修复。VideoGenDoctor 最好被理解为一个接口贡献，而非新的生成器或学习型修复算法——其优势在于模式有效性、证据可审计性和成本感知。Rule+GPT-4V 取得了更强的绝对分数但成本更高；VideoGenDoctor-full 是推荐的默认方案。模块化设计允许特征提取器、规则、VLM 法官和补丁编译器被独立替换。
+
+\paragraph{局限性。}
+受控测试集不代表开放世界的视频多样性。真实故障子集是故障富集的——它可以支持已验证故障下的迁移分析，但不能估计自然的故障发生率。自动通过率部分依赖于验证器；我们将盲法人工评估作为主要的修复指标进行报告。只有 \TaxonomyNumCodes{} 个已观测的分类法代码具有经验支持；其余 \TaxonomyTotalCodes{} 个代码是定义性的。修复假设下游生成器至少消费补丁词汇表中的部分内容。更广泛的验证需要更多的生成器、领域和标注者。
+
+\paragraph{验证器—人工一致性。}
+在 144 段盲法评估子集上，验证器—人工一致性达到 \VerifierHumanAgreement{}（Cohen's $\kappa = \VerifierHumanKappa$），确认了自动通过/不通过信号是良好校准的。因此，主要的 Pass@K 声明基于盲法人工判断；自动 Pass@K 作为消融扫描的可扩展代理指标。
+
+\paragraph{盈亏平衡分析。}
+诊断成本约为每段视频 \$0.24；完全重新渲染成本约为 \$0.52。盈亏平衡故障率约为 \BreakEvenFailureRate：当生成视频中不到一半包含规格说明违规时，诊断引导的修复比重新渲染全部更便宜。当故障率更高时，重新渲染全部可能更经济。此权衡关系在附录~\ref{app:moved_main_details} 的图~\ref{fig:cost_performance_pareto} 中可视化展示。
+
+\paragraph{何时会失败？}
+诊断在重叠伪影（如相机抖动与运动/抖动）、低于 CLIP 敏感度阈值的微妙风格变化以及视频最后 20\% 时间线内的故障上退化最严重。第二阶段 VLM 法官偶尔会在其有效视觉范围之外的代码上过度校正（如细粒度镜头类型判别）。真实正常视频上的假阳性集中在纹理闪烁和光照偏移代码上，这些代码中规则引擎会在良性的高频变化上触发。这些故障模式为第~\ref{sec:ablations} 节中的阈值和候选预算建议提供了依据。
+
+\section{结论}
+VideoGenDoctor 将标量视频评估替换为可审计的诊断记录，每条记录在时间上定位故障、指定受影响的目标并给出修复动作。在一个包含 324 段视频的受控诊断测试集上，默认管线检测故障代码的宏 F1 为 0.911，证据区间定位的 tIoU@0.5 为 0.732，并将盲法人工修复 Pass@2 从 27.8\% 提升至 76.4\%。在一个跨四个生产级生成器、覆盖 18 个分类法代码的 240 段故障富集真实生成器子集上，管线保持宏 F1 0.826 和 tIoU@0.5 0.598。模块化设计——将特征提取、基于规则的筛选、VLM 验证和补丁编译分离——允许每个组件被独立替换。这些结果支持结构化诊断与修复作为可控视频生成的实用接口，但未能确立其在当前评估的受控扰动、生成器集合和视频时长之外的通用性。
+
+\section{伦理声明}
+\label{sec:ethics}
+VideoGenDoctor 通过自动化诊断改善了生成视频的可控性。改进的生成可靠性可能被滥用以强化误导性媒体。在敏感部署中，自动化修复应与来源追踪、水印和人工审核相结合。故障分类法对视觉质量编码了规范性判断；创意工作流应暴露可配置的阈值并允许人工覆写。
+
+\begin{ack}
+本研究得到了作者各自机构的支持。我们感谢匿名审稿人提供的建设性反馈。
+
+发布包包含参考实现、报告模式、分类法、补丁编译器、受控测试集生成脚本、标注数据、预测日志、评估脚本、VLM 基线提示模板以及自助法置信区间脚本。每次运行记录配置、模型和包版本、随机种子、提示词、原始 VLM 响应和输出路径。从序列化预测和标注中在 CPU 上重新计算表格可在数秒内完成；完整的特征提取和 VLM 评判依赖于 GPU 可用性和 API 访问。
+
+本研究中所有新生成的支持研究结论的数据——包括 VideoGenDoctor-Bench-v0（324 段受控扰动视频，2,016 个人工验证的证据区间）、240 段故障富集真实生成器子集（1,536 个验证证据区间）、120 段真实正常子集、完整的 38 代码分类法、标注记录、预测日志和诊断报告——将在论文被接收后存入公开的 Zenodo 仓库，并作为补充工件包的一部分供评审使用。用于构造受控测试集的 18 个干净源片段来自公开可用的视频数据集，具有宽松的许可。四个生产级生成器（CogVideoX、Wan、Stable Video Diffusion、HunyuanVideo）是公开可用的模型；检查点标识符记录在逐视频的 JSON 清单中。未收集人类受试者数据或可识别个人身份的信息。标注方案已获得相关机构审查委员会的批准。
+\end{ack}
+
+\FloatBarrier
+
+{\small
+\bibliographystyle{plainnat}
+\bibliography{references}
+}
+
+\appendix
+
+
+\section{补充正文结果}
+\label{app:moved_main_details}
+本附录存储从正文中移出的表格和图形，以保持核心叙述的精简，同时保留比较、分类法范围、测试集构造、时间证据剖面、强化 VLM 基线、修复可视化和成本-性能权衡的审计轨迹。
+
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{故障类型、检测它们的证据信号以及它们触发的修复动作。}
+\label{tab:code_patch_mapping}
+\begin{tabular}{p{0.29\textwidth}p{0.33\textwidth}p{0.26\textwidth}}
+\toprule
+\textbf{故障类型} & \textbf{证据信号} & \textbf{修复动作} \\
+\midrule
+人脸身份漂移 & 跨关键帧的人脸嵌入漂移 & 参考帧注入 \\
+身体/服装漂移 & 角色区域外观漂移 & 参考帧或角色锚点注入 \\
+相机运动偏差 & 相机光流轨迹或轨迹不匹配 & 相机运动覆写 \\
+冻结帧或动作停滞 & 近零光流或停滞姿态轨迹 & 重新生成受影响片段 \\
+缺失所需道具 & 目标存在性检查或 VLM 道具缺失判断 & 道具注入 \\
+风格不一致 & 跨片段的风格或颜色嵌入漂移 & 风格校正 \\
+背景不一致 & 场景/背景嵌入漂移 & 背景锚定 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering\small
+\caption{受控测试集和故障富集真实生成器子集的数据集统计。真实故障划分不能估计自然的故障发生率。}
+\label{tab:dataset_statistics}
+\begin{tabular*}{0.95\textwidth}{@{\extracolsep{\fill}}lccccc@{}}
+\toprule
+\textbf{划分} & \textbf{视频数} & \textbf{证据数} & \textbf{平均时长} & \textbf{扰动类型数} & \textbf{代码数} \\
+\midrule
+受控测试集 & 324 & 2016 & 10.46秒 & 9 & 12 \\
+真实故障子集 & 240 & 1536 & 8.93秒 & -- & 18 \\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+\begin{table}[t]
+\centering\small
+\caption{与相关评估和评判范式的功能比较。此处"全局评分"指标量质量、对齐度或验证器式通过/不通过输出，而非定位化的证据记录。直接 VLM 报告被视为强基线，而非仅与仅评分基准比较。}
+\label{tab:comparison}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{系统} & \textbf{全局评分} & \textbf{故障代码} & \textbf{证据} & \textbf{补丁} & \textbf{闭环} \\
+\midrule
+VBench & \cmark & \xmark & \xmark & \xmark & \xmark \\
+EvalCrafter & \cmark & \xmark & \xmark & \xmark & \xmark \\
+VideoScore & \cmark & \xmark & \xmark & \xmark & \xmark \\
+T2V-CompBench & \cmark & 部分 & \xmark & \xmark & \xmark \\
+直接 VLM 报告 & 部分 & 部分 & 部分 & 部分 & \xmark \\
+\textbf{VideoGenDoctor} & \cmark & \cmark & \cmark & \cmark & \cmark \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[t]
+\centering
+\small
+\caption{故障即代码分类法组。每组为诊断记录定义一个命名空间，并链接到证据程序和修复计划模板。}
+\label{tab:failure_taxonomy_groups}
+\begin{tabular}{p{0.20\textwidth}p{0.70\textwidth}}
+\toprule
+\textbf{组} & \textbf{操作范围} \\
+\midrule
+身份（Identity） & 身份漂移、人脸/身体一致性、错误角色、服装一致性。 \\
+相机（Camera） & 镜头类型、相机运动、视角角度、非预期变焦、相机抖动。 \\
+运动（Motion） & 动作时序、帧连续性、运动物理、冻结帧、片段断裂。 \\
+对齐（Alignment） & 提示遵循度、所需物体和道具、角色数量、道具位置。 \\
+风格（Style） & 颜色一致性、纹理闪烁、压缩伪影、艺术风格一致性。 \\
+场景（Scene） & 背景一致性、光照、环境匹配度、场景-物体稳定性。 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{受控诊断测试集的组成。每个领域组包含三个干净源片段。每个源片段配有一份 ShotIR 风格的规格说明，在两个随机种子下受到九种确定性算子的扰动。}
+\label{tab:controlled_fixture_composition}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.27\textwidth}cccccc}
+\toprule
+领域组 & 源片段数 & 平均时长 & 分辨率 & 扰动算子数 & 种子数 & 视频数 \\
+\midrule
+室内/人物-物体交互 & 3 & 10.1秒 & 768$\times$432 & 9 & 2 & 54 \\
+室外/运动 & 3 & 10.8秒 & 768$\times$432 & 9 & 2 & 54 \\
+多物体交互 & 3 & 10.4秒 & 768$\times$432 & 9 & 2 & 54 \\
+相机控制场景 & 3 & 11.0秒 & 768$\times$432 & 9 & 2 & 54 \\
+风格/光照变化 & 3 & 10.2秒 & 768$\times$432 & 9 & 2 & 54 \\
+场景切换/背景 & 3 & 10.3秒 & 768$\times$432 & 9 & 2 & 54 \\
+\midrule
+总计 & 18 & 10.46秒 & -- & 9 & 2 & 324 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/temporal_evidence_profile.pdf}
+\vspace{0.3em}
+\safeincludegraphics[width=\textwidth]{../figures/temporal_evidence_real_profile.pdf}
+\vspace{0.3em}
+\safeincludegraphics[width=\textwidth]{../figures/temporal_evidence_heatmap.pdf}
+\caption{评估集中已验证证据区间的时间分布。面板（a）将 2,016 个受控测试集区间在 2 秒分箱上聚合，展示了确定性扰动算子所预期的前部和中部集中的模式。面板（b）将 1,536 个真实故障区间在相同时间分箱上进行汇总，使更靠后且更分散的时间质量可直接与面板（a）进行比较。面板（c）进一步按故障组和时间分箱分解真实故障区间，突出显示运动和相机故障主导了较晚的时间区间，且比受控测试集中重叠更为严重。}
+\label{fig:temporal_evidence_distribution}
+\end{figure}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{受控测试集上的强化 VLM-agent 基线。所有行在相同下游修复协议下评估；在报告人工修复成功率时，仅诊断前端显式地与共享的修复回路配对。自一致性改善了直接 VLM 报告但增加了成本。有效性列报告发出的动作是否位于受支持的修复计划词汇表内；它不声明生成器适配器的可执行性。最佳值加粗；越高越好，除相对成本越低越好。}
+\label{tab:strong_vlm_agent_baselines}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccccc}
+\toprule
+方法 & 宏 F1 & tIoU@0.5 & 人工 Pass@2 & 模式有效性 & 补丁词汇有效性 & 相对成本 \\
+\midrule
+VLM 自由形式报告 & 0.8402 & 0.5986 & 0.6125 & 0.742 & 0.604 & 1.12$\times$ \\
+VLM 结构化报告 & 0.8869 & 0.6639 & 0.6810 & 0.914 & 0.732 & 1.16$\times$ \\
+VLM 结构化 + 自一致性 & 0.8978 & 0.6824 & 0.7042 & 0.951 & 0.755 & 3.48$\times$ \\
+VLM 时间提案 + 补丁 & 0.8915 & 0.7018 & 0.7076 & 0.936 & 0.802 & 2.05$\times$ \\
+VideoGenDoctor-full & 0.9110 & 0.7316 & 0.7639 & 0.991 & 0.953 & \textbf{1.00}$\times$ \\
+Rule+GPT-4V + 修复回路 & \textbf{0.9276} & \textbf{0.7688} & \textbf{0.7917} & \textbf{0.993} & \textbf{0.957} & 2.75$\times$ \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/manuscript_fig3.pdf}
+\caption{受控测试集上的闭环修复比较。左图：在所有 324 段受控视频上的自动验证器 Pass@1/2。右图：在分层抽样 144 段人工评估子集上的盲法人工 Pass@1/2。自动通过率可能与系统验证器耦合，而人工通过率提供修复成功与否的独立检验。}
+\label{fig:repair_curve}
+\end{figure}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{共享下游修复协议下的成本-性能权衡。在报告人工 Pass@2 之前，仅诊断前端与相同的修复回路配对。成本以默认 VideoGenDoctor-full 配置为基准报告相对值。最后两列的值为相对于 VideoGenDoctor-full 的乘法因子（1.00$\times$）。最佳值加粗；任务指标越高越好，成本和延迟越低越好。}
+\label{tab:cost_performance}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.28\textwidth}ccccc}
+\toprule
+方法 & 宏 F1 & tIoU@0.5 & 人工 Pass@2 & 相对成本 & 相对延迟 \\
+\midrule
+Rule-only + 修复回路 & 0.8926 & 0.6714 & 0.5988 & \textbf{0.42}$\times$ & \textbf{0.58}$\times$ \\
+Rule+Open-VLM + 修复回路 & 0.9047 & 0.7062 & 0.7160 & 0.73$\times$ & 0.87$\times$ \\
+VideoGenDoctor-full & 0.9110 & 0.7316 & 0.7639 & 1.00$\times$ & 1.00$\times$ \\
+Rule+GPT-4V + 修复回路 & \textbf{0.9276} & \textbf{0.7688} & \textbf{0.7917} & 2.75$\times$ & 2.31$\times$ \\
+VLM 结构化报告 & 0.8869 & 0.6639 & 0.6810 & 1.16$\times$ & 1.20$\times$ \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/cost_performance_pareto.pdf}
+\caption{共享下游修复协议下成本-性能权衡的帕累托视图。默认 VideoGenDoctor-full 操作点在人工修复成功率上优于低成本规则变体和直接结构化 VLM 报告，而高成本的 Rule+GPT-4V 参考方案以显著更高的相对成本获得最强的人工 Pass@2。}
+\label{fig:cost_performance_pareto}
+\end{figure}
+
+
+% 从 appendix.tex 内联
+\section{附加实验表格}
+\label{app:additional_experiment_tables}
+本附录收集构造细节、审计表格、压力分析、逐切片结果以及支持主要实验声明而不会打断主叙述的可视化图表。
+
+\subsection{诊断与修复可视化}
+\label{app:diagnosis_repair_viz}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/controlled_vs_real_paired.pdf}
+\caption{跨四个指标的受控到真实迁移。实心柱：受控测试集；斜线柱：真实故障子集。tIoU@0.5 的退化差距最大，补丁实用性的退化差距最小。}
+\label{fig:controlled_vs_real_paired}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/feature_ablation_horizontal.pdf}
+\caption{逐特征消融水平柱状图。光流是唯一最关键信号；单独信号配置均显著表现不佳。}
+\label{fig:feature_ablation}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/repair_ablation_bars.pdf}
+\caption{修复消融分组柱状图。随着代码、区间、证据和验证的逐步加入，人工 Pass@2 和补丁实用性呈加法式上升。}
+\label{fig:repair_ablation_bars}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/threshold_sensitivity.pdf}
+\caption{阈值敏感性曲线。$\tau=0.50$ 处的虚线标记了宏 F1 和 tIoU@0.5 达到峰值的操作点。}
+\label{fig:threshold_sensitivity}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/alpha_topk_sensitivity.pdf}
+\caption{法官权重 $\alpha$ 和候选预算 $K$ 的敏感性。$\alpha=0.6$，$K=3$ 平衡了诊断准确率和修复成功率。}
+\label{fig:alpha_topk_sensitivity}
+\end{figure}
+
+\subsection{扩展实验分析}
+\label{app:experiment_extensions}
+
+\paragraph{适配器可执行性。}
+表~\ref{tab:adapter_executability} 和图~\ref{fig:adapter_executability} 通过将生成的修复计划分组为 L0--L3 适配器级别，区分了修复计划质量与后端可执行性。趋势与预期的修复接口一致：L2/L3 动作更常可执行且带来更高的人工 Pass@2，而 L0/L1 输出作为保守的放弃声明或提示级修复指令仍然有用，但提供的直接修复成功率较弱。
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{适配器可执行性分层。L0：放弃声明；L1：提示级指令；L2：部分可执行动作；L3：原生生成器/编辑器控制。}
+\label{tab:adapter_executability}
+\begin{tabular}{lcccc}
+\toprule
+适配器级别 & 计划占比 & 适配器可执行率 & 人工 Pass@2 & 新伪影 \\
+\midrule
+L0 放弃声明 & 0.100 & 0.000 & 0.280 & 0.040 \\
+L1 计划 & 0.310 & 0.280 & 0.540 & 0.100 \\
+L2 部分 & 0.420 & 0.740 & 0.730 & 0.140 \\
+L3 原生 & 0.170 & 0.960 & 0.810 & 0.160 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/adapter_executability.pdf}
+\caption{按修复计划级别划分的适配器可执行性分层。左图报告了按适配器级别划分的生成计划占比；右图比较了每个级别内的适配器可执行率、人工 Pass@2 和新伪影率。}
+\label{fig:adapter_executability}
+\end{figure}
+
+\paragraph{强化真实故障压力切片。}
+表~\ref{tab:extended_real_validation} 和图~\ref{fig:extended_real_validation} 将真实故障检验扩展到更困难的切片：新增生成器、更长视频、风格偏移提示和更复杂的提示规格说明。压力切片相对于基础真实故障子集退化，尤其是长视频和复杂提示，但保留的性能仍高于正文实验中报告的仅评分和仅先验操作区间。
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{更困难真实故障切片的压力验证。区间为图~\ref{fig:extended_real_validation} 的自助法半宽度。}
+\label{tab:extended_real_validation}
+\begin{tabular}{lcccc}
+\toprule
+切片 & 宏 F1 & tIoU@0.5 & 人工 Pass@2 & FPR \\
+\midrule
+基础真实故障 & 0.826 $\pm$ 0.020 & 0.598 $\pm$ 0.017 & 0.691 $\pm$ 0.028 & 0.100 $\pm$ 0.010 \\
+新增生成器 & 0.802 $\pm$ 0.024 & 0.574 $\pm$ 0.020 & 0.662 $\pm$ 0.034 & 0.126 $\pm$ 0.012 \\
+长视频 & 0.784 $\pm$ 0.029 & 0.552 $\pm$ 0.025 & 0.628 $\pm$ 0.041 & 0.142 $\pm$ 0.014 \\
+风格偏移 & 0.811 $\pm$ 0.025 & 0.581 $\pm$ 0.022 & 0.674 $\pm$ 0.036 & 0.118 $\pm$ 0.013 \\
+复杂提示 & 0.793 $\pm$ 0.027 & 0.560 $\pm$ 0.023 & 0.641 $\pm$ 0.039 & 0.135 $\pm$ 0.014 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/extended_real_validation.pdf}
+\caption{更困难真实故障切片的压力验证。左图：带有不确定性的诊断、定位和人工修复指标。右图：在匹配的真实正常对照上的假阳性率。}
+\label{fig:extended_real_validation}
+\end{figure}
+
+\paragraph{多标注者稳定性。}
+表~\ref{tab:multi_annotator_stability} 和图~\ref{fig:multi_annotator_stability} 将标注可靠性分析从双人标注扩展到三人标注设置。代码级一致性仍然显著，而区间一致性在真实故障样本上较低，这与自然发生故障的更高模糊性以及较不隔离的时间证据一致。
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{三人标注者稳定性分析。边界分歧以秒为单位（越低越好）。}
+\label{tab:multi_annotator_stability}
+\begin{tabular}{lccccc}
+\toprule
+子集 & 视频数 & 候选区间数 & 标注者数 & Fleiss' $\kappa$ & 平均成对 tIoU / 边界分歧 \\
+\midrule
+受控 & 72 & 468 & 3 & 0.842 & 0.704 / 0.38秒 \\
+真实故障 & 48 & 300 & 3 & 0.782 & 0.628 / 0.52秒 \\
+合并 & 120 & 768 & 3 & 0.813 & 0.666 / 0.45秒 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/multi_annotator_stability.pdf}
+\caption{多标注者稳定性。代码级 $\kappa$ 超过时间边界一致性；真实故障划分显示最高的模糊性。}
+\label{fig:multi_annotator_stability}
+\end{figure}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{受控测试集的算子-模板对齐分析。该表明确指出哪些可观测线索、规则信号、故障代码和修复计划模板是通过构造对齐的。}
+\label{tab:operator_alignment}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.18\textwidth}p{0.16\textwidth}p{0.16\textwidth}p{0.16\textwidth}p{0.17\textwidth}p{0.11\textwidth}}
+\toprule
+扰动算子 & 可观测线索 & 规则/特征信号 & 故障代码 & 修复计划模板 & 对齐类型 \\
+\midrule
+身份锚点移除 & 人脸或身体外观漂移 & 人脸嵌入漂移；角色区域嵌入漂移 & \tblcode{ID\_FACE\_DRIFT}, \tblcode{ID\_BODY\_DRIFT} & \tblcode{inject\_reference\_frame}; \tblcode{replace\_character\_anchor} & 身份锚点 \\
+所需道具移除 & 所需物体缺失或不一致 & 目标检测器缺失；VLM 道具缺失判断 & \tblcode{AL\_PROP\_MISSING} & \tblcode{inject\_prop} & 道具存在性 \\
+相机运动改变 & 要求轨迹被静态或错误运动替代 & 全局光流方向；轨迹不匹配 & \tblcode{CA\_MOVE\_WRONG} & \tblcode{set\_camera\_movement} & 运动控制 \\
+镜头类型/构图改变 & 构图违反要求的镜头类型 & 裁剪统计；VLM 构图判断 & \tblcode{CA\_SHOT\_TYPE\_WRONG} & \tblcode{adjust\_framing} & 构图控制 \\
+相机抖动注入 & 带有非预期抖动的不稳定相机 & 光流不稳定；相机抖动启发式 & \tblcode{CA\_SHAKE} & \tblcode{stabilize\_camera} & 稳定性控制 \\
+动作移除/偏移 & 所需事件缺失或顺序错误 & 动作轨迹间隙；VLM 事件顺序判断 & \tblcode{MO\_EVENT\_MISSING} & \tblcode{inject\_action\_keyframe}; \tblcode{regenerate\_segment} & 事件结构 \\
+时间抖动/丢帧注入 & 不连续性、重复帧或帧率不匹配 & 光流异常；近零运动平台 & \tblcode{MO\_JITTER}, \tblcode{MO\_SEGMENT\_BREAK} & \tblcode{normalize\_frame\_rate}; \tblcode{regenerate\_segment} & 时间连续性 \\
+压缩再编码 & 方块效应和去块效应伪影 & 压缩检测器；纹理退化信号 & \tblcode{ST\_COMPRESSION\_ARTIFACT} & \tblcode{apply\_enhancement} & 质量恢复 \\
+背景锚点弱化 & 场景背景在镜头中漂移 & 场景嵌入漂移；背景锚点不匹配 & \tblcode{SC\_BG\_INCONSISTENCY} & \tblcode{fix\_background\_anchor} & 场景锚点 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{故障富集真实生成器子集的源组成。我们从 480 段原始生成中筛选，保留 240 段具有标注者验证的可见故障的样本。每个生成器采样平衡为 60 段保留故障，生成器特定的提示或条件适配器记录在构造清单中。该子集仅用作初始迁移检验，不用于估计自然的故障发生率。我们使用公开可识别的生成器检查点，使子集构造可审计且可复现。}
+\label{tab:real_failure_source}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.16\textwidth}p{0.18\textwidth}p{0.22\textwidth}cccc}
+\toprule
+生成器 & 版本/检查点 & 输入类型 & 提示/规格数 & 视频数 & 平均时长 & 唯一已观测代码数 \\
+\midrule
+CogVideoX & CogVideoX1.5-5B & 文本 / ShotIR-to-prompt & 60 & 60 & 8.4秒 & 15 \\
+Wan & Wan2.1-T2V-14B & 文本 / ShotIR-to-prompt & 60 & 60 & 9.2秒 & 16 \\
+Stable Video Diffusion & SVD-XT-1.1 & 图像到视频 / 参考帧 & 60 & 60 & 8.6秒 & 14 \\
+HunyuanVideo & HunyuanVideo-1.5 & 文本 / 多镜头提示 & 60 & 60 & 9.5秒 & 17 \\
+\midrule
+总计 & -- & -- & 240 & 240 & 8.93秒 & 18 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{真实故障与真实正常评估。真实正常子集包含 120 段从相同 480 段原始生成池中保留但被判定为无明显故障的视频。每当列出面向诊断的前端时，补丁相关列是在将该前端与共享下游修复回路配对后计算的。最佳值加粗；越高越好，除真实正常 FPR 和不必要补丁率越低越好。}
+\label{tab:real_normal_control}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccc}
+\toprule
+方法 & 真实故障召回率 & 真实正常 FPR & 不必要补丁率 & 无需操作准确率 & 特异度 \\
+\midrule
+仅评分 & 0.621 & 0.258 & 0.231 & 0.769 & 0.742 \\
+仅规则 & 0.806 & 0.168 & 0.154 & 0.846 & 0.832 \\
+VLM 结构化报告 & 0.818 & 0.217 & 0.205 & 0.795 & 0.783 \\
+VLM 结构化 + 自一致性 & 0.837 & 0.167 & 0.150 & 0.850 & 0.833 \\
+VLM 时间提案 + 补丁 & 0.848 & 0.192 & 0.183 & 0.817 & 0.808 \\
+VideoGenDoctor-diagnosis & \textbf{0.862} & 0.108 & 0.092 & 0.908 & 0.892 \\
+VideoGenDoctor-full & 0.858 & \textbf{0.100} & \textbf{0.087} & \textbf{0.913} & \textbf{0.900} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{72 个模糊规格说明违规案例的压力分析。这些样本包含可能但不可仲裁的规格说明偏差。每当列出面向诊断的前端时，补丁相关列是在将该前端与共享下游修复回路配对后计算的。最佳值加粗；对于与放弃声明相关的列越高越好，对于假具体补丁、错误目标补丁、过度修复和新伪影越低越好。}
+\label{tab:ambiguous_violation_cases}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccccc}
+\toprule
+方法 & 放弃声明率 & 适当放弃声明 & 假具体补丁 & 错误目标补丁 & 过度修复 & 新伪影 \\
+\midrule
+仅评分 & 0.292 & 0.361 & 0.514 & 0.222 & 0.347 & 0.083 \\
+VLM 结构化报告 & 0.181 & 0.292 & 0.611 & 0.278 & 0.431 & 0.153 \\
+VLM 时间提案 + 补丁 & 0.222 & 0.347 & 0.556 & 0.236 & 0.389 & 0.194 \\
+VideoGenDoctor-diagnosis & \textbf{0.500} & \textbf{0.639} & 0.292 & 0.125 & 0.208 & \textbf{0.069} \\
+VideoGenDoctor-full & 0.472 & 0.625 & \textbf{0.250} & \textbf{0.111} & \textbf{0.181} & 0.111 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{48 个低质量或不可仲裁案例的压力分析。这些样本以全局退化、内容不清晰或证据不足以进行可靠代码级标注为特征。每当列出面向诊断的前端时，补丁相关列是在将该前端与共享下游修复回路配对后计算的。最佳值加粗；质量门控放弃声明越高越好，其余列越低越好。}
+\label{tab:low_quality_cases}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccc}
+\toprule
+方法 & 质量门控放弃声明 & 假具体补丁 & 错误目标补丁 & 过度修复 & 新伪影 \\
+\midrule
+仅评分 & 0.417 & 0.375 & 0.125 & 0.208 & 0.063 \\
+VLM 结构化报告 & 0.292 & 0.458 & 0.188 & 0.271 & 0.104 \\
+VLM 时间提案 + 补丁 & 0.333 & 0.396 & 0.167 & 0.250 & 0.146 \\
+VideoGenDoctor-diagnosis & \textbf{0.667} & 0.146 & 0.063 & 0.104 & \textbf{0.042} \\
+VideoGenDoctor-full & 0.625 & \textbf{0.125} & \textbf{0.042} & \textbf{0.083} & 0.083 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{受控测试集和真实故障子集中已观测的故障代码分布。完整分类法包含 38 个代码，但经验声明仅限于以下已观测的代码。}
+\label{tab:code_distribution}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.30\textwidth}p{0.14\textwidth}ccc}
+\toprule
+故障代码 & 组 & 受控区间数 & 真实故障区间数 & 总区间数 \\
+\midrule
+\tblcode{ID\_FACE\_DRIFT} & Identity & 150 & 112 & 262 \\
+\tblcode{ID\_BODY\_DRIFT} & Identity & 132 & 76 & 208 \\
+\tblcode{ID\_CLOTHING\_CHANGE} & Identity & -- & 60 & 60 \\
+\tblcode{CA\_MOVE\_WRONG} & Camera & 240 & 104 & 344 \\
+\tblcode{CA\_SHOT\_TYPE\_WRONG} & Camera & 144 & 84 & 228 \\
+\tblcode{CA\_SHAKE} & Camera & 126 & 70 & 196 \\
+\tblcode{CA\_WRONG\_ANGLE} & Camera & -- & 68 & 68 \\
+\tblcode{MO\_JITTER} & Motion & 174 & 124 & 298 \\
+\tblcode{MO\_FROZEN\_FRAME} & Motion & 156 & 72 & 228 \\
+\tblcode{MO\_SEGMENT\_BREAK} & Motion & 162 & 88 & 250 \\
+\tblcode{MO\_EVENT\_MISSING} & Motion & 126 & 90 & 216 \\
+\tblcode{MO\_ACTION\_ORDER\_WRONG} & Motion & -- & 56 & 56 \\
+\tblcode{AL\_PROP\_MISSING} & Alignment & 198 & 116 & 314 \\
+\tblcode{AL\_TEXT\_PROMPT\_MISMATCH} & Alignment & -- & 132 & 132 \\
+\tblcode{ST\_COMPRESSION\_ARTIFACT} & Style & 252 & 80 & 332 \\
+\tblcode{ST\_COLOR\_SHIFT} & Style & -- & 56 & 56 \\
+\tblcode{SC\_BG\_INCONSISTENCY} & Scene & 156 & 86 & 242 \\
+\tblcode{SC\_OBJECT\_TELEPORT} & Scene & -- & 62 & 62 \\
+\midrule
+总计 & -- & 2016 & 1536 & 3552 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{标注可靠性。在仲裁前对可靠性子集进行双人标注。}
+\label{tab:annotation_reliability}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.28\textwidth}ccccc}
+\toprule
+子集 & 视频数 & 候选区间数 & 标注者数 & 代码一致率 & 区间一致率 \\
+\midrule
+受控可靠性子集 & 72 & 468 & 2 & $\kappa$ = 0.858 & tIoU = 0.716 \\
+真实故障可靠性子集 & 48 & 300 & 2 & $\kappa$ = 0.803 & tIoU = 0.641 \\
+合并 & 120 & 768 & 2 & $\kappa$ = 0.831 & tIoU = 0.681 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{基于 VLM 的法官和外部诊断/修复基线的实现细节。}
+\label{tab:vlm_details}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.19\textwidth}cc>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}}
+\toprule
+设置 & 模型 & 帧数 & 分辨率 & 提示词 & 相对成本 \\
+\midrule
+Rule+Open-VLM & Qwen2-VL-7B-Instruct~\cite{qwen2vl2024} & 18 & 512px 短边 & 结构化问答 & 0.34$\times$ \\
+Rule+GPT-4V & GPT-4V 端点 & 18 & 512px 短边 & 结构化问答 & 2.75$\times$ \\
+VLM 自由形式报告 & GPT-4V 端点 & 12 & 512px 短边 & 自由形式评判 & 1.12$\times$ \\
+VLM 结构化报告 & GPT-4V 端点 & 12 & 512px 短边 & JSON 模式 & 1.16$\times$ \\
+VLM 结构化 + 自一致性 & GPT-4V 端点 & 12 帧 $\times$ 3 次运行 & 512px 短边 & JSON 模式，3 次运行 & 3.48$\times$ \\
+VLM 时间提案 + 补丁 & GPT-4V 端点 & 12 & 512px 短边 & 区间提案 + JSON & 2.05$\times$ \\
+VLM-to-patch & GPT-4V 端点 & 12 & 512px 短边 & JSON 补丁 & 1.19$\times$ \\
+Score+LLM-to-patch & 标量评估器 + LLM & 0 & -- & 评分到补丁 JSON & N/A \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\vspace{2pt}
+\begin{minipage}{0.98\linewidth}
+\footnotesize\emph{注：}大多数直接 VLM 基线共享相同的托管 GPT-4V 端点~\cite{gpt4v2023}，以隔离提示和模式层面的效果而非主干模型的变化；Rule+Open-VLM 提供一个开放模型参考。托管端点调用均记录原始响应以供审计。`N/A' 表示以标量评估器为主导的管线，其成本无法直接与基于帧的 VLM 调用相比较。
+\end{minipage}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{真实故障子集上的逐代码可靠性。该子集比受控测试集更具挑战性，尤其在运动、相机和场景级故障上。}
+\label{tab:real_per_code}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.31\textwidth}ccccc}
+\toprule
+故障代码 & 区间数 & 精确率 & 召回率 & F1 & tIoU@0.5 \\
+\midrule
+\tblcode{ID\_FACE\_DRIFT} & 112 & 0.884 & 0.848 & 0.866 & 0.648 \\
+\tblcode{ID\_BODY\_DRIFT} & 76 & 0.856 & 0.823 & 0.839 & 0.615 \\
+\tblcode{ID\_CLOTHING\_CHANGE} & 60 & 0.834 & 0.798 & 0.816 & 0.586 \\
+\tblcode{CA\_MOVE\_WRONG} & 104 & 0.866 & 0.832 & 0.849 & 0.628 \\
+\tblcode{CA\_SHOT\_TYPE\_WRONG} & 84 & 0.838 & 0.803 & 0.820 & 0.590 \\
+\tblcode{CA\_SHAKE} & 70 & 0.820 & 0.779 & 0.799 & 0.559 \\
+\tblcode{CA\_WRONG\_ANGLE} & 68 & 0.825 & 0.786 & 0.805 & 0.568 \\
+\tblcode{MO\_JITTER} & 124 & 0.823 & 0.777 & 0.799 & 0.565 \\
+\tblcode{MO\_FROZEN\_FRAME} & 72 & 0.899 & 0.854 & 0.876 & 0.663 \\
+\tblcode{MO\_SEGMENT\_BREAK} & 88 & 0.827 & 0.792 & 0.809 & 0.582 \\
+\tblcode{MO\_EVENT\_MISSING} & 90 & 0.807 & 0.762 & 0.784 & 0.542 \\
+\tblcode{MO\_ACTION\_ORDER\_WRONG} & 56 & 0.792 & 0.748 & 0.769 & 0.524 \\
+\tblcode{AL\_PROP\_MISSING} & 116 & 0.893 & 0.863 & 0.878 & 0.669 \\
+\tblcode{AL\_TEXT\_PROMPT\_MISMATCH} & 132 & 0.842 & 0.794 & 0.817 & 0.596 \\
+\tblcode{ST\_COMPRESSION\_ARTIFACT} & 80 & 0.914 & 0.874 & 0.893 & 0.688 \\
+\tblcode{ST\_COLOR\_SHIFT} & 56 & 0.846 & 0.806 & 0.825 & 0.601 \\
+\tblcode{SC\_BG\_INCONSISTENCY} & 86 & 0.832 & 0.795 & 0.813 & 0.578 \\
+\tblcode{SC\_OBJECT\_TELEPORT} & 62 & 0.823 & 0.782 & 0.802 & 0.545 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{真实故障和真实正常子集上的逐生成器结果。FPR 基于每个生成器 30 段真实正常样本计算。}
+\label{tab:per_generator_results}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccclc}
+\toprule
+生成器 & 宏 F1 & tIoU@0.5 & 人工 Pass@2 & 真实正常 FPR & 主要故障组 & 正常样本数 \\
+\midrule
+CogVideoX & 0.834 & 0.609 & 0.702 & 0.092 & Camera, Motion, Alignment & 30 \\
+Wan & 0.821 & 0.588 & 0.681 & 0.108 & Motion, Camera, Identity & 30 \\
+Stable Video Diffusion & 0.842 & 0.617 & 0.696 & 0.083 & Identity, Style, Scene & 30 \\
+HunyuanVideo & 0.809 & 0.579 & 0.684 & 0.117 & Camera, Motion, Alignment & 30 \\
+\midrule
+平均 & 0.827 & 0.598 & 0.691 & 0.100 & -- & 120 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{留一扰动评估。每个保留的扰动算子被排除在阈值调优之外，然后仅用于测试。}
+\label{tab:leave_one_perturbation}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccc}
+\toprule
+保留的扰动算子 & 宏 F1 & tIoU@0.5 & Top-3 命中率 \\
+\midrule
+身份锚点移除 & 0.884 & 0.681 & 0.644 \\
+所需道具移除 & 0.902 & 0.704 & 0.672 \\
+相机运动改变 & 0.871 & 0.653 & 0.612 \\
+镜头类型/构图改变 & 0.862 & 0.641 & 0.606 \\
+相机抖动注入 & 0.851 & 0.628 & 0.590 \\
+动作移除/偏移 & 0.838 & 0.612 & 0.568 \\
+时间抖动/丢帧注入 & 0.846 & 0.621 & 0.577 \\
+压缩再编码 & 0.910 & 0.719 & 0.688 \\
+背景锚点弱化 & 0.868 & 0.646 & 0.610 \\
+\midrule
+平均 & 0.870 & 0.656 & 0.619 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{跨六个受控测试集领域组的留一源组评估。}
+\label{tab:leave_one_source_group}
+\begin{tabular}{lccc}
+\toprule
+保留的源组 & 宏 F1 & tIoU@0.5 & Top-3 命中率 \\
+\midrule
+室内/人物-物体交互 & 0.899 & 0.714 & 0.665 \\
+室外/运动 & 0.887 & 0.702 & 0.651 \\
+多物体交互 & 0.892 & 0.706 & 0.657 \\
+相机控制场景 & 0.875 & 0.683 & 0.631 \\
+风格/光照变化 & 0.907 & 0.722 & 0.676 \\
+场景切换/背景 & 0.884 & 0.694 & 0.642 \\
+\midrule
+平均 & 0.891 & 0.704 & 0.654 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{完整故障分类法}
+\label{app:taxonomy}
+表~\ref{tab:full_taxonomy} 报告了 VideoGenDoctor v0.1 使用的机器可读分类法。v0.1 分类法包含 \TaxonomyTotalCodes{} 个代码，归类为六个类别。每个代码配有操作定义、证据程序和默认补丁模板。当前基准评估了在 VideoGenDoctor-Bench-v0 中观测到的 \TaxonomyNumCodes{} 个代码，其余代码定义了报告模式和补丁编译器使用的可扩展命名空间。
+
+\begingroup
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{longtable}{
+  >{\raggedright\arraybackslash}p{0.23\textwidth}
+  >{\raggedright\arraybackslash}p{0.27\textwidth}
+  >{\raggedright\arraybackslash}p{0.21\textwidth}
+  >{\raggedright\arraybackslash}p{0.13\textwidth}}
+\caption{报告模式和补丁编译器使用的 VideoGenDoctor v0.1 完整故障分类法。}
+\label{tab:full_taxonomy}\\
+\toprule
+\textbf{代码} & \textbf{定义} & \textbf{证据程序} & \textbf{补丁模板} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{代码} & \textbf{定义} & \textbf{证据程序} & \textbf{补丁模板} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{4}{r}{接下页} \\
+\endfoot
+\bottomrule
+\endlastfoot
+\multicolumn{4}{l}{Identity（身份）} \\
+\tblcode{ID\_FACE\_DRIFT} & 人脸身份在不同帧或片段之间不一致地变化。 & 比较跨关键帧的人脸嵌入并标记较大的余弦距离。 & \tblcode{inject\_reference\_frame} \\
+\tblcode{ID\_BODY\_DRIFT} & 身体外观、服装或体型不一致地变化。 & 比较跨片段的角色区域嵌入。 & \tblcode{inject\_reference\_frame} \\
+\tblcode{ID\_WRONG\_CHARACTER} & 可见角色与任何指定角色都不匹配。 & 将人脸嵌入与已知角色锚点进行比对。 & \tblcode{replace\_character\_anchor} \\
+\tblcode{ID\_CLOTHING\_CHANGE} & 服装在镜头之间变化而无叙事正当理由。 & 测量跨片段的角色区域外观漂移。 & \tblcode{fix\_character\_consistency} \\
+\tblcode{ID\_MULTIPLE\_FACES} & 期望一个角色时出现多个不同的人脸。 & 在单人镜头中统计检测到的不同身份数量。 & \tblcode{adjust\_character\_count} \\
+\tblcode{ID\_NO\_FACE\_VISIBLE} & 要求人脸可见的镜头中缺失预期的人脸。 & 在特写或中景镜头约束下检查人脸检测。 & \tblcode{adjust\_framing} \\
+\midrule
+\multicolumn{4}{l}{Scene（场景）} \\
+\tblcode{SC\_BG\_INCONSISTENCY} & 背景在片段之间意外变化。 & 测量连续片段间的背景区域嵌入漂移。 & \tblcode{fix\_background\_anchor} \\
+\tblcode{SC\_ENVIRONMENT\_MISMATCH} & 场景环境与指定地点不匹配。 & 使用图像-文本相似度将帧与地点描述进行比较。 & \tblcode{set\_environment} \\
+\tblcode{SC\_LIGHTING\_SHIFT} & 光照在镜头内不一致地变化。 & 测量片段内的逐帧亮度变化。 & \tblcode{normalize\_lighting} \\
+\tblcode{SC\_OBJECT\_TELEPORT} & 场景物体出现或消失而无合理运动。 & 在相邻帧之间追踪物体框。 & \tblcode{stabilize\_scene\_objects} \\
+\tblcode{SC\_BG\_FLICKER} & 背景闪烁或脉冲不自然。 & 检测背景区域的高频亮度变化。 & \tblcode{fix\_background\_anchor} \\
+\tblcode{SC\_WRONG\_TIME\_OF\_DAY} & 时间与规格说明不匹配。 & 根据预期时间对天空和环境光照进行分类。 & \tblcode{set\_time\_of\_day} \\
+\midrule
+\multicolumn{4}{l}{Motion（运动）} \\
+\tblcode{MO\_JITTER} & 非自然的帧间抖动出现在预期相机运动之外。 & 测量光流幅度方差和方向不稳定性。 & \tblcode{normalize\_frame\_rate} \\
+\tblcode{MO\_FRAME\_DROP} & 重复或丢失帧产生可见的卡顿。 & 在预期运动的片段检测相邻帧近零光流。 & \tblcode{interpolate\_frames} \\
+\tblcode{MO\_UNNATURAL\_MOTION} & 角色或物体运动物理上不合理。 & 将光流方向和幅度与预期运动约束进行比较。 & \tblcode{constrain\_motion} \\
+\tblcode{MO\_EVENT\_MISSING} & 所需动作或事件在预期片段中未出现。 & 向 VLM 法官询问指定动作是否可见。 & \tblcode{inject\_action\_keyframe} \\
+\tblcode{MO\_ACTION\_ORDER\_WRONG} & 动作以错误的时间顺序发生。 & 将检测到的动作时间戳与规格说明顺序进行比较。 & \tblcode{reorder\_segments} \\
+\tblcode{MO\_MOTION\_BLUR\_EXCESS} & 过度运动模糊降低了关键帧质量。 & 使用清晰度度量，如拉普拉斯方差。 & \tblcode{reduce\_motion\_blur} \\
+\tblcode{MO\_FROZEN\_FRAME} & 预期运动时视频冻结。 & 检测整个片段上近零光流。 & \tblcode{regenerate\_segment} \\
+\tblcode{MO\_SEGMENT\_BREAK} & 视觉不连续出现在片段边界处。 & 检测边界处的嵌入漂移尖峰。 & \tblcode{smooth\_segment\_transition} \\
+\midrule
+\multicolumn{4}{l}{Camera（相机）} \\
+\tblcode{CA\_MOVE\_WRONG} & 相机运动偏离指定的运动。 & 将光流方向模式与预期运动类型进行比较。 & \tblcode{set\_camera\_movement} \\
+\tblcode{CA\_SHOT\_TYPE\_WRONG} & 镜头类型与规格说明不匹配。 & 将人脸或身体框尺寸比例与预期镜头类型进行比较。 & \tblcode{adjust\_framing} \\
+\tblcode{CA\_UNINTENDED\_ZOOM} & 出现未经规划的变焦。 & 检测无变焦规格说明的径向光流。 & \tblcode{remove\_zoom} \\
+\tblcode{CA\_SHAKE} & 相机抖动出现在指定运动之外。 & 检测全局光流的高频振荡。 & \tblcode{stabilize\_camera} \\
+\tblcode{CA\_WRONG\_ANGLE} & 相机角度偏离规格说明。 & 向 VLM 法官请求比较观察角度与目标角度。 & \tblcode{set\_camera\_angle} \\
+\tblcode{CA\_ROLL} & 出现非预期的相机翻滚。 & 估计光流的旋转分量。 & \tblcode{remove\_camera\_roll} \\
+\midrule
+\multicolumn{4}{l}{Alignment（对齐）} \\
+\tblcode{AL\_PROP\_MISSING} & 所需道具在片段中不可见。 & 使用目标检测或 VLM 验证道具缺失。 & \tblcode{inject\_prop} \\
+\tblcode{AL\_PROP\_WRONG\_PLACEMENT} & 所需道具出现在错误区域。 & 将道具框与预期屏幕区域进行比较。 & \tblcode{reposition\_prop} \\
+\tblcode{AL\_TEXT\_PROMPT\_MISMATCH} & 生成内容与提示不一致。 & 测量文本-图像相似度并用法官验证不匹配。 & \tblcode{strengthen\_prompt\_guidance} \\
+\tblcode{AL\_CHARACTER\_COUNT\_WRONG} & 可见角色数量与规格说明不匹配。 & 统计人脸或身体数量并与预期数量比较。 & \tblcode{adjust\_character\_count} \\
+\tblcode{AL\_WRONG\_PROP} & 可见道具不在规格说明列表中。 & 检测高置信度的未列明物体。 & \tblcode{remove\_prop} \\
+\tblcode{AL\_PROP\_OCCLUDED} & 所需道具存在但被严重遮挡。 & 估计道具框的可见面积和遮挡程度。 & \tblcode{reposition\_prop} \\
+\midrule
+\multicolumn{4}{l}{Style（风格）} \\
+\tblcode{ST\_COLOR\_SHIFT} & 调色板在片段之间不一致地变化。 & 测量片段间的 HSV 直方图距离。 & \tblcode{apply\_color\_grading} \\
+\tblcode{ST\_ART\_STYLE\_INCONSISTENCY} & 艺术风格在片段之间偏移。 & 比较跨片段的风格嵌入。 & \tblcode{apply\_style\_transfer} \\
+\tblcode{ST\_COMPRESSION\_ARTIFACT} & 可见压缩伪影降低视频质量。 & 检测块效应、振铃效应或质量分数退化。 & \tblcode{apply\_enhancement} \\
+\tblcode{ST\_TEXTURE\_FLICKER} & 纹理图案不自然地闪烁或闪光。 & 测量纹理区域的高时间频率。 & \tblcode{smooth\_texture} \\
+\tblcode{ST\_OVEREXPOSURE} & 大量帧区域过曝。 & 统计饱和高值像素的比例。 & \tblcode{adjust\_exposure} \\
+\tblcode{ST\_UNDEREXPOSURE} & 大量帧区域欠曝。 & 统计近黑色像素的比例。 & \tblcode{adjust\_exposure} \\
+\end{longtable}
+\endgroup
+
+
+\section{法官协议}
+\label{app:judge}
+第二阶段法官接收第一阶段产生的排名前 $K$ 的候选片段。对于每个片段，输入包括片段标识符、时间边界、关键帧路径、候选故障代码以及规格说明上下文，包括所需道具、预期动作、相机运动、镜头类型和角色锚点。法官回答结构化问题，而非生成自由形式的报告。这一设计保持了本地开源 VLM 与托管视觉能力模型之间输出的可比较性。
+
+对于身份故障，法官检查人脸、身体外观、服装或其他角色显著视觉属性是否在关键帧之间不一致地变化。对于对齐故障，它验证所需道具是否可见、是否出现在预期的屏幕区域，以及生成的内容是否与提示或结构化规格说明匹配。对于相机故障，它将观察到的相机运动、镜头类型和视角角度与请求的控制信号进行比较。对于运动故障，它验证所需动作是否发生、是否以指定顺序发生，以及卡顿、冻结帧或片段断裂是否可见。对于风格和场景故障，它检查光照、颜色、压缩伪影、背景一致性和环境匹配度。
+
+输出是一个结构化对象，包含每个问题的自然语言答案、置信度分数、逐代码概率更新以及关键帧的重新排序。最终故障分数计算为
+\[
+\tilde{\sigma}_{s,c} = (1-\alpha)\sigma^{(1)}_{s,c} + \alpha\sigma^{(2)}_{s,c},
+\]
+其中 $\sigma^{(1)}_{s,c}$ 是第一阶段分数，$\sigma^{(2)}_{s,c}$ 是法官分数，缺省 $\alpha=0.6$。所有法官调用记录模型名称、提示词、原始响应、令牌数（可用时）和输出路径，以支持可复现性。
+
+
+\section{补丁模板示例}
+\label{app:patch}
+VideoGenDoctor 将每条诊断记录编译为一个或多个补丁动作。如果有 ShotIR 规格说明可用，编译器发出字段级的差异描述。如果生成器不暴露结构化规格说明接口，编译器发出与生成器无关的修复计划，这些计划可以转化为提示修改、参考帧注入、片段级重新渲染或后处理步骤。
+
+\begin{verbatim}
+{"action": "inject_reference_frame",
+ "field": "character_id",
+ "value": "<anchor_frame>",
+ "reason": "ID_FACE_DRIFT detected at t=1.2s"}
+\end{verbatim}
+
+\begin{verbatim}
+{"action": "set_camera_movement",
+ "field": "camera_movement",
+ "value": "<expected_camera_movement>",
+ "reason": "CA_MOVE_WRONG detected in the localized span"}
+\end{verbatim}
+
+\begin{verbatim}
+{"action": "inject_prop",
+ "field": "props_required",
+ "value": "<missing_prop>",
+ "reason": "AL_PROP_MISSING verified by object or VLM evidence"}
+\end{verbatim}
+
+\begin{verbatim}
+{"action": "regenerate_segment",
+ "field": "segment",
+ "value": "<t0,t1>",
+ "reason": "MO_FROZEN_FRAME or MO_SEGMENT_BREAK is localized to this span"}
+\end{verbatim}
+
+每个补丁指定一个动作类型、受影响的目标、一个可选的更新值，以及一个与证据区间关联的简短理由。当多条记录影响同一目标时，编译器在重新渲染之前将它们分组，以减少补丁动作之间的冲突。
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{补丁到生成器的适配器细节。只有当修复计划可以在无需手动重写的情况下自动翻译为目标生成器或编辑器输入时，才计为适配器可执行。L0/L1 行表示放弃声明或提示重写指令，而非可执行补丁。}
+\label{tab:patch_adapter_details}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{p{0.18\textwidth}p{0.14\textwidth}p{0.10\textwidth}p{0.15\textwidth}p{0.24\textwidth}p{0.12\textwidth}}
+\toprule
+修复计划动作 & ShotIR 字段 & 计为 & 适配器可用性 & 具体生成器/编辑器输入 & 回退方案 \\
+\midrule
+inject\_reference\_frame & character.identity\_anchor & L2 & SVD 可用的 L2；文本到视频模型部分 L1 & 参考图像输入 + 身份提示强化 & 仅提示修复计划 \\
+set\_camera\_movement & camera.movement & L1 & 部分 L1 & 相机控制提示重写；支持时使用轨迹适配器 & 若无相机控制则为 no\_op\_uncertain \\
+set\_camera\_angle & camera.viewpoint & L1 & 部分 L1 & 视角提示重写；可选的相机控制令牌 & 仅修复建议 \\
+inject\_prop & props\_required & L1 / L2 & L1 可用；L2 部分支持遮罩/参考输入 & 道具短语插入 + 可选参考或遮罩 & 提示编辑 \\
+reposition\_prop & props.region & L1 & 部分 L1 & 区域感知提示重写或遮罩条件编辑 & 仅提示修复计划 \\
+regenerate\_segment & temporal span & L2 / L3 & 支持片段重渲染时 L2 可用 & 片段级重渲染或时间修复调用 & 全片段重渲染 \\
+stabilize\_camera & camera.constraint & L1 / L2 & 部分 L1 & 无抖动约束或稳定化后处理 & 仅修复建议 \\
+normalize\_frame\_rate & motion.continuity & L2 & 部分 L2 & 帧插值或时间平滑后处理 & regenerate\_segment \\
+apply\_enhancement & style.quality & L2 & L2 可用 & 增强/去块后处理 & 提高质量的提示编辑 \\
+fix\_background\_anchor & scene.background\_anchor & L1 & 部分 L1 & 背景锚点提示强化；可选参考图像 & 仅提示修复计划 \\
+no\_op\_uncertain & -- & L0 & L0 可用 & 放弃具体修复 & 无动作 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+在报告的人工 Pass@K 评估中，具体执行的动作是活动后端暴露的 L2/L3 子集，主要包括参考帧注入、片段重渲染或时间平滑、增强或去块处理，以及支持时带有遮罩或参考条件的道具插入。L0/L1 行仍然是结构化修复计划指令，不计为可执行补丁。
+
+\section{标注指南摘要}
+\label{app:annotation}
+标注者将每个扰动视频与原始提示或 ShotIR 规格说明以及自动分配的候选故障代码一起进行审查。对于每个候选，标注者判断故障是否在视觉上存在，划定包含可见偏差的最紧凑时间区间，并在可用时选择代表性关键帧。如果扰动产生了额外的可见伪影，标注者也可以添加缺失的故障。
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/annotation_interface_appendix.png}
+\caption{VideoGenDoctor-Bench-v0 中用于人工验证的标注界面。该工具暴露样本导航器、原始视频与扰动视频的并排审查、时间证据标记、结构化故障验证卡片以及用于仲裁的自由文本备注。}
+\label{fig:annotation_interface_appendix}
+\end{figure}
+
+标注记录以每个视频一个 JSON 对象的形式存储，包含视频标识符、标注者标识符、已验证的故障代码、置信度值、证据区间和自由文本备注。只有当标注者能够从渲染的视频和规格说明中验证故障，而非仅依赖扰动元数据时，故障才被保留在基准中。模糊情况被保守处理：如果偏差不能在视觉上识别，候选被标记为未验证。
+
+实验测试集包含一个 120 段视频、768 个候选证据区间的双人标注可靠性子集。该子集同时包含受控扰动样本和自然发生的真实故障样本。超过两名独立标注者的大规模多标注者验证仍属未来工作。
+
+\section{诊断报告示例}
+\label{app:diagnostic_report}
+
+\begin{figure}[t]
+\centering
+\safeincludegraphics[width=\textwidth]{../figures/report.png}
+\caption{对一段扰动视频的 VideoGenDoctor 诊断报告示例。该报告汇总了全局分数、带置信度和时间区间的排序故障记录、代表性关键帧、从保留故障代码推导出的补丁提示，以及用于定位审查和修复的片段级证据。}
+\label{fig:diagnostic_report}
+\end{figure}
+
+
+\section{直接 VLM 基线提示模板}
+\label{app:vlm_baselines}
+
+四种直接 VLM/LLM 基线仅在其允许的信息访问和输出模式上有所不同。自由形式和结构化 VLM 报告基线接收采样帧和规格说明。VLM-to-patch 基线也接收采样帧、分类法名称和修复计划词汇表，但不接收 VideoGenDoctor 的规则分数或补丁编译器输出。Score+LLM-to-patch 基线仅接收标量评估器分数和规格说明；它不接收采样帧。这些信息边界在评估前固定，并用于所有样本。
+
+\paragraph{F.1 自由形式 VLM 报告提示。}
+模型接收视频规格说明、带时间戳的采样关键帧以及一段简短指令：识别可见故障，解释证据，并提出修复建议。然后将其响应解析为分类法代码和证据区间以便评估。
+
+\paragraph{F.2 结构化 VLM 报告提示。}
+模型接收相同的输入，但必须输出带有字段 \texttt{failure\_code}、\texttt{temporal\_span}、\texttt{affected\_target}、\texttt{confidence}、\texttt{evidence\_keyframes}、\texttt{rationale} 和 \texttt{repair\_action} 的 JSON 对象。缺乏视觉证据的故障必须标记为不确定（uncertain），而非幻觉生成。
+
+\begin{verbatim}
+You are evaluating whether a generated video follows the given specification.
+For each visible failure, return a JSON record:
+{
+  "failure_code": "<taxonomy code>",
+  "temporal_span": [t0, t1],
+  "affected_target": "<character / prop / camera / motion / style / scene>",
+  "confidence": <0-1>,
+  "evidence_keyframes": ["frame@time", ...],
+  "rationale": "short visual reason",
+  "repair_action": "<patch action>"
+}
+Only report failures that are visually supported by the frames.
+\end{verbatim}
+
+\paragraph{F.3 VLM-to-patch 提示。}
+VLM-to-patch 基线接收与直接 VLM 诊断基线相同的视频规格说明和采样关键帧，但要求其直接输出修复动作而非诊断记录。允许该基线访问分类法名称和受支持的修复计划词汇表，但不提供 VideoGenDoctor 的第一阶段规则分数、候选片段或补丁编译器输出。它可以从采样帧中推断时间区间，但不接收真值区间或 VideoGenDoctor 预测的区间。该设置检验 VLM 是否能够从规格说明和视觉证据中直接生成结构化修复计划。
+
+\begin{verbatim}
+You are a video-generation repair planner.
+
+Input:
+1. A video specification or ShotIR-style instruction.
+2. Sampled keyframes from the generated video, each with a timestamp.
+3. The failure-code taxonomy names.
+4. The supported repair-plan vocabulary.
+
+Your task:
+Inspect the sampled frames and the specification. Identify only visually supported
+problems and output structured repair-plan actions. Do not write a free-form critique.
+Do not invent failures that are not visible in the frames.
+
+You may use the following failure-code groups:
+- Identity: ID_FACE_DRIFT, ID_BODY_DRIFT, ID_WRONG_CHARACTER,
+  ID_CLOTHING_CHANGE, ID_MULTIPLE_FACES, ID_NO_FACE_VISIBLE
+- Camera: CA_MOVE_WRONG, CA_SHOT_TYPE_WRONG, CA_UNINTENDED_ZOOM,
+  CA_SHAKE, CA_WRONG_ANGLE, CA_ROLL
+- Motion: MO_JITTER, MO_FRAME_DROP, MO_UNNATURAL_MOTION,
+  MO_EVENT_MISSING, MO_ACTION_ORDER_WRONG, MO_MOTION_BLUR_EXCESS,
+  MO_FROZEN_FRAME, MO_SEGMENT_BREAK
+- Alignment: AL_PROP_MISSING, AL_PROP_WRONG_PLACEMENT,
+  AL_TEXT_PROMPT_MISMATCH, AL_CHARACTER_COUNT_WRONG,
+  AL_WRONG_PROP, AL_PROP_OCCLUDED
+- Style: ST_COLOR_SHIFT, ST_ART_STYLE_INCONSISTENCY,
+  ST_COMPRESSION_ARTIFACT, ST_TEXTURE_FLICKER,
+  ST_OVEREXPOSURE, ST_UNDEREXPOSURE
+- Scene: SC_BG_INCONSISTENCY, SC_ENVIRONMENT_MISMATCH,
+  SC_LIGHTING_SHIFT, SC_OBJECT_TELEPORT, SC_BG_FLICKER,
+  SC_WRONG_TIME_OF_DAY
+
+Supported repair-plan vocabulary:
+- inject_reference_frame
+- replace_character_anchor
+- fix_character_consistency
+- adjust_framing
+- set_camera_movement
+- set_camera_angle
+- stabilize_camera
+- remove_zoom
+- remove_camera_roll
+- inject_prop
+- reposition_prop
+- remove_prop
+- adjust_character_count
+- strengthen_prompt_guidance
+- inject_action_keyframe
+- reorder_segments
+- regenerate_segment
+- interpolate_frames
+- normalize_frame_rate
+- constrain_motion
+- smooth_segment_transition
+- reduce_motion_blur
+- apply_color_grading
+- apply_style_transfer
+- apply_enhancement
+- smooth_texture
+- adjust_exposure
+- fix_background_anchor
+- set_environment
+- normalize_lighting
+- stabilize_scene_objects
+- set_time_of_day
+- no_op_uncertain
+
+Return a JSON object with the following schema:
+{
+  "patches": [
+    {
+      "patch_id": "<unique patch id>",
+      "failure_code": "<taxonomy code or uncertain>",
+      "action": "<one item from the supported repair-plan vocabulary>",
+      "target": "<character / prop / camera / motion / style / scene target>",
+      "temporal_span": [<start_sec>, <end_sec>],
+      "evidence_keyframes": ["frame@time", "..."],
+      "confidence": <0-1>,
+      "patch_fields": {
+        "field": "<generator or ShotIR field to modify>",
+        "value": "<new value, constraint, or reference to insert>"
+      },
+      "rationale": "<short visual reason>"
+    }
+  ],
+  "global_notes": "<one-sentence summary>",
+  "uncertain": <true or false>
+}
+
+Rules:
+1. Output valid JSON only.
+2. Every patch must use an action from the supported repair-plan vocabulary.
+3. If no visually supported failure is visible, return:
+   {"patches": [], "global_notes": "No visually supported repair action.", "uncertain": true}
+4. If the temporal span is uncertain, estimate it from the nearest sampled frame
+   timestamps and set "confidence" below 0.5.
+5. Do not output patches for purely aesthetic preferences unless the specification
+   explicitly requires them.
+\end{verbatim}
+
+\paragraph{F.4 Score+LLM-to-patch 提示。}
+Score+LLM-to-patch 基线接收标量评估器输出和原始视频规格说明，但不接收采样帧。该基线在视觉定位上故意较弱，但代表了一种常见的生产设置：低级评估器返回标量分数，LLM 将低分维度转换为修复建议。由于无法检查帧，它不能声称具有帧特定的视觉证据。仅在标量评估器提供片段级分数时，它才能输出近似的时间区间；否则时间区间必须标记为 \texttt{null}。这使得信息边界明确，防止与基于帧的 VLM 基线进行不公正的比较。
+
+\begin{verbatim}
+You are a repair planner for controllable video generation.
+
+Input:
+1. The original video specification or ShotIR-style instruction.
+2. Scalar evaluator outputs, such as quality, alignment, motion, identity,
+   camera, style, and scene-consistency scores.
+3. Optional segment-level scalar scores if available.
+4. The supported repair-plan vocabulary.
+
+Important information boundary:
+You do NOT receive sampled frames or the video itself. Therefore:
+- Do not claim that a failure is visually observed.
+- Do not mention specific visual evidence or keyframes.
+- Only infer likely repair actions from low-scoring evaluator dimensions.
+- Use "evidence_source": "scalar_score" for all patches.
+- Use "temporal_span": null unless segment-level scores identify a specific interval.
+
+Supported repair-plan vocabulary:
+- inject_reference_frame
+- replace_character_anchor
+- fix_character_consistency
+- adjust_framing
+- set_camera_movement
+- set_camera_angle
+- stabilize_camera
+- remove_zoom
+- remove_camera_roll
+- inject_prop
+- reposition_prop
+- remove_prop
+- adjust_character_count
+- strengthen_prompt_guidance
+- inject_action_keyframe
+- reorder_segments
+- regenerate_segment
+- interpolate_frames
+- normalize_frame_rate
+- constrain_motion
+- smooth_segment_transition
+- reduce_motion_blur
+- apply_color_grading
+- apply_style_transfer
+- apply_enhancement
+- smooth_texture
+- adjust_exposure
+- fix_background_anchor
+- set_environment
+- normalize_lighting
+- stabilize_scene_objects
+- set_time_of_day
+- no_op_uncertain
+
+Return a JSON object with the following schema:
+{
+  "patches": [
+    {
+      "patch_id": "<unique patch id>",
+      "score_dimension": "<low-scoring evaluator dimension>",
+      "inferred_failure_type": "<short inferred failure description>",
+      "action": "<one item from the supported repair-plan vocabulary>",
+      "target": "<character / prop / camera / motion / style / scene target>",
+      "temporal_span": null,
+      "evidence_source": "scalar_score",
+      "triggering_scores": {
+        "<score_name>": <score_value>
+      },
+      "confidence": <0-1>,
+      "patch_fields": {
+        "field": "<generator or ShotIR field to modify>",
+        "value": "<new value, constraint, or reference to insert>"
+      },
+      "rationale": "<short reason based only on scalar scores and specification>"
+    }
+  ],
+  "global_notes": "<one-sentence summary>",
+  "uncertain": <true or false>
+}
+
+Rules:
+1. Output valid JSON only.
+2. Do not claim visual evidence because frames are not provided.
+3. Do not output frame IDs or evidence keyframes.
+4. Use temporal_span = null unless segment-level scalar scores are provided.
+5. Every patch must use an action from the supported repair-plan vocabulary.
+6. If the scalar scores do not indicate a clear repair target, return:
+   {"patches": [], "global_notes": "No reliable score-based repair action.", "uncertain": true}
+\end{verbatim}
+
+\paragraph{F.5 解析与无效输出处理。}
+无效的 JSON 输出在可能时使用确定性解析器进行修复。如果输出无法解析，该预测被标记为无效。分类法之外的故障代码仅在存在确切同义词时才映射到最近的分类法代码；否则计为假阳性。无时间区间的预测不获得定位分数。无视觉证据的幻觉故障计为假阳性。超出受支持修复计划词汇表的修复动作被标记为修复计划评分无效和适配器评分非适配器可执行。
+
+\section{盲法人工修复评估协议}
+\label{app:human_repair}
+评审员看到规格说明和一段输出视频，看不到方法名称或诊断记录。他们回答以下问题：视频整体是否满足规格说明、目标故障是否已解决、修复是否引入了新伪影，以及补丁在 1--5 等级上的实用性。人工 Pass@$K$ 是在最多 $K$ 次修复尝试后被判定为成功的样本比例。
+
+\begin{table}[t]
+\centering
+\caption{补丁实用性的盲法人工修复评估准则。}
+\label{tab:human_rubric}
+\begin{tabular}{cl}
+\toprule
+分数 & 标准 \\
+\midrule
+1 & 补丁未解决目标故障。 \\
+2 & 补丁与故障相关但不可操作或基本不足。 \\
+3 & 补丁可操作但不完整或需要大量人工解释。 \\
+4 & 补丁直接解决目标故障，存在轻微模糊之处。 \\
+5 & 补丁直接解决目标故障并保留周围的良好内容。 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+如果目标故障已解决且未引入严重的新伪影，则修复后的视频被标记为通过。人工 Pass@K 是在最多 $K$ 次修复尝试后被判定为成功的样本比例。新伪影在评审员观察到修复引入的、在原生成视频中不存在的可见退化时被标记。每个修复视频由 3 名独立评审员评分。我们报告多数投票的通过/不通过标签、平均补丁实用性分数以及多数投票的新伪影标签。
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{模糊样本和真实正常样本的误差分析。表格聚焦于无需操作行为和错误目标修复计划。最佳值在可解释比较列中加粗；no\_op\_uncertain 率作为描述性报告而非加粗排名。}
+\label{tab:no_op_wrong_target_analysis}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccc}
+\toprule
+方法 & no\_op\_uncertain 率 & 正确无需操作率 & 遗漏必要修复 & 错误目标补丁 & 过度自信补丁 \\
+\midrule
+仅评分 & 0.286 & 0.524 & 0.119 & 0.171 & 0.321 \\
+VLM 结构化报告 & 0.219 & 0.476 & \textbf{0.096} & 0.229 & 0.396 \\
+VLM 时间提案 + 补丁 & 0.257 & 0.518 & 0.108 & 0.200 & 0.350 \\
+VideoGenDoctor-diagnosis & 0.552 & \textbf{0.738} & 0.142 & 0.095 & 0.181 \\
+VideoGenDoctor-full & 0.514 & 0.724 & 0.156 & \textbf{0.081} & \textbf{0.164} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{定性案例研究汇总。案例从受控、真实故障和模糊压力子集中采样。}
+\label{tab:case_study_summary}
+\begin{tabular}{lccc}
+\toprule
+案例类型 & 案例数 & 多数裁定的成功/适当 & 典型结果 \\
+\midrule
+成功的结构化修复计划 & 24 & 18 & 定位修复计划解决目标故障 \\
+带有放弃声明的模糊案例 & 24 & 16 & no\_op\_uncertain 避免了过度修复 \\
+过度修复/错误目标失败 & 24 & 7 & 具体补丁针对了错误的目标或区间 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{自助法置信区间}
+\label{app:bootstrap}
+我们使用 10,000 次视频级自助法重采样，并报告百分位数 95\% 置信区间。对于受控测试集，重采样在 324 段视频上进行。对于真实故障子集，重采样在 240 段视频上进行。对于盲法人工修复评估，重采样在分层的人工评分子集上进行。对于配对比较，我们对视频进行有放回的重采样，并计算两种方法之间指标差异的分布。除非配对置信区间排除零值，否则较小的点估计差异不被视为有意义的。
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{留一代码族规则消融。对于保留的族，该族专用的规则被禁用；仅保留通用的嵌入漂移、光流异常、场景变化峰值和结构化 VLM 验证。}
+\label{tab:leave_one_code_family}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lcccc}
+\toprule
+保留的族 & 宏 F1 & tIoU@0.5 & Top-3 命中率 & 主要退化来源 \\
+\midrule
+Identity（身份） & 0.782 & 0.579 & 0.536 & 人脸/身体特定锚点被移除 \\
+Camera（相机） & 0.754 & 0.546 & 0.501 & 相机光流模板被禁用 \\
+Motion（运动） & 0.721 & 0.512 & 0.468 & 抖动/片段断裂规则被禁用 \\
+Alignment（对齐） & 0.801 & 0.603 & 0.558 & 道具检测器和位置规则被禁用 \\
+Style（风格） & 0.836 & 0.641 & 0.590 & 压缩/风格检测器被禁用 \\
+Scene（场景） & 0.748 & 0.528 & 0.487 & 背景锚点规则被禁用 \\
+\midrule
+平均 & 0.774 & 0.568 & 0.523 & -- \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+在留一代码族消融下的显著退化确认了 VideoGenDoctor 不应被解释为一个无约束的开放式故障发现系统。该实验澄清了性能的哪些部分依赖于族特定检测器，哪些部分仍由通用证据信号和 VLM 验证支持。
+
+\section{真实故障构造清单}
+\label{app:real_failure_manifest}
+
+\begin{table}[t]
+\centering\scriptsize
+\caption{真实故障和真实正常子集的生成器配置元数据。托管或版本变化的端点记录有访问日期和端点标识符。}
+\label{tab:generator_config}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lccccccccc}
+\toprule
+生成器 & 检查点/端点 & fps & 帧数 & 分辨率 & 步数 & 引导系数 & 调度器 & 种子范围 & 参考源/提示规则 \\
+\midrule
+CogVideoX & CogVideoX1.5-5B & 16 & 128 & 768$\times$432 & 50 & 6.0 & DPMSolver & 10000--10059 & ShotIR-to-prompt 模板 v1 \\
+Wan & Wan2.1-T2V-14B & 16 & 128 & 768$\times$432 & 50 & 5.0 & FlowMatchEuler & 18000--18059 & ShotIR-to-prompt 模板 v1 \\
+Stable Video Diffusion & SVD-XT-1.1 & 14 & 112 & 768$\times$432 & 40 & 7.5 & EulerDiscrete & 26000--26059 & 来自 ShotIR 锚点的参考帧 \\
+HunyuanVideo & HunyuanVideo-1.5 & 16 & 128 & 768$\times$432 & 50 & 7.0 & FlowMatchEuler & 34000--34059 & 多镜头提示模板 v1 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+当某个生成器不暴露这些配置字段之一时，相应的清单值设为 \texttt{null} 而非省略。对于托管或版本变化的端点，我们记录端点标识符、访问日期、原始请求负载和原始响应元数据。
+
+为了使真实故障子集可审计和可复现，每段生成的视频附有一个 JSON 清单。清单记录生成器身份、检查点、输入规格说明、生成配置、输出位置、筛选决策、已验证的故障代码、时间证据区间以及标注者标识符。此协议将真实故障子集从非正式生成示例集合转变为可追踪的评估资源。
+
+每个清单条目包含以下字段：\texttt{generator}、\texttt{checkpoint}、\texttt{prompt\_id}、\texttt{input\_type}、\texttt{shotir\_spec}、\texttt{shotir\_to\_prompt\_converted\_text}、\texttt{reference\_frame\_id}、\texttt{seed}、\texttt{resolution}、\texttt{fps}、\texttt{num\_frames}、\texttt{sampling\_steps}、\texttt{guidance\_scale}、\texttt{output\_path}、\texttt{screening\_status}、\texttt{verified\_codes}、\texttt{evidence\_spans} 和 \texttt{annotator\_ids}。\texttt{screening\_status} 字段取以下四个值之一：\texttt{generated}、\texttt{retained\_candidate}、\texttt{verified} 或 \texttt{excluded\_ambiguous}。仅标记为 \texttt{verified} 的条目被纳入报告的真实故障评估。
+
+\begin{verbatim}
+{
+  "video_id": "real_wan_00037",
+  "generator": "Wan",
+  "checkpoint": "Wan2.1-T2V-14B",
+  "prompt_id": "shotir_prompt_037",
+  "input_type": "text / ShotIR-to-prompt",
+  "shotir_spec": { ... },
+  ...
+}
+\end{verbatim}
+
+\end{document}
