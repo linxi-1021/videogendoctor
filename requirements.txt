@@ -1,0 +1,26 @@
+# Core runtime (always required)
+# Use contrib build to enable classic trackers (CSRT/KCF, etc.).
+opencv-contrib-python-headless>=4.8
+numpy>=1.24
+Pillow>=10.0
+jinja2>=3.1
+click>=8.1
+tqdm>=4.65
+jsonschema>=4.19
+pyyaml>=6.0
+pytest>=7.4
+
+# Optional: semantic embeddings (install for full features)
+# open_clip_torch>=2.20
+# torch>=2.1
+
+# Optional: face drift detection
+# insightface>=0.7
+
+# Optional: object detection
+# ultralytics>=8.0
+
+# Optional: VLM judge
+# transformers>=4.40
+# accelerate>=0.26
+

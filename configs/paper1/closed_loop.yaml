@@ -1,0 +1,16 @@
+# Closed-loop repair configuration
+
+# Maximum repair iterations before giving up
+max_iterations: 3
+
+# Failure confidence threshold below which a video is considered "passed"
+pass_threshold: 0.5
+
+# Cost schema (USD per 1000 tokens or per GPU-minute)
+cost_schema:
+  judge_per_segment_usd: 0.002   # placeholder
+  render_per_second_usd: 0.001   # placeholder
+
+# Logging
+log_dir: out/closed_loop_logs/
+

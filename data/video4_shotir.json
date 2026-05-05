@@ -1,0 +1,49 @@
+{
+  "schema_version": "0.1",
+  "spec_id": "video4_shotir_001",
+  "title": "Park jogging sequence with stable full-body motion",
+  "shots": [
+    {
+      "shot_id": "shot_000",
+      "t_start": 0.0,
+      "t_end": 3.0,
+      "shot_type": "wide",
+      "camera_movement": "tracking_right_smooth",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": [],
+      "action": "character_A starts jogging and settles into a steady running rhythm along the park path",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_001",
+      "t_start": 3.0,
+      "t_end": 7.0,
+      "shot_type": "wide",
+      "camera_movement": "tracking_right_smooth",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": [],
+      "action": "character_A maintains a smooth and natural jogging pace from left to right",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_002",
+      "t_start": 7.0,
+      "t_end": 10.0,
+      "shot_type": "wide",
+      "camera_movement": "tracking_right_smooth",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": [],
+      "action": "character_A gradually slows down, stops, and calmly adjusts breathing",
+      "style": "photorealistic"
+    }
+  ],
+  "characters": {
+    "character_A": {
+      "anchor_frame": null,
+      "description": "young man in a dark blue sports jacket and black trousers jogging in a sunny park"
+    }
+  }
+}

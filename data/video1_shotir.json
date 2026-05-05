@@ -1,0 +1,85 @@
+{
+  "schema_version": "0.1",
+  "spec_id": "video1_shotir_001",
+  "title": "Kitchen tabletop interaction with stable identity and object continuity",
+  "shots": [
+    {
+      "shot_id": "shot_000",
+      "t_start": 0.0,
+      "t_end": 2.0,
+      "shot_type": "wide",
+      "camera_movement": "static",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_wooden_table", "prop_red_mug"],
+      "action": "character_A stands behind the wooden table facing the camera with both hands resting on the tabletop",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_001",
+      "t_start": 2.0,
+      "t_end": 4.0,
+      "shot_type": "medium",
+      "camera_movement": "dolly_in_slow",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_wooden_table", "prop_red_mug"],
+      "action": "character_A picks up the red mug, takes one sip, and places it back in the same position",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_002",
+      "t_start": 4.0,
+      "t_end": 6.0,
+      "shot_type": "close_up",
+      "camera_movement": "static",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_wooden_table", "prop_green_apple"],
+      "action": "character_A uses the right hand to push the green apple from the left side of the frame to the center of the table",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_003",
+      "t_start": 6.0,
+      "t_end": 8.0,
+      "shot_type": "medium",
+      "camera_movement": "pan_left_slow",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_wooden_table", "prop_blue_notebook"],
+      "action": "character_A picks up the blue notebook with a visible white rectangular label and opens it to one page",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_004",
+      "t_start": 8.0,
+      "t_end": 10.0,
+      "shot_type": "wide",
+      "camera_movement": "static",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_wooden_table", "prop_red_mug", "prop_green_apple", "prop_blue_notebook"],
+      "action": "character_A places the blue notebook back onto the table so the red mug, green apple, and blue notebook are all clearly visible together",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_005",
+      "t_start": 10.0,
+      "t_end": 12.0,
+      "shot_type": "medium",
+      "camera_movement": "static",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_wooden_table", "prop_red_mug", "prop_green_apple", "prop_blue_notebook"],
+      "action": "character_A faces the camera, smiles naturally, and waves goodbye",
+      "style": "photorealistic"
+    }
+  ],
+  "characters": {
+    "character_A": {
+      "anchor_frame": null,
+      "description": "young woman with long straight black hair, round glasses, and a light blue hoodie"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+# Stage-2 VLM Judge configuration: OpenAI vision model
+provider: openai
+
+# "GPT-4V" in the paper narrative maps to the current OpenAI vision-capable model.
+model_name: gpt-4o
+
+# Number of top Stage-1 candidate segments to pass to the judge
+candidate_topk: 3
+
+# Weight for blending Stage-1 and Stage-2 scores (0=stage1 only, 1=stage2 only)
+alpha: 0.6
+
+# Question templates reference
+question_templates: configs/paper1/judge_questions.yaml
+
+# Retained for schema consistency; ignored by the OpenAI provider.
+device: cuda

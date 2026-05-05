@@ -1,0 +1,185 @@
+你的 Fig.2 判断是对的，但我会再往前推一步：**VideoGenDoctor 的图组不要按“benchmark 论文”来画，而要按“diagnosis + evidence + repair benchmark”来画**。VBench、FETV、EvalCrafter、T2V-CompBench 这类论文主要证明“我能评估”；你这篇更应该证明“我能定位、解释、修复，并量化闭环收益”。
+
+**参考论文给出的图形规律**
+
+我看了几类相近工作：
+
+- **VBench**：强调 hierarchical / disentangled dimensions、prompt suite、evaluation methods、human preference annotations，用图建立“完整评价体系”的可信度。来源：[VBench arXiv](https://arxiv.org/abs/2311.17982)。
+- **EvalCrafter**：强调 700 prompts、17 objective metrics，并用 human alignment 得到 leaderboard，适合参考“多指标如何汇总成模型诊断”。来源：[EvalCrafter arXiv](https://arxiv.org/abs/2310.11440)。
+- **FETV**：重点是 fine-grained、multi-aspect、temporal-aware prompt categorization，并检查自动指标与人类评价相关性。来源：[FETV NeurIPS](https://proceedings.neurips.cc/paper_files/paper/2023/hash/c481049f7410f38e788f67c171c64ad5-Abstract-Datasets_and_Benchmarks.html)。
+- **T2V-CompBench**：把 compositionality 拆成 consistent/dynamic attributes、spatial、motion/action binding、object interaction、numeracy，并结合 MLLM / detection / tracking metrics。来源：[T2V-CompBench arXiv](https://arxiv.org/abs/2407.14505)。
+- **VideoPhy / VideoPhy-2**：证明某一类失败不是泛泛质量问题，而是“物理规则失效”，适合参考细粒度 failure evidence 和 rule-level analysis。来源：[VideoPhy arXiv](https://arxiv.org/abs/2406.03520)。
+- **GenAI-Bench / VideoScore / AIGCBench**：强调 human alignment、candidate ranking、multi-dimension score 与自动指标可信性。来源：[GenAI-Bench arXiv](https://arxiv.org/abs/2406.13743)、[AIGCBench](https://www.sciencedirect.com/science/article/pii/S2772485924000048)、[VideoScore](https://huggingface.co/papers/2406.15252)。
+
+**我建议你的主图组这样定**
+
+1. **Fig.1：VideoGenDoctor System Overview**
+   
+   画成 VBench Fig.1 / AIGCBench Fig.1 那种 suite overview，但核心不是 dataset-to-score，而是：
+   
+   ```text
+   Input prompt + generated video
+        ↓
+   Evidence extraction
+   keyframes / spans / object tracks / OCR / identity embeddings
+        ↓
+   Failure-as-code diagnosis
+   ID_* / CA_* / MO_* / AL_* / ST_* / SC_*
+        ↓
+   Patch planner
+   reference injection / camera correction / motion rerender / prop insertion
+        ↓
+   Re-generated video
+        ↓
+   Verification + repair report
+   ```
+   
+   这张图回答：**VideoGenDoctor 到底是什么系统**。  
+   不要放太多指标，重点放“闭环”和“可执行 patch”。
+
+2. **Fig.2：Failure Taxonomy-to-Patch Suite + Temporal Evidence Inset**
+   
+   你前面提的这个方向最适合作为 Fig.2。建议布局：
+   
+   ```text
+   ┌─────────────────────────────────────────────────────┐
+   │ Failure-as-Code Taxonomy                            │
+   │ ID Identity | CA Camera | MO Motion | AL Alignment  │
+   │ ST Style    | SC Scene                              │
+   ├───────────────────────┬─────────────────────────────┤
+   │ Representative Codes  │ Patch Templates             │
+   │ ID_FACE_DRIFT         │ inject_reference_frame       │
+   │ ID_BODY_DRIFT         │ lock_character_embedding     │
+   │ CA_MOVE_WRONG         │ set_camera_movement          │
+   │ MO_ACTION_MISSING     │ add_motion_constraint        │
+   │ AL_PROP_MISSING       │ inject_prop                  │
+   │ ST_COMPRESSION_ART    │ rerender_quality_region      │
+   ├─────────────────────────────────────────────────────┤
+   │ Inset: temporal distribution of verified failures    │
+   │ stacked bars over 0-2s, 2-4s, ..., 10-12s             │
+   └─────────────────────────────────────────────────────┘
+   ```
+   
+   这张图回答：**你的 taxonomy 不是分类表，而是 diagnosis-to-action interface**。  
+   它比单纯 taxonomy tree 更强，因为直接体现“可修复”。
+
+   Caption 可以改成：
+
+   ```latex
+   \caption{
+   Failure-as-code taxonomy and patch mapping in VideoGenDoctor.
+   Verified generation failures are represented as machine-readable codes
+   grouped into identity, camera, motion, alignment, style, and scene categories.
+   Each code is linked to evidence procedures and executable patch templates,
+   enabling diagnosis-to-action repair rather than score-only evaluation.
+   The inset shows the temporal distribution of verified evidence spans in
+   VideoGenDoctor-Bench-v0, indicating that failures are often localized in
+   specific video regions.
+   }
+   ```
+
+3. **Fig.3：Closed-loop Repair Curve**
+   
+   这张非常关键，建议放主文，不要放 appendix。
+   
+   画法：
+   
+   - x-axis：repair iteration，`0 / 1 / 2 / 3`
+   - y-axis 左轴：failure rate 或 unresolved failure count
+   - y-axis 右轴：quality / preference / success rate
+   - 多条线：All、Identity、Motion、Alignment，或者不同模型
+   - 加阴影：95% CI / bootstrap interval
+   
+   这张图回答：**修复是不是有效，是否越修越好**。  
+   这比只报告 before/after table 更像顶会主图。
+
+4. **Fig.4：Qualitative Evidence + Patch Example**
+   
+   这是你文章最能打动人的图。建议每个 case 用 4 列：
+   
+   ```text
+   Prompt | Failure Evidence | Patch Code | Repaired Result
+   ```
+   
+   每个视频案例放 3-4 个 keyframes，而不是单帧。  
+   每个 evidence span 上方标注：
+   
+   ```text
+   t=2.4s-3.8s, ID_FACE_DRIFT, confidence=0.87
+   ```
+   
+   Patch 部分不要写自然语言，写像代码块一样的 patch：
+   
+   ```yaml
+   code: ID_FACE_DRIFT
+   evidence: [2.4s, 3.8s]
+   patch:
+     inject_reference_frame: frame_000
+     identity_lock: high
+   ```
+   
+   这张图回答：**失败是怎么被发现、怎么被修的**。  
+   它应该是最“VideoGenDoctor”的图。
+
+5. **Fig.5：Per-category Diagnosis / Repair Performance**
+   
+   参考 VBench Fig.2 和 T2V-CompBench 的 multidimensional result，但别画成普通柱状图。建议：
+   
+   - 雷达图或 grouped bar：`ID / CA / MO / AL / ST / SC`
+   - 每类显示：
+     - detection F1
+     - temporal IoU
+     - patch success rate
+   - 模型维度可以用颜色或小 multiples：
+     - Runway / Pika / ModelScope / AnimateDiff / Sora-like samples
+   
+   更推荐 **small multiples grouped bar**，少用雷达图。雷达图视觉漂亮但数值难读。  
+   这张图回答：**系统在哪些失败类型上强，哪些还弱**。
+
+6. **Fig.6：Human / Judge Agreement**
+   
+   如果篇幅够，这张可选但很有用。
+   
+   画法：
+   
+   - x-axis：human preference
+   - y-axis：VideoGenDoctor score 或 repair success score
+   - 每个点是一个 sample pair
+   - 右侧放 Kendall / Spearman correlation
+   - 或画 confusion matrix：human says repaired vs system says repaired
+   
+   这张图回答：**自动诊断/修复是不是和人类感受一致**。  
+   这是 VBench、FETV、EvalCrafter、GenAI-Bench 都在强调的可信性维度。
+
+**最推荐的最终主文图顺序**
+
+我建议主文放 5 张，Fig.6 视篇幅决定：
+
+| Figure | 作用 | 借鉴对象 | 你这篇的差异化 |
+|---|---|---|---|
+| Fig.1 | 系统总览 | VBench / AIGCBench | evaluator → repair loop |
+| Fig.2 | taxonomy + patch suite | VBench / FETV | failure code → executable patch |
+| Fig.3 | repair curve | GenAI-Bench ranking / RLHF-style eval | closed-loop improvement |
+| Fig.4 | evidence + repair qualitative | VideoPhy / T2V-CompBench | temporal evidence span + patch code |
+| Fig.5 | category performance | VBench / T2V-CompBench | F1/tIoU/patch success, not only score |
+| Fig.6 可选 | human agreement | EvalCrafter / GenAI-Bench / VideoScore | repair success aligns with preference |
+
+**具体视觉规范**
+
+- 颜色固定：
+  - `ID_*` Identity：blue
+  - `CA_*` Camera：purple
+  - `MO_*` Motion：orange
+  - `AL_*` Alignment：green
+  - `ST_*` Style：red
+  - `SC_*` Scene：gray
+- 所有图里同一类 failure 必须同色，形成视觉记忆。
+- 代码命名全部换成 `ID_* / CA_* / MO_* / AL_* / ST_* / SC_*`。
+- 主图只放 5-8 个代表性 failure code，完整 taxonomy 放 appendix。
+- 图中尽量出现 “evidence span / patch template / verified repair” 三个词，这是你的论文区别于 score-only benchmark 的核心。
+- 统计图不要堆太满。Fig.2 inset 只保留 top-5 failure groups 或 six groups，不要画 60+ codes。
+- 定性图一定要用时间轴或 keyframe strip，单帧图不足以证明视频失败。
+
+**一句话结论**
+
+Fig.2 应该保留你说的 **Failure Taxonomy + Evidence + Patch Mapping + Temporal Distribution Inset**；但整篇图组要围绕一个更强叙事组织：**VideoGenDoctor 是一个 evidence-grounded, failure-as-code, closed-loop repair benchmark/system，而不是另一个多维打分器。**

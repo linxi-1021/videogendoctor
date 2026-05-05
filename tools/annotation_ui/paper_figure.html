@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VideoGenDoctor Annotation Interface Figure</title>
+  <link rel="stylesheet" href="./paper_figure.css" />
+</head>
+<body>
+  <main class="figure-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">VideoGenDoctor / Paper Figure</p>
+        <h1>Annotation Interface for Manual Failure Verification</h1>
+        <p class="subtitle">
+          Single-page static presentation of the annotation workflow used to inspect generated videos,
+          verify failure codes, mark temporal evidence, and record notes for manual analysis.
+        </p>
+      </div>
+      <div class="hero-tags">
+        <span class="tag">Side-by-Side Review</span>
+        <span class="tag">Failure Verification</span>
+        <span class="tag">Temporal Evidence</span>
+      </div>
+    </header>
+
+    <section class="figure-grid">
+      <aside class="panel navigator">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">1. Dataset Navigator</p>
+            <h2>Representative Samples</h2>
+          </div>
+          <span class="counter">24 / 72</span>
+        </div>
+
+        <div class="search-box">Search sample id / path / failure code</div>
+
+        <div class="sample-list">
+          <article class="sample-card active">
+            <strong>video12__temporal_jitter_or_frame_drop__s1</strong>
+            <div class="chips">
+              <span class="chip success">Completed</span>
+              <span class="chip">MO_JITTER</span>
+              <span class="chip">MO_FRAME_DROP</span>
+            </div>
+          </article>
+          <article class="sample-card">
+            <strong>video13__compression_artifacts__s0</strong>
+            <div class="chips">
+              <span class="chip muted">In Review</span>
+              <span class="chip">ST_COMPRESSION_ARTIFACT</span>
+            </div>
+          </article>
+          <article class="sample-card">
+            <strong>video15__change_camera_movement__s1</strong>
+            <div class="chips">
+              <span class="chip muted">Pending</span>
+              <span class="chip">CA_MOVE_WRONG</span>
+            </div>
+          </article>
+          <article class="sample-card">
+            <strong>video17__remove_anchor__s0</strong>
+            <div class="chips">
+              <span class="chip muted">Pending</span>
+              <span class="chip">AL_PROP_MISSING</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="panel-note">
+          The navigator supports quick switching between benchmark samples and surfaces the predicted
+          failure codes for each candidate video.
+        </div>
+      </aside>
+
+      <section class="panel review">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">2. Side-by-Side Video Review</p>
+            <h2>Original vs. Generated Video</h2>
+          </div>
+          <div class="chips">
+            <span class="chip">Perturbation: temporal jitter</span>
+            <span class="chip">ShotIR attached</span>
+          </div>
+        </div>
+
+        <div class="video-columns">
+          <article class="video-card">
+            <div class="video-label">Original Video</div>
+            <div class="frame-grid original">
+              <span>Frame 032</span>
+              <span>Frame 064</span>
+              <span>Frame 096</span>
+              <span>Frame 128</span>
+            </div>
+            <p class="video-caption">Stable motion and consistent scene structure across keyframes.</p>
+          </article>
+
+          <article class="video-card">
+            <div class="video-label">Video to Annotate</div>
+            <div class="frame-grid perturbed">
+              <span>Frame 032</span>
+              <span>Frame 064</span>
+              <span>Frame 096</span>
+              <span>Frame 128</span>
+            </div>
+            <p class="video-caption">Abrupt temporal jumps and repeated motion are visible near the middle segment.</p>
+          </article>
+        </div>
+
+        <div class="timeline-box">
+          <div class="timeline-head">
+            <span>3. Temporal Evidence Marking</span>
+            <span>Current review window: 2.467s to 4.133s</span>
+          </div>
+          <div class="timeline">
+            <div class="tick"></div>
+            <div class="tick"></div>
+            <div class="tick"></div>
+            <div class="tick"></div>
+            <div class="tick"></div>
+            <div class="segment">Annotated failure span</div>
+          </div>
+        </div>
+
+        <div class="meta-grid">
+          <div class="meta-card">
+            <span class="meta-label">Sample ID</span>
+            <strong>video12__temporal_jitter_or_frame_drop__s1</strong>
+          </div>
+          <div class="meta-card">
+            <span class="meta-label">Video Path</span>
+            <strong>out/dataset_v0/videos/video12__temporal_jitter_or_frame_drop__s1.mp4</strong>
+          </div>
+          <div class="meta-card">
+            <span class="meta-label">Suggested Failure Codes</span>
+            <strong>MO_JITTER, MO_FRAME_DROP</strong>
+          </div>
+          <div class="meta-card">
+            <span class="meta-label">Annotator</span>
+            <strong>tanbo</strong>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel annotation">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">4. Annotation Pane</p>
+            <h2>Failure Verification Cards</h2>
+          </div>
+          <span class="chip success">Ready for Export</span>
+        </div>
+
+        <article class="failure-card">
+          <div class="failure-top">
+            <div>
+              <div class="failure-title">MO_JITTER</div>
+              <p class="failure-desc">Temporal jitter with visible back-and-forth motion discontinuities.</p>
+            </div>
+            <span class="chip success">verified=true</span>
+          </div>
+          <div class="failure-grid">
+            <div><span>Confidence</span><strong>0.96</strong></div>
+            <div><span>t0</span><strong>2.467s</strong></div>
+            <div><span>t1</span><strong>3.233s</strong></div>
+            <div><span>Status</span><strong>Completed</strong></div>
+          </div>
+        </article>
+
+        <article class="failure-card">
+          <div class="failure-top">
+            <div>
+              <div class="failure-title">MO_FRAME_DROP</div>
+              <p class="failure-desc">Dropped or repeated frames cause visible stutter around the transition.</p>
+            </div>
+            <span class="chip success">verified=true</span>
+          </div>
+          <div class="failure-grid">
+            <div><span>Confidence</span><strong>0.91</strong></div>
+            <div><span>t0</span><strong>3.100s</strong></div>
+            <div><span>t1</span><strong>4.133s</strong></div>
+            <div><span>Status</span><strong>Completed</strong></div>
+          </div>
+        </article>
+
+        <section class="notes-card">
+          <p class="eyebrow">5. Notes</p>
+          <p>
+            Jitter starts after the second motion burst. The actor briefly snaps backward between adjacent
+            frames, followed by a short repeated segment before normal progression resumes.
+          </p>
+        </section>
+
+        <section class="export-card">
+          <p class="eyebrow">Export Output</p>
+          <p>`annotations.jsonl` stores the annotator ID, verified failure codes, confidence scores, and temporal evidence spans.</p>
+        </section>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

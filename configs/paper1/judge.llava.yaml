@@ -1,0 +1,15 @@
+# Stage-2 VLM Judge configuration: local/open-source LLaVA
+provider: transformers
+model_name: llava-hf/llava-1.5-7b-hf
+
+# Number of top Stage-1 candidate segments to pass to the judge
+candidate_topk: 3
+
+# Weight for blending Stage-1 and Stage-2 scores (0=stage1 only, 1=stage2 only)
+alpha: 0.6
+
+# Question templates reference
+question_templates: configs/paper1/judge_questions.yaml
+
+# Device for local inference: cpu | cuda | mps
+device: cuda

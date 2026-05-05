@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "videoeval"
+version = "0.1.0"
+description = "Evidence-grounded failure diagnosis and repair for controllable video generation"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "opencv-contrib-python-headless>=4.8",
+    "numpy>=1.24",
+    "Pillow>=10.0",
+    "jinja2>=3.1",
+    "click>=8.1",
+    "tqdm>=4.65",
+    "jsonschema>=4.19",
+    "pyyaml>=6.0",
+    # Optional heavy deps — installed separately:
+    # open_clip_torch>=2.20
+    # insightface>=0.7
+    # ultralytics>=8.0
+    # transformers>=4.40
+]
+
+[project.optional-dependencies]
+full = [
+    "open_clip_torch>=2.20",
+    "insightface>=0.7",
+    "torch>=2.1",
+]
+yolo = ["ultralytics>=8.0"]
+judge = ["transformers>=4.40", "torch>=2.1", "accelerate>=0.26"]
+
+[project.scripts]
+videoeval = "videoeval.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+

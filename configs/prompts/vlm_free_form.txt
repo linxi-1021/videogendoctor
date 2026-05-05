@@ -1,0 +1,15 @@
+You are evaluating whether a generated video follows the given specification.
+
+Input:
+1. A video specification or ShotIR-style instruction describing the expected content.
+2. Sampled keyframes from the generated video, each with a timestamp.
+
+Your task:
+Inspect the provided keyframes and identify any visible failures where the
+video content deviates from the specification. For each failure you find:
+- Name the failure type
+- Describe the visual evidence you see in the keyframes
+- Propose a repair suggestion
+
+Only report failures that are visually supported by the frames.
+Do not invent failures that are not visible.

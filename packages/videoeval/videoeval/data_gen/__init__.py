@@ -1,0 +1,2 @@
+"""Data generation sub-package."""
+

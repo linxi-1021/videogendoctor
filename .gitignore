@@ -1,13 +1,89 @@
-docs/paper1_videogendoctor/neurIPS/main.aux
-docs/paper1_videogendoctor/neurIPS/main.bbl
-docs/paper1_videogendoctor/neurIPS/main.blg
-docs/paper1_videogendoctor/neurIPS/main.log
-docs/paper1_videogendoctor/neurIPS/main.out
-docs/paper1_videogendoctor/neurIPS/main.synctex.gz
-docs/paper1_videogendoctor/neurIPS/main_theme.aux
-docs/paper1_videogendoctor/neurIPS/main_theme.bbl
-docs/paper1_videogendoctor/neurIPS/main_theme.log
-docs/paper1_videogendoctor/neurIPS/main_theme.out
+# --- LaTeX build artifacts ---
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.xdv
+
+# --- Compiled PDFs (keep figure PDFs for LaTeX compilation) ---
+docs/paper1_videogendoctor/latex/main.pdf
+docs/paper1_videogendoctor/latex/main_tmp.pdf
+docs/paper1_videogendoctor/latex/build/
+docs/paper1_videogendoctor/latex/out/
+docs/paper1_videogendoctor/neurIPS/main.pdf
+docs/paper1_videogendoctor/neurIPS/main_final.pdf
+docs/paper1_videogendoctor/neurIPS/main_submission.pdf
+docs/paper1_videogendoctor/neurIPS/main_submission_cn.pdf
 docs/paper1_videogendoctor/neurIPS/main_theme.pdf
-docs/paper1_videogendoctor/neurIPS/neurips_2026.tex
-docs/paper1_videogendoctor/figures/__pycache__/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+.pytest_cache/
+
+# --- Virtual environments ---
+venv/
+.venv/
+env/
+.env
+
+# --- IDE / Editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Large binary files (videos, zip) ---
+*.mp4
+*.avi
+*.mov
+*.zip
+*.tar.gz
+*.7z
+
+# --- Output directories ---
+out/
+out_demo/
+out_demo_verify3/
+_tmp_full_1400_balanced_55/
+
+# --- API keys and secrets ---
+.env
+.env.local
+*.secret
+credentials*.json
+service-account*.json
+
+# --- Notebook outputs ---
+.ipynb_checkpoints/
+
+# --- Internal planning documents (not for public release) ---
+TANBO_COMPLETE_GUIDE.md
+TANBO_TOPVENUE_EXECUTION_PLAN.md
+plan.md
+prompt.txt
+manuscript.docx
+download.txt
+
+# --- Personal Claude Code config ---
+.claude/
+
+# --- Misc ---
+*.tmp

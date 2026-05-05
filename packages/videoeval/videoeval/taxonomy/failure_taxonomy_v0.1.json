@@ -1,0 +1,81 @@
+{
+  "version": "0.1",
+  "description": "VideoGenDoctor Failure Taxonomy v0.1 — 60+ codes across 6 groups",
+  "groups": [
+    {
+      "group_id": "Identity",
+      "group_label": "ID",
+      "codes": [
+        {"code": "ID_FACE_DRIFT", "definition": "The face identity of a character changes inconsistently between frames or segments.", "evidence": "Compare face embeddings across keyframes; flag if cosine distance > threshold.", "patch_template": "inject_reference_frame"},
+        {"code": "ID_BODY_DRIFT", "definition": "The body appearance (clothing, build) of a character changes inconsistently.", "evidence": "Compare full-frame CLIP embeddings focused on character region.", "patch_template": "inject_reference_frame"},
+        {"code": "ID_WRONG_CHARACTER", "definition": "A character appearing in the segment does not match any specified character.", "evidence": "No face embedding match to known character anchors.", "patch_template": "replace_character_anchor"},
+        {"code": "ID_CLOTHING_CHANGE", "definition": "Character clothing changes between shots without narrative justification.", "evidence": "High CLIP drift on character bounding box region across segments.", "patch_template": "fix_character_consistency"},
+        {"code": "ID_MULTIPLE_FACES", "definition": "Multiple distinct faces detected when only one character is expected.", "evidence": "InsightFace detects N>1 distinct identities in single-character shot.", "patch_template": "reduce_character_count"},
+        {"code": "ID_NO_FACE_VISIBLE", "definition": "Expected character face is not visible when a close-up or medium shot is specified.", "evidence": "InsightFace detects no face in segment where shot_type requires face visibility.", "patch_template": "adjust_framing"}
+      ]
+    },
+    {
+      "group_id": "Scene",
+      "group_label": "SC",
+      "codes": [
+        {"code": "SC_BG_INCONSISTENCY", "definition": "Background scene changes unexpectedly between segments.", "evidence": "CLIP background-region drift exceeds threshold across consecutive segments.", "patch_template": "fix_background_anchor"},
+        {"code": "SC_ENVIRONMENT_MISMATCH", "definition": "Scene environment does not match the specified location.", "evidence": "CLIP similarity between frame and location description below threshold.", "patch_template": "set_environment"},
+        {"code": "SC_LIGHTING_SHIFT", "definition": "Lighting conditions change inconsistently within a shot.", "evidence": "Per-frame luminance variance exceeds threshold within segment.", "patch_template": "normalize_lighting"},
+        {"code": "SC_OBJECT_TELEPORT", "definition": "A scene object appears/disappears between frames without motion.", "evidence": "Object detection bounding box absent in one frame and present in adjacent frame.", "patch_template": "stabilize_scene_objects"},
+        {"code": "SC_BG_FLICKER", "definition": "Background flickers or pulses unnaturally.", "evidence": "High-frequency luminance variation in background region.", "patch_template": "smooth_background"},
+        {"code": "SC_WRONG_TIME_OF_DAY", "definition": "Time of day in the scene does not match specification.", "evidence": "Sky/ambient light classification does not match expected time.", "patch_template": "set_time_of_day"}
+      ]
+    },
+    {
+      "group_id": "Motion",
+      "group_label": "MO",
+      "codes": [
+        {"code": "MO_JITTER", "definition": "Unnatural frame-to-frame jitter not attributable to camera movement.", "evidence": "High optical flow magnitude variance with low mean displacement.", "patch_template": "normalize_frame_rate"},
+        {"code": "MO_FRAME_DROP", "definition": "Duplicate or dropped frames causing stutter.", "evidence": "Adjacent frames with near-zero optical flow but non-zero expected motion.", "patch_template": "interpolate_frames"},
+        {"code": "MO_UNNATURAL_MOTION", "definition": "Character or object motion is physically implausible.", "evidence": "Optical flow direction/magnitude inconsistent with expected physics.", "patch_template": "constrain_motion"},
+        {"code": "MO_EVENT_MISSING", "definition": "A required action or event does not occur in its expected segment.", "evidence": "VLM judge Q&A for expected action returns negative.", "patch_template": "inject_action_keyframe"},
+        {"code": "MO_ACTION_ORDER_WRONG", "definition": "Actions occur in incorrect temporal order relative to specification.", "evidence": "Temporal order of detected action timestamps violates spec sequence.", "patch_template": "reorder_segments"},
+        {"code": "MO_MOTION_BLUR_EXCESS", "definition": "Excessive motion blur degrades frame quality.", "evidence": "Laplacian variance of keyframe below sharpness threshold.", "patch_template": "reduce_motion_blur"},
+        {"code": "MO_FROZEN_FRAME", "definition": "Video appears frozen (no motion) when motion is expected.", "evidence": "Optical flow magnitude near zero for entire segment.", "patch_template": "regenerate_segment"},
+        {"code": "MO_SEGMENT_BREAK", "definition": "Visual discontinuity at segment boundary.", "evidence": "CLIP drift spike at segment boundary exceeds threshold.", "patch_template": "smooth_segment_transition"}
+      ]
+    },
+    {
+      "group_id": "Camera",
+      "group_label": "CA",
+      "codes": [
+        {"code": "CA_MOVE_WRONG", "definition": "Camera movement type deviates from the specified movement.", "evidence": "Optical flow direction pattern does not match expected movement type.", "patch_template": "set_camera_movement"},
+        {"code": "CA_SHOT_TYPE_WRONG", "definition": "Shot type (close-up, medium, wide) does not match specification.", "evidence": "Face/body bounding box size ratio inconsistent with expected shot type.", "patch_template": "adjust_framing"},
+        {"code": "CA_UNINTENDED_ZOOM", "definition": "Unplanned zoom-in or zoom-out occurs during the shot.", "evidence": "Radial optical flow pattern detected without zoom specification.", "patch_template": "remove_zoom"},
+        {"code": "CA_SHAKE", "definition": "Camera shake not consistent with specified movement.", "evidence": "High-frequency oscillation in optical flow with low-frequency mean.", "patch_template": "stabilize_camera"},
+        {"code": "CA_WRONG_ANGLE", "definition": "Camera angle (eye-level, high-angle, low-angle) deviates from specification.", "evidence": "VLM judge identifies angle mismatch.", "patch_template": "set_camera_angle"},
+        {"code": "CA_ROLL", "definition": "Unintended camera roll (rotation around optical axis).", "evidence": "Rotational component in optical flow without roll specification.", "patch_template": "remove_camera_roll"}
+      ]
+    },
+    {
+      "group_id": "Alignment",
+      "group_label": "AL",
+      "codes": [
+        {"code": "AL_PROP_MISSING", "definition": "A required prop from the specification is not visible in the segment.", "evidence": "Object detection or VLM judge confirms prop absence.", "patch_template": "inject_prop"},
+        {"code": "AL_PROP_WRONG_PLACEMENT", "definition": "A required prop is present but placed in the wrong screen region.", "evidence": "Prop bounding box does not overlap expected region.", "patch_template": "reposition_prop"},
+        {"code": "AL_TEXT_PROMPT_MISMATCH", "definition": "Generated content does not align with the text prompt.", "evidence": "CLIP text-image similarity below threshold for prompt.", "patch_template": "strengthen_prompt_guidance"},
+        {"code": "AL_CHARACTER_COUNT_WRONG", "definition": "Number of visible characters does not match specification.", "evidence": "InsightFace or VLM judge count differs from spec.", "patch_template": "adjust_character_count"},
+        {"code": "AL_WRONG_PROP", "definition": "A prop present in the video is not in the specification.", "evidence": "Object detection identifies unlisted object with high confidence.", "patch_template": "remove_prop"},
+        {"code": "AL_PROP_OCCLUDED", "definition": "Required prop is present but significantly occluded.", "evidence": "Prop bounding box area below visibility threshold.", "patch_template": "adjust_prop_placement"}
+      ]
+    },
+    {
+      "group_id": "Style",
+      "group_label": "ST",
+      "codes": [
+        {"code": "ST_COLOR_SHIFT", "definition": "Color palette changes inconsistently across segments.", "evidence": "HSV histogram distance between segments exceeds threshold.", "patch_template": "apply_color_grading"},
+        {"code": "ST_ART_STYLE_INCONSISTENCY", "definition": "Art style (photorealistic, animated, etc.) shifts between segments.", "evidence": "CLIP style embedding drift across segments.", "patch_template": "apply_style_transfer"},
+        {"code": "ST_COMPRESSION_ARTIFACT", "definition": "Visible compression artifacts (blocking, ringing) degrade quality.", "evidence": "DCT block artifact score or BRISQUE exceeds threshold.", "patch_template": "apply_enhancement"},
+        {"code": "ST_TEXTURE_FLICKER", "definition": "Texture patterns flicker or shimmer unnaturally.", "evidence": "High temporal frequency in texture region optical flow.", "patch_template": "smooth_texture"},
+        {"code": "ST_OVEREXPOSURE", "definition": "Significant regions of frame are overexposed.", "evidence": "Fraction of pixels with value > 250 exceeds threshold.", "patch_template": "adjust_exposure"},
+        {"code": "ST_UNDEREXPOSURE", "definition": "Significant regions of frame are underexposed or too dark.", "evidence": "Fraction of pixels with value < 5 exceeds threshold.", "patch_template": "adjust_exposure"}
+      ]
+    }
+  ]
+}
+

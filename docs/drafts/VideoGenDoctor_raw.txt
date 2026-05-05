@@ -1,0 +1,50 @@
+# VideoGenDoctor — Raw Draft Manuscript
+# STATUS: PLACEHOLDER — paste your manuscript here and re-run.
+
+## Instructions
+1. Paste the full raw manuscript text below this line.
+2. Save the file.
+3. Re-run: make demo  (or the full pipeline).
+
+## Draft Content (replace below)
+
+Title: VideoGenDoctor: Evidence-Grounded Failure Diagnosis and Actionable Repair for Controllable Video Generation
+
+[PASTE FULL MANUSCRIPT HERE]
+
+### Motivation
+Controllable video generation (e.g., ShotIR-driven pipelines) increasingly relies on
+complex multi-shot, multi-character, multi-prop specifications. Despite recent advances in
+diffusion-based video generators, practitioners still face systematic, hard-to-diagnose failures:
+identity drift across shots, camera deviation from plan, missing/misplaced props, temporal
+jitter at segment boundaries, and style inconsistency. Existing evaluation frameworks
+return aggregate quality scores with no failure localization, no root-cause codes, and no
+actionable repair path — leaving engineers with no systematic recourse.
+
+### Proposed System
+VideoGenDoctor is a closed-loop diagnosis-and-repair system that:
+1. Ingests a generated video + optional ShotIR specification.
+2. Segments and embeds frames (OpenCLIP / EVA-CLIP).
+3. Runs a Stage-1 rule engine to emit top-K failure codes with evidence spans.
+4. Optionally routes candidate segments to a Stage-2 VLM judge for fine-grained Q&A.
+5. Compiles a structured patch (shotir.diff.json or rerender_plan.json).
+6. Supports closed-loop rerenders: diagnose -> patch -> rerender -> re-diagnose.
+
+### Key Claims (PLACEHOLDERS — do not submit without real numbers)
+- Failure-code F1: [X]% macro, [Y]% micro on VideoGenDoctor-Bench-v0 (N=[N] videos).
+- Evidence localization: tIoU@0.5 = [Z], Top-1 keyframe hit = [W]%.
+- Closed-loop repair: Pass@1 = [P1]%, Pass@2 = [P2]%, avg [K] iterations.
+- Cost: [C] USD / usable minute of video.
+
+### Related Work
+- T2V-CompBench (to_verify)
+- EvalCrafter (arXiv:2310.11440)
+- VideoScore (arXiv:2406.15252)
+- VBench (arXiv:2311.17982)
+- CogVideoX / ShotIR (to_verify)
+- InstructVideo / MotionCtrl (to_verify)
+- InsightFace (to_verify)
+- OpenCLIP (ICML 2023, arXiv:2212.07143)
+
+### END OF PLACEHOLDER DRAFT
+

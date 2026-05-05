@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use VideoGenDoctor in your research, please cite it as below."
+type: software
+title: "VideoGenDoctor: Structured Diagnosis, Evidence Localization, and Repair for Controllable Video Generation"
+version: "0.1.0"
+date-released: "2026-01-01"
+license: MIT
+repository-code: "https://github.com/tanbo1217/videogendoctor"
+abstract: >
+  VideoGenDoctor is a closed-loop failure diagnosis and repair system for
+  controllable video generation. It replaces scalar quality scores with
+  structured diagnosis records — each carrying a taxonomy code, temporal
+  evidence span, affected target, confidence, representative keyframes, and
+  a compiled repair action. The pipeline combines lightweight feature-based
+  screening, optional structured VLM verification, and a template-driven
+  patch compiler.
+authors:
+  - given-names: Bo
+    family-names: Tan
+    affiliation: Sichuan Agricultural University
+    email: bot@stu.sicau.edu.cn
+  - given-names: Yupeng
+    family-names: Niu
+    affiliation: "Institute of Radiation Medicine, CAMS & PUMC"
+    email: niuyupeng1@gmail.com
+keywords:
+  - video generation
+  - failure diagnosis
+  - controllable generation
+  - video evaluation
+  - ShotIR
+  - automated repair

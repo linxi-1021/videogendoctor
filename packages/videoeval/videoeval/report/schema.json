@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VideoEval Report Schema v0.1",
+  "type": "object",
+  "required": ["video_meta", "segments", "scores", "top_failures", "patch_hints"],
+  "properties": {
+    "video_meta": {
+      "type": "object",
+      "required": ["video_path", "duration_s", "fps", "resolution", "num_frames"],
+      "properties": {
+        "video_path": {"type": "string"},
+        "shotir_path": {"type": "string"},
+        "duration_s": {"type": "number"},
+        "fps": {"type": "number"},
+        "resolution": {
+          "type": "object",
+          "properties": {"width": {"type": "integer"}, "height": {"type": "integer"}}
+        },
+        "num_frames": {"type": "integer"},
+        "run_id": {"type": "string"},
+        "timestamp": {"type": "string", "format": "date-time"}
+      }
+    },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["seg_id", "t_start", "t_end", "keyframes"],
+        "properties": {
+          "seg_id": {"type": "string"},
+          "t_start": {"type": "number"},
+          "t_end": {"type": "number"},
+          "keyframes": {"type": "array", "items": {"type": "string"}},
+          "features": {
+            "type": "object",
+            "properties": {
+              "clip_drift": {"type": "number"},
+              "flow_magnitude_mean": {"type": "number"},
+              "flow_magnitude_std": {"type": "number"},
+              "face_drift": {"type": ["number", "null"]},
+              "has_face": {"type": "boolean"}
+            }
+          },
+          "failures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["code", "confidence", "evidence"],
+              "properties": {
+                "code": {"type": "string"},
+                "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+                "evidence": {
+                  "type": "object",
+                  "required": ["t0", "t1", "keyframes"],
+                  "properties": {
+                    "t0": {"type": "number"},
+                    "t1": {"type": "number"},
+                    "keyframes": {"type": "array", "items": {"type": "string"}}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "scores": {
+      "type": "object",
+      "required": ["consistency", "coherence", "alignment"],
+      "properties": {
+        "consistency": {"type": "number", "minimum": 0, "maximum": 1},
+        "coherence": {"type": "number", "minimum": 0, "maximum": 1},
+        "alignment": {"type": "number", "minimum": 0, "maximum": 1},
+        "shot_compliance": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "top_failures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "confidence", "evidence"],
+        "properties": {
+          "code": {"type": "string"},
+          "confidence": {"type": "number"},
+          "evidence": {
+            "type": "object",
+            "required": ["t0", "t1", "keyframes"],
+            "properties": {
+              "t0": {"type": "number"},
+              "t1": {"type": "number"},
+              "keyframes": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        }
+      }
+    },
+    "patch_hints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["action", "reason"],
+        "properties": {
+          "action": {"type": "string"},
+          "field": {"type": "string"},
+          "value": {},
+          "reason": {"type": "string"},
+          "failure_code": {"type": "string"}
+        }
+      }
+    }
+  }
+}
+

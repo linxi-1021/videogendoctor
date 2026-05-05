@@ -1,0 +1,25 @@
+# Segment length in seconds
+seg_len: 2.0
+# Segment stride in seconds
+stride: 2.0
+# Number of keyframes sampled per segment
+k_frames: 6
+# CLIP embedding drift threshold (0-1; higher = more tolerant)
+clip_drift_threshold: 0.15
+# Optical flow jitter threshold (pixels/frame)
+flow_jitter_threshold: 5.0
+# Frozen-frame threshold on mean flow magnitude (lower = stricter)
+flow_frozen_threshold: 0.01
+# Camera shake threshold on flow std (higher = stricter)
+flow_shake_threshold: 8.0
+# Face embedding drift threshold (0-1)
+face_drift_threshold: 0.35
+# Top-K failures per segment to report
+top_k_failures: 3
+# Whether to emit placeholder AL_PROP_MISSING candidates without a real detector
+enable_prop_placeholders: false
+# Enable YOLOv8 object detection (requires ultralytics)
+use_yolo: false
+# Enable Stage-2 VLM judge
+use_judge: false
+

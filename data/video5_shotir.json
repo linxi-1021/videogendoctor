@@ -1,0 +1,49 @@
+{
+  "schema_version": "0.1",
+  "spec_id": "video5_shotir_001",
+  "title": "Office speaking portrait with stable face and expression",
+  "shots": [
+    {
+      "shot_id": "shot_000",
+      "t_start": 0.0,
+      "t_end": 3.0,
+      "shot_type": "close_up",
+      "camera_movement": "static",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_chair"],
+      "action": "character_A sits near the window, looks forward, and begins speaking calmly",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_001",
+      "t_start": 3.0,
+      "t_end": 7.0,
+      "shot_type": "close_up",
+      "camera_movement": "static",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_chair"],
+      "action": "character_A continues speaking with slight nods, natural blinking, and subtle expression changes",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_002",
+      "t_start": 7.0,
+      "t_end": 10.0,
+      "shot_type": "close_up",
+      "camera_movement": "static",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_chair"],
+      "action": "character_A finishes speaking and returns to a calm neutral expression",
+      "style": "photorealistic"
+    }
+  ],
+  "characters": {
+    "character_A": {
+      "anchor_frame": null,
+      "description": "Asian man around 30 years old wearing a light blue shirt, seated by an office window"
+    }
+  }
+}

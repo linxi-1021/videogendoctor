@@ -1,0 +1,39 @@
+# Stage-2 VLM judge structured question templates.
+# Each entry includes a question id, text, and the taxonomy code group it maps to.
+
+questions:
+  - qid: Q_IDENTITY_DRIFT
+    text: "Does the main character's face or body appearance change inconsistently between these keyframes? Answer Yes or No."
+    code_group: ID_FACE_DRIFT
+
+  - qid: Q_PROP_MISSING
+    text: "Is there any required object or prop missing from this scene? Answer Yes or No."
+    code_group: AL_PROP_MISSING
+
+  - qid: Q_CAMERA_DEV
+    text: "Does the camera movement appear unintended or inconsistent with a planned shot? Answer Yes or No."
+    code_group: CA_MOVE_WRONG
+
+  - qid: Q_ACTION_PRESENT
+    text: "Does a clear action or event occur in this segment as specified? Answer Yes or No."
+    code_group: MO_EVENT_MISSING
+
+  - qid: Q_STYLE_CONSIST
+    text: "Is the visual style and color consistent throughout this segment? Answer Yes or No."
+    code_group: ST_COLOR_SHIFT
+
+  - qid: Q_BG_CONSISTENCY
+    text: "Does the background scene remain consistent across these keyframes? Answer Yes or No."
+    code_group: SC_BG_INCONSISTENCY
+
+  - qid: Q_SHOT_TYPE
+    text: "Does the framing and shot type match what was specified? Answer Yes or No."
+    code_group: CA_SHOT_TYPE_WRONG
+
+  - qid: Q_FROZEN_FRAME
+    text: "Does the video appear frozen or stalled in this segment when motion is expected? Answer Yes or No."
+    code_group: MO_FROZEN_FRAME
+
+  - qid: Q_COMPRESSION
+    text: "Are there visible compression artifacts, blocking, or quality degradation in these frames? Answer Yes or No."
+    code_group: ST_COMPRESSION_ARTIFACT

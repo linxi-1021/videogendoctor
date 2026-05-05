@@ -1,0 +1,49 @@
+{
+  "schema_version": "0.1",
+  "spec_id": "video2_shotir_001",
+  "title": "Desk interaction with laptop, coffee cup, and notebook",
+  "shots": [
+    {
+      "shot_id": "shot_000",
+      "t_start": 0.0,
+      "t_end": 3.0,
+      "shot_type": "medium",
+      "camera_movement": "static",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_desk", "prop_laptop_silver", "prop_coffee_cup_white", "prop_notebook_open"],
+      "action": "character_A looks at the laptop screen and places a hand near the coffee cup",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_001",
+      "t_start": 3.0,
+      "t_end": 7.0,
+      "shot_type": "medium",
+      "camera_movement": "static",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_desk", "prop_laptop_silver", "prop_coffee_cup_white", "prop_notebook_open"],
+      "action": "character_A picks up the white ceramic coffee cup, takes one sip, and places it back on the right side of the desk",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_002",
+      "t_start": 7.0,
+      "t_end": 10.0,
+      "shot_type": "medium",
+      "camera_movement": "static",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_desk", "prop_laptop_silver", "prop_coffee_cup_white", "prop_notebook_open"],
+      "action": "character_A writes two lines in the notebook and briefly looks back at the laptop screen",
+      "style": "photorealistic"
+    }
+  ],
+  "characters": {
+    "character_A": {
+      "anchor_frame": null,
+      "description": "short-haired Asian woman seated at a tidy wooden desk"
+    }
+  }
+}

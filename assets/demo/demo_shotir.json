@@ -1,0 +1,62 @@
+{
+  "schema_version": "0.1",
+  "spec_id": "demo_shotir_001",
+  "title": "Demo ShotIR Specification",
+  "shots": [
+    {
+      "shot_id": "shot_000",
+      "t_start": 0.0,
+      "t_end": 2.0,
+      "shot_type": "wide",
+      "camera_movement": "static",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_table"],
+      "action": "character_A enters the room",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_001",
+      "t_start": 2.0,
+      "t_end": 4.0,
+      "shot_type": "medium",
+      "camera_movement": "pan_right",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_table", "prop_chair"],
+      "action": "character_A sits down",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_002",
+      "t_start": 4.0,
+      "t_end": 6.0,
+      "shot_type": "close_up",
+      "camera_movement": "static",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": [],
+      "action": "character_A speaks",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_003",
+      "t_start": 6.0,
+      "t_end": 8.0,
+      "shot_type": "wide",
+      "camera_movement": "zoom_out",
+      "camera_angle": "high_angle",
+      "characters": ["character_A"],
+      "props_required": ["prop_table", "prop_chair"],
+      "action": "character_A stands up and exits",
+      "style": "photorealistic"
+    }
+  ],
+  "characters": {
+    "character_A": {
+      "anchor_frame": null,
+      "description": "placeholder character"
+    }
+  }
+}
+

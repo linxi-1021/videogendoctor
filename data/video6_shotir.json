@@ -1,0 +1,49 @@
+{
+  "schema_version": "0.1",
+  "spec_id": "video6_shotir_001",
+  "title": "Cafe entrance portrait with stable identity and mild facial motion",
+  "shots": [
+    {
+      "shot_id": "shot_000",
+      "t_start": 0.0,
+      "t_end": 3.0,
+      "shot_type": "medium",
+      "camera_movement": "dolly_in_very_slow",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": [],
+      "action": "character_A stands still near the cafe entrance, looking off to the right with natural blinking and breathing",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_001",
+      "t_start": 3.0,
+      "t_end": 7.0,
+      "shot_type": "medium_close_up",
+      "camera_movement": "dolly_in_very_slow",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": [],
+      "action": "character_A slowly turns to face forward and shows a slight natural smile",
+      "style": "photorealistic"
+    },
+    {
+      "shot_id": "shot_002",
+      "t_start": 7.0,
+      "t_end": 10.0,
+      "shot_type": "medium_close_up",
+      "camera_movement": "dolly_in_very_slow",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": [],
+      "action": "character_A raises a hand to adjust hair near the ear and then lowers the hand while keeping a calm standing pose",
+      "style": "photorealistic"
+    }
+  ],
+  "characters": {
+    "character_A": {
+      "anchor_frame": null,
+      "description": "Asian woman around 25 years old wearing a light beige trench coat outside a quiet city cafe"
+    }
+  }
+}

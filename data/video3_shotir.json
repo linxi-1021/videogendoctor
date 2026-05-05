@@ -1,0 +1,49 @@
+{
+  "schema_version": "0.1",
+  "spec_id": "video3_shotir_001",
+  "title": "Seaside cinematic scene with stable background and color tone",
+  "shots": [
+    {
+      "shot_id": "shot_000",
+      "t_start": 0.0,
+      "t_end": 3.0,
+      "shot_type": "medium",
+      "camera_movement": "arc_slow",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_boardwalk"],
+      "action": "camera establishes the seaside boardwalk environment while character_A stands still facing away at a slight angle",
+      "style": "cinematic_photorealistic"
+    },
+    {
+      "shot_id": "shot_001",
+      "t_start": 3.0,
+      "t_end": 7.0,
+      "shot_type": "medium",
+      "camera_movement": "arc_slow",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_boardwalk"],
+      "action": "character_A gently turns toward the side and looks into the distance while the camera continues a smooth orbit",
+      "style": "cinematic_photorealistic"
+    },
+    {
+      "shot_id": "shot_002",
+      "t_start": 7.0,
+      "t_end": 10.0,
+      "shot_type": "medium",
+      "camera_movement": "arc_slow",
+      "camera_angle": "eye_level",
+      "characters": ["character_A"],
+      "props_required": ["prop_boardwalk"],
+      "action": "character_A holds a natural standing pose as the coat hem moves lightly in the sea breeze and the camera completes the smooth move",
+      "style": "cinematic_photorealistic"
+    }
+  ],
+  "characters": {
+    "character_A": {
+      "anchor_frame": null,
+      "description": "male adult wearing a khaki long trench coat on a seaside wooden boardwalk at sunset"
+    }
+  }
+}
