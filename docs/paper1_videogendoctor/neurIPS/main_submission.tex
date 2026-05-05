@@ -1073,6 +1073,9 @@ Combined & 120 & 768 & 2 & $\kappa$ = 0.831 & tIoU = 0.681 \\
 \end{adjustbox}
 \end{table}
 
+\paragraph{VLM implementation details.}
+Table~\ref{tab:vlm_details} documents the implementation details for all VLM-based configurations: model endpoint, number of sampled frames, resolution, prompt type, and relative cost. Most direct VLM baselines share the same hosted GPT-4V endpoint to isolate prompt- and schema-level effects from backbone model changes; Rule+Open-VLM uses Qwen2-VL-7B-Instruct as an open-model reference. The self-consistency baseline runs 3 independent VLM calls and applies majority voting, improving macro-F1 by +0.011 over single-run structured reporting at 3.48$\times$ the cost. All hosted endpoint calls log the raw prompt, response, latency, and output path for auditability.
+
 \begin{table}[t]
 \centering\scriptsize
 \caption{Implementation details for VLM-based judges and external diagnosis/repair baselines.}
@@ -1098,6 +1101,9 @@ Score+LLM-to-patch & scalar evaluator + LLM & 0 & -- & score-to-patch JSON & N/A
 \footnotesize\emph{Note.} Most direct VLM baselines share the same hosted GPT-4V endpoint~\cite{gpt4v2023} to isolate prompt- and schema-level effects rather than backbone changes; Rule+Open-VLM provides an open-model reference. Hosted endpoint calls are logged with raw responses for auditability. `N/A' denotes a scalar-evaluator-dominated pipeline whose cost is not directly comparable to frame-based VLM calls.
 \end{minipage}
 \end{table}
+
+\paragraph{Per-code reliability on real failures.}
+Table~\ref{tab:real_per_code} reports precision, recall, F1, and tIoU@0.5 for each of the 18 observed codes on the real-failure subset. Frozen-frame detection remains the strongest code (F1 0.876, tIoU@0.5 0.663), consistent with its unambiguous near-zero-flow signal. The hardest codes are action-order errors (F1 0.769, tIoU@0.5 0.524) and event-missing (F1 0.784, tIoU@0.5 0.542), where the VLM judge must reason about temporal order and event presence from sparse keyframes. Camera- and motion-group codes exhibit the largest drop from controlled to real, reflecting the greater diversity and overlap of real-world camera and motion artifacts.
 
 \begin{table}[t]
 \centering\scriptsize
@@ -1131,6 +1137,9 @@ Failure code & \#Spans & Precision & Recall & F1 & tIoU@0.5 \\
 \end{adjustbox}
 \end{table}
 
+\paragraph{Per-generator results.}
+Table~\ref{tab:per_generator_results} breaks down real-failure performance by generator. Stable Video Diffusion achieves the strongest macro-F1 (0.842) and lowest FPR (0.083), likely because its reference-frame conditioning provides a stronger identity anchor than text-only prompts. HunyuanVideo is the most challenging generator (macro-F1 0.809, FPR 0.117), consistent with its multi-shot prompt input which introduces more opportunities for camera, motion, and alignment failures. The main failure groups per generator align with the input modality: SVD struggles most with identity/style/scene, while text-conditioned generators (CogVideoX, Wan, HunyuanVideo) are dominated by camera/motion/alignment failures.
+
 \begin{table}[t]
 \centering\scriptsize
 \caption{Per-generator results on the real-failure and real-normal subsets. FPR is computed on 30 real-normal samples per generator.}
@@ -1150,6 +1159,9 @@ Average & 0.827 & 0.598 & 0.691 & 0.100 & -- & 120 \\
 \end{tabular}
 \end{adjustbox}
 \end{table}
+
+\paragraph{Leave-one-perturbation-out.}
+Table~\ref{tab:leave_one_perturbation} evaluates generalization by holding out each perturbation operator from threshold tuning and testing on it alone. Average macro-F1 drops to 0.870 (from 0.911 in the full configuration), confirming that the pipeline does not simply memorize perturbation templates, though unseen-operator generalization is weaker than in-distribution evaluation. The hardest held-out perturbations are action dropping/shifting (macro-F1 0.838) and camera-shake injection (0.851), while compression re-encoding (0.910) remains the easiest to detect even without calibration on that specific perturbation.
 
 \begin{table}[t]
 \centering\scriptsize
@@ -1195,6 +1207,10 @@ Average & 0.891 & 0.704 & 0.654 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\paragraph{Leave-one-source-group-out.}
+Table~\ref{tab:leave_one_source_group} evaluates robustness across the six domain groups by holding out each group from threshold tuning. Average macro-F1 of 0.891 and tIoU@0.5 of 0.704 indicate reasonable domain generalization, with style/lighting variation (macro-F1 0.907) and indoor/human-object (0.899) as the easiest groups, and camera-control scene (0.875) and scene-change/background (0.884) as the hardest. The performance spread across groups is narrower than the spread across perturbation types (Table~\ref{tab:leave_one_perturbation}), suggesting the pipeline is more sensitive to perturbation type than to scene domain.
+
 
 \section{Full failure taxonomy}
 \label{app:taxonomy}
@@ -1353,6 +1369,9 @@ Each patch specifies an action type, the affected target, an optional update val
 rationale tied to the evidence span. When multiple records affect the same target, the compiler
 groups them before re-rendering to reduce conflicts among patch actions.
 
+\paragraph{Patch-to-generator adapter details.}
+Table~\ref{tab:patch_adapter_details} documents the full adapter availability matrix: for each repair-plan action, it lists the corresponding ShotIR specification field, the adapter-executability level (L0--L3), the concrete generator or editor input that executes the action, and the fallback behavior when the adapter is unavailable. Reference-frame injection and segment regeneration are the most widely supported actions (L2 for image-to-video backends; L1 partial for text-to-video), while camera-angle and prop-reposition actions remain at L1 (prompt-rewrite only). Actions counted as adapter-executable (L2/L3) in the Human Pass@K evaluation are restricted to reference-frame injection, segment rerendering, temporal smoothing, enhancement/deblocking, and mask- or reference-conditioned prop insertion.
+
 \begin{table}[t]
 \centering\scriptsize
 \caption{Patch-to-generator adapter details. A repair plan is counted as adapter-executable only when it can be automatically translated into target-generator or editor inputs without manual rewriting. L0/L1 rows denote abstention or prompt-rewrite instructions rather than executable patches.}
@@ -1388,6 +1407,9 @@ determine whether the failure is visually present, assign the tightest temporal 
 the visible deviation, and select representative keyframes when available. Annotators may also
 add missing failures if the perturbation produces an additional visible artifact.
 
+\paragraph{Annotation interface.}
+Figure~\ref{fig:annotation_interface_appendix} shows the annotation tool used for manual verification in VideoGenDoctor-Bench-v0. The interface provides a sample navigator, side-by-side playback of the original and perturbed videos, temporal evidence marking on a scrubber timeline, structured failure-verification cards with candidate codes and confidence fields, and a free-form notes field for adjudication. Each annotator is assigned a random subset to avoid systematic bias; dual annotation is performed on the reliability subset.
+
 \begin{figure}[t]
 \centering
 \safeincludegraphics[width=\textwidth]{../figures/annotation_interface_appendix.png}
@@ -1409,6 +1431,8 @@ independent annotators remains future work.
 
 \section{Example diagnostic report}
 \label{app:diagnostic_report}
+
+Figure~\ref{fig:diagnostic_report} shows a representative diagnostic report produced by the default VideoGenDoctor pipeline for a perturbed video from the controlled fixture. The report includes global quality and alignment scores, a ranked list of failure records (each with taxonomy code, confidence, temporal span, affected target, and representative keyframes), derived patch hints, and segment-level evidence summaries. The report is designed to be both machine-parsed by the patch compiler and human-audited by a reviewer inspecting the keyframe evidence.
 
 \begin{figure}[t]
 \centering
@@ -1648,6 +1672,9 @@ Invalid JSON outputs are repaired using a deterministic parser when possible. If
 \label{app:human_repair}
 Raters are shown the specification and one output video, without method names or diagnosis records. They answer whether the video satisfies the specification overall, whether the target failure is resolved, whether the repair introduces new artifacts, and how useful the patch is on a 1--5 scale. Human Pass@$K$ is the fraction of samples judged successful after at most $K$ repair attempts.
 
+\paragraph{Patch-usefulness rubric.}
+Table~\ref{tab:human_rubric} defines the 5-point Likert scale used by raters to assess patch usefulness. Scores 1--2 denote insufficient or non-actionable patches; scores 3--5 denote actionable, effective, and resolution-grade patches. Raters are trained on 20 calibration samples before evaluation; inter-rater calibration is verified on a 10\% pilot subset.
+
 \begin{table}[t]
 \centering
 \caption{Blind human repair evaluation rubric for patch usefulness.}
@@ -1666,6 +1693,9 @@ Score & Criterion \\
 \end{table}
 
 A repaired video is marked as pass if the target failure is resolved and no severe new artifact is introduced. Human Pass@K is the fraction of samples judged successful after at most $K$ repair attempts. New artifacts are marked when raters observe a visible degradation introduced by repair that was not present in the original generated video. Each repaired video is rated by 3 independent raters. We report the majority-vote pass/fail label, the mean patch-usefulness score, and the majority-vote new-artifact label.
+
+\paragraph{No-op and wrong-target analysis.}
+Table~\ref{tab:no_op_wrong_target_analysis} examines error modes on ambiguous and real-normal samples where a correct response is often no\_op\_uncertain rather than a concrete patch. VideoGenDoctor-diagnosis achieves the highest correct no-op rate (0.738), over 21 percentage points above VLM structured reporting (0.476). VideoGenDoctor-full achieves the lowest wrong-target patch rate (0.081) and over-confident patch rate (0.164), while VLM structured reporting incurs the highest over-confident patch rate (0.396), indicating that without rule-based gating, VLMs frequently over-commit to concrete patches on ambiguous or normal inputs.
 
 \begin{table}[t]
 \centering\scriptsize
@@ -1686,6 +1716,9 @@ VideoGenDoctor-full & 0.514 & 0.724 & 0.156 & \textbf{0.081} & \textbf{0.164} \\
 \end{adjustbox}
 \end{table}
 
+\paragraph{Qualitative case-study summary.}
+Table~\ref{tab:case_study_summary} summarizes three categories of qualitative case studies. Successful structured repair plans (18/24 majority-judged successful) demonstrate the intended diagnosis-to-repair pathway: a localized evidence span triggers a template-constrained patch that resolves the target failure without introducing new artifacts. Ambiguous cases with appropriate abstention (16/24) show that no\_op\_uncertain avoids over-repair when the evidence is insufficient for a concrete patch. Over-repair and wrong-target failures (7/24 majority-judged successful) represent the primary failure mode: a concrete patch targets the wrong object or temporal span, typically when overlapping artifacts confuse the rule engine.
+
 \begin{table}[t]
 \centering\scriptsize
 \caption{Qualitative case-study summary. Cases are sampled from controlled, real-failure, and ambiguous stress subsets.}
@@ -1704,6 +1737,9 @@ Over-repair / wrong-target failure & 24 & 7 & concrete patch targets wrong objec
 \section{Bootstrap confidence intervals}
 \label{app:bootstrap}
 We use 10,000 video-level bootstrap resamples and report percentile 95\% confidence intervals. For the controlled fixture, resampling is performed over 324 videos. For the real-failure subset, resampling is performed over 240 videos. For blind human repair evaluation, resampling is performed over the stratified human-rated subset. For paired comparisons, we resample videos with replacement and compute the distribution of metric differences between two methods. Small point-estimate differences are not treated as meaningful unless the paired confidence interval excludes zero.
+
+\paragraph{Leave-one-code-family-out rule ablation.}
+Table~\ref{tab:leave_one_code_family} evaluates what happens when an entire code family's dedicated rules are disabled, leaving only generic embedding drift, optical-flow anomaly, and structured VLM verification. Average macro-F1 drops substantially to 0.774 (from 0.911), confirming that family-specific detectors carry most of the diagnostic signal. Motion-family removal causes the largest degradation (macro-F1 0.721), consistent with optical flow being the single most critical signal. Scene-family removal (macro-F1 0.748) and camera-family removal (0.754) follow. Style-family removal has the mildest impact (0.836), reflecting the relatively strong contribution of generic CLIP embedding drift to style/compression artifact detection.
 
 \begin{table}[t]
 \centering\scriptsize
@@ -1731,6 +1767,9 @@ The large degradation under leave-one-code-family-out ablation confirms that Vid
 
 \section{Real-failure construction manifest}
 \label{app:real_failure_manifest}
+
+\paragraph{Generator configuration metadata.}
+Table~\ref{tab:generator_config} reports the exact generator configuration parameters used to produce the real-failure and real-normal subsets. For each generator, the table records the checkpoint identifier, fps, frame count, resolution, sampling steps, guidance scale, scheduler, seed range, and reference source or prompt rule. CogVideoX and Wan use the same ShotIR-to-prompt template (v1); Stable Video Diffusion uses reference frames extracted from ShotIR character anchors; HunyuanVideo uses a multi-shot prompt template (v1). When a configuration field is not exposed by a generator, the corresponding manifest value is set to \texttt{null} rather than omitted.
 
 \begin{table}[t]
 \centering\scriptsize
