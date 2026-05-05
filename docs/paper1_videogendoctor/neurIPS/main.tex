@@ -568,7 +568,10 @@ All newly generated data supporting the findings of this study---including Video
 
 \section{Supplementary main-text results}
 \label{app:moved_main_details}
-This appendix stores tables and figures moved out of the main text to keep the core narrative compact while preserving the audit trail for comparisons, taxonomy scope, fixture construction, temporal evidence profiles, strengthened VLM baselines, repair visualization, and cost-performance trade-offs.
+This appendix collects detailed tables and figures that support the main experimental claims: taxonomy definitions, benchmark statistics, comparisons with existing evaluation paradigms, VLM baseline results, repair visualizations, and cost-performance analyses.
+
+\paragraph{Taxonomy and patch mappings.}
+Table~\ref{tab:code_patch_mapping} lists the representative failure types covered by the VideoGenDoctor taxonomy, the evidence signals used to detect each failure, and the repair action the patch compiler emits. These seven categories map to the six taxonomy groups defined in Table~\ref{tab:failure_taxonomy_groups} and serve as the primary diagnosis-to-repair bridge.
 
 \begin{table}[t]
 \centering
@@ -590,6 +593,9 @@ Background inconsistency & Scene/background embedding drift & Background anchori
 \end{tabular}
 \end{table}
 
+\paragraph{Benchmark statistics.}
+Table~\ref{tab:dataset_statistics} summarizes the key statistics of the two evaluation subsets: the controlled diagnostic fixture and the failure-enriched real-generator subset. The controlled fixture contains 324 videos with 2,016 verified evidence spans across 12 observed codes and 9 perturbation types. The real-failure subset spans 240 videos across 4 generators with 18 observed codes. Because the real-failure subset is failure-enriched by construction, these numbers cannot estimate natural failure prevalence; they only support transfer analyses under verified failures.
+
 \begin{table}[t]
 \centering\small
 \caption{Dataset statistics for the controlled fixture and failure-enriched real-generator subset. The real-failure split cannot estimate natural failure prevalence.}
@@ -603,6 +609,9 @@ Real-failure subset & 240 & 1536 & 8.93s & -- & 18 \\
 \bottomrule
 \end{tabular*}
 \end{table}
+
+\paragraph{Comparison with existing evaluation paradigms.}
+Table~\ref{tab:comparison} situates VideoGenDoctor against related evaluation and critique systems. Prior evaluators (VBench, EvalCrafter, VideoScore, T2V-CompBench) return scalar scores that rank models but cannot localize failures or prescribe repairs. Direct VLM reporting provides partial code and evidence output but lacks patch generation and closed-loop capability. VideoGenDoctor is the only system that combines global scoring, failure-code diagnosis, evidence localization, template-based patch compilation, and closed-loop repair in an integrated pipeline.
 
 \begin{table}[t]
 \centering\small
@@ -624,6 +633,9 @@ Direct VLM report & partial & partial & partial & partial & \xmark \\
 \end{adjustbox}
 \end{table}
 
+\paragraph{Taxonomy group definitions.}
+Table~\ref{tab:failure_taxonomy_groups} defines the six failure-code groups that structure the VideoGenDoctor taxonomy. Each group serves as a namespace for diagnosis records and links to dedicated evidence procedures (feature extractors and rules) and repair-plan templates. The controlled fixture exercises all six groups; the real-failure subset additionally covers codes in groups that are not deterministic-perturbation-induced (e.g., clothing change, text-prompt mismatch).
+
 \begin{table}[t]
 \centering
 \small
@@ -642,6 +654,9 @@ Scene & Background consistency, lighting, environment match, scene-object stabil
 \bottomrule
 \end{tabular}
 \end{table}
+
+\paragraph{Controlled fixture composition.}
+Table~\ref{tab:controlled_fixture_composition} breaks down the controlled diagnostic fixture by domain group. Each of the six groups contributes three clean source clips, which are then perturbed by nine deterministic operators under two random seeds. The table records per-group clip counts, average durations, resolutions, perturbation counts, seeds, and resulting video counts. This construction ensures that every taxonomy code in the controlled evaluation is backed by a known perturbation operator-template alignment (see Appendix~\ref{app:additional_experiment_tables}, Table~\ref{tab:operator_alignment}).
 
 \begin{table}[t]
 \centering\scriptsize
@@ -665,6 +680,9 @@ Total & 18 & 10.46s & -- & 9 & 2 & 324 \\
 \end{adjustbox}
 \end{table}
 
+\paragraph{Temporal evidence profiles.}
+Figure~\ref{fig:temporal_evidence_distribution} visualizes how verified evidence spans are distributed across the video timeline. Panel~(a) aggregates the 2,016 controlled-fixture spans over 2-second bins, revealing a front- and mid-loaded pattern expected from deterministic perturbation operators. Panel~(b) summarizes the 1,536 real-failure spans using the same binning, showing a later and more diffuse temporal mass. Panel~(c) further breaks down real-failure spans by failure group and time bin: motion and camera failures dominate the later intervals and overlap more strongly than in the controlled fixture, consistent with the greater difficulty of localizing these codes.
+
 \begin{figure}[t]
 \centering
 \safeincludegraphics[width=\textwidth]{../figures/temporal_evidence_profile.pdf}
@@ -675,6 +693,9 @@ Total & 18 & 10.46s & -- & 9 & 2 & 324 \\
 \caption{Temporal distribution of verified evidence spans in the evaluation sets. Panel (a) aggregates the 2,016 controlled-fixture spans over 2-second bins and shows the front- and mid-loaded pattern expected from deterministic perturbation operators. Panel (b) summarizes the 1,536 real-failure spans over the same time bins, making the later and more diffuse temporal mass directly comparable to panel (a). Panel (c) further breaks the real-failure spans down by failure group and time bin, highlighting that motion and camera failures dominate the later intervals and overlap more strongly than in the controlled fixture.}
 \label{fig:temporal_evidence_distribution}
 \end{figure}
+
+\paragraph{Strengthened VLM-agent baselines.}
+Table~\ref{tab:strong_vlm_agent_baselines} reports strengthened VLM-agent baselines on the controlled fixture, all evaluated under the same downstream repair protocol so that diagnosis-only front ends are fairly compared. Free-form VLM reporting achieves the lowest schema validity and patch vocabulary validity among structured methods. Adding a structured JSON schema improves schema validity to 0.914 and macro-F1 to 0.887. Self-consistency (3-run majority voting) further improves macro-F1 to 0.898 at 3.48$\times$ the cost. Temporal proposal with patch output achieves a favorable tIoU@0.5 of 0.702 by asking the VLM to propose spans explicitly. VideoGenDoctor-full exceeds all direct VLM baselines on schema validity (0.991) and patch vocabulary validity (0.953) while being the most cost-efficient structured configuration. Rule+GPT-4V provides the strongest absolute scores at 2.75$\times$ the cost of VideoGenDoctor-full.
 
 \begin{table}[t]
 \centering\scriptsize
@@ -696,12 +717,18 @@ Rule+GPT-4V + repair loop & \textbf{0.9276} & \textbf{0.7688} & \textbf{0.7917} 
 \end{adjustbox}
 \end{table}
 
+\paragraph{Closed-loop repair visualization.}
+Figure~\ref{fig:repair_curve} compares closed-loop repair outcomes across seven methods on the controlled fixture. The left panel reports automatic verifier Pass@1/2 on all 324 controlled videos; the right panel reports blind human Pass@1/2 on a stratified 144-video subset. Human Pass@2 rises from 0.236 (random-patch) and 0.278 (score-only) to 0.764 (VideoGenDoctor-full), demonstrating that structured diagnosis records with localized evidence and template-constrained repair plans substantially improve downstream video quality. The human panel provides an independent check against verifier-coupled automatic gains.
+
 \begin{figure}[t]
 \centering
 \safeincludegraphics[width=\textwidth]{../figures/manuscript_fig3.pdf}
 \caption{Closed-loop repair comparison on the controlled fixture. Left: automatic verifier Pass@1/2 on all 324 controlled videos. Right: blind human Pass@1/2 on the stratified 144-video human-evaluation subset. Automatic pass rates may be coupled to the system verifier, while human pass rates provide an independent check of repair success.}
 \label{fig:repair_curve}
 \end{figure}
+
+\paragraph{Cost-performance trade-off.}
+Table~\ref{tab:cost_performance} compares cost, latency, and performance across five configurations under a shared downstream repair protocol. Rule-only achieves the lowest cost (0.42$\times$) but leaves a sizable gap in human Pass@2 (0.599 vs.\ 0.764 for VideoGenDoctor-full). Rule+Open-VLM narrows the gap to Pass@2 0.716 at 0.73$\times$ the cost. Rule+GPT-4V achieves the strongest Human Pass@2 (0.792) at 2.75$\times$ the cost. Direct VLM structured reporting, which bypasses the rule-based candidate stage, reaches Pass@2 0.681 at 1.16$\times$ the cost, underperforming all rule-assisted configurations. VideoGenDoctor-full represents the recommended default, balancing strong repair performance with moderate cost. Figure~\ref{fig:cost_performance_pareto} visualizes this trade-off as a Pareto front, confirming that VideoGenDoctor-full occupies the knee point: beyond it, marginal Pass@2 gains come at steeply increasing relative cost.
 
 \begin{table}[t]
 \centering\scriptsize
@@ -722,13 +749,15 @@ VLM structured report & 0.8869 & 0.6639 & 0.6810 & 1.16$\times$ & 1.20$\times$ \
 \end{adjustbox}
 \end{table}
 
+\paragraph{Pareto-optimal trade-off.}
+Figure~\ref{fig:cost_performance_pareto} plots the cost-performance trade-off from Table~\ref{tab:cost_performance} as a Pareto front. The default VideoGenDoctor-full operating point occupies the knee: it improves human repair success over lower-cost rule variants and direct structured VLM reporting, while the higher-cost Rule+GPT-4V reference obtains the strongest Human Pass@2 at substantially higher relative cost. The Pareto curve confirms that Rule-only is the most cost-efficient configuration for resource-constrained settings, VideoGenDoctor-full is the recommended default, and Rule+GPT-4V sets the quality ceiling where budget allows.
+
 \begin{figure}[t]
 \centering
 \safeincludegraphics[width=\textwidth]{../figures/cost_performance_pareto.pdf}
 \caption{Pareto view of the cost-performance trade-off under the shared downstream repair protocol. The default VideoGenDoctor-full operating point improves human repair success over lower-cost rule variants and direct structured VLM reporting, while the higher-cost Rule+GPT-4V reference obtains the strongest Human Pass@2 at substantially higher relative cost.}
 \label{fig:cost_performance_pareto}
 \end{figure}
-
 
 % Begin inlined from appendix.tex
 \section{Additional experimental tables}

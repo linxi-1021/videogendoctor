@@ -571,7 +571,10 @@ VideoGenDoctor 通过自动化诊断改善了生成视频的可控性。改进�
 
 \section{补充正文结果}
 \label{app:moved_main_details}
-本附录存储从正文中移出的表格和图形，以保持核心叙述的精简，同时保留比较、分类法范围、测试集构造、时间证据剖面、强化 VLM 基线、修复可视化和成本-性能权衡的审计轨迹。
+本附录收集支持正文实验声明的详细表格和图形：分类法定义、基准统计、与现有评估范式的比较、VLM 基线结果、修复可视化以及成本-性能分析。
+
+\paragraph{分类法与补丁映射。}
+表~\ref{tab:code_patch_mapping} 列出了 VideoGenDoctor 分类法覆盖的代表性故障类型、用于检测每种故障的证据信号以及补丁编译器发出的修复动作。这七类映射到表~\ref{tab:failure_taxonomy_groups} 中定义的六个分类法组，并作为主要的诊断到修复的桥梁。
 
 \begin{table}[t]
 \centering
@@ -593,6 +596,9 @@ VideoGenDoctor 通过自动化诊断改善了生成视频的可控性。改进�
 \end{tabular}
 \end{table}
 
+\paragraph{基准统计。}
+表~\ref{tab:dataset_statistics} 汇总了两个评估子集的关键统计数据：受控诊断测试集和故障富集真实生成器子集。受控测试集包含 324 段视频、2,016 个已验证的证据区间，跨越 12 个已观测的代码和 9 种扰动类型。真实故障子集跨越 4 个生成器的 240 段视频，涵盖 18 个已观测的代码。由于真实故障子集是通过构造进行故障富集的，这些数字不能估计自然的故障发生率；它们仅支持已验证故障下的迁移分析。
+
 \begin{table}[t]
 \centering\small
 \caption{受控测试集和故障富集真实生成器子集的数据集统计。真实故障划分不能估计自然的故障发生率。}
@@ -606,6 +612,9 @@ VideoGenDoctor 通过自动化诊断改善了生成视频的可控性。改进�
 \bottomrule
 \end{tabular*}
 \end{table}
+
+\paragraph{与现有评估范式的比较。}
+表~\ref{tab:comparison} 将 VideoGenDoctor 与相关评估和评判系统进行了对比定位。先前的评估器（VBench、EvalCrafter、VideoScore、T2V-CompBench）返回标量分数，可以对模型进行排序，但不能定位故障或给出修复方案。直接 VLM 报告提供了部分代码和证据输出，但缺乏补丁生成和闭环能力。VideoGenDoctor 是唯一将全局评分、故障代码诊断、证据定位、基于模板的补丁编译和闭环修复整合为一体的系统。
 
 \begin{table}[t]
 \centering\small
@@ -627,6 +636,9 @@ T2V-CompBench & \cmark & 部分 & \xmark & \xmark & \xmark \\
 \end{adjustbox}
 \end{table}
 
+\paragraph{分类法组定义。}
+表~\ref{tab:failure_taxonomy_groups} 定义了构成 VideoGenDoctor 分类法的六个故障代码组。每组为诊断记录提供命名空间，并链接到专用的证据程序（特征提取器和规则）以及修复计划模板。受控测试集覆盖全部六个组；真实故障子集额外覆盖非确定性扰动诱导的代码（如服装变化、文本提示不匹配）。
+
 \begin{table}[t]
 \centering
 \small
@@ -645,6 +657,9 @@ T2V-CompBench & \cmark & 部分 & \xmark & \xmark & \xmark \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\paragraph{受控测试集组成。}
+表~\ref{tab:controlled_fixture_composition} 按领域组分解了受控诊断测试集。六个组中的每一组贡献了三个干净源片段，然后在两个随机种子下受到九种确定性算子的扰动。该表记录了每组片段数量、平均时长、分辨率、扰动算子数量、种子数量和生成的视频数量。这种构造确保了受控评估中的每个分类法代码都由一个已知的扰动算子-模板对齐所支撑（参见附录~\ref{app:additional_experiment_tables}，表~\ref{tab:operator_alignment}）。
 
 \begin{table}[t]
 \centering\scriptsize
@@ -668,6 +683,9 @@ T2V-CompBench & \cmark & 部分 & \xmark & \xmark & \xmark \\
 \end{adjustbox}
 \end{table}
 
+\paragraph{时间证据剖面。}
+图~\ref{fig:temporal_evidence_distribution} 可视化了已验证证据区间在视频时间轴上的分布情况。面板（a）将 2,016 个受控测试集区间在 2 秒分箱上聚合，揭示了确定性扰动算子所预期的前部和中部集中的模式。面板（b）使用相同分箱汇总 1,536 个真实故障区间，展示了更靠后且更分散的时间分布。面板（c）进一步按故障组和时间分箱分解真实故障区间：运动和相机故障主导了较晚的时间区间，且比重叠的受控测试集更为严重，这与这些代码更难以定位的特征一致。
+
 \begin{figure}[t]
 \centering
 \safeincludegraphics[width=\textwidth]{../figures/temporal_evidence_profile.pdf}
@@ -678,6 +696,9 @@ T2V-CompBench & \cmark & 部分 & \xmark & \xmark & \xmark \\
 \caption{评估集中已验证证据区间的时间分布。面板（a）将 2,016 个受控测试集区间在 2 秒分箱上聚合，展示了确定性扰动算子所预期的前部和中部集中的模式。面板（b）将 1,536 个真实故障区间在相同时间分箱上进行汇总，使更靠后且更分散的时间质量可直接与面板（a）进行比较。面板（c）进一步按故障组和时间分箱分解真实故障区间，突出显示运动和相机故障主导了较晚的时间区间，且比受控测试集中重叠更为严重。}
 \label{fig:temporal_evidence_distribution}
 \end{figure}
+
+\paragraph{强化 VLM-agent 基线。}
+表~\ref{tab:strong_vlm_agent_baselines} 报告了受控测试集上的强化 VLM-agent 基线，所有基线在相同下游修复协议下评估，确保仅诊断前端得到公平比较。自由形式 VLM 报告在结构化方法中实现了最低的模式有效性和补丁词汇有效性。添加结构化 JSON 模式将模式有效性提升至 0.914，宏 F1 提升至 0.887。自一致性（3 次运行多数投票）进一步将宏 F1 提升至 0.898，但成本为 3.48$\times$。带有补丁输出的时间提案方法以 0.702 的 tIoU@0.5 取得了良好效果，该方法明确要求 VLM 提出时间区间。VideoGenDoctor-full 在模式有效性（0.991）和补丁词汇有效性（0.953）上超过所有直接 VLM 基线，同时也是最具成本效率的结构化配置。Rule+GPT-4V 以 VideoGenDoctor-full 2.75$\times$ 的成本提供了最强的绝对分数。
 
 \begin{table}[t]
 \centering\scriptsize
@@ -699,12 +720,18 @@ Rule+GPT-4V + 修复回路 & \textbf{0.9276} & \textbf{0.7688} & \textbf{0.7917}
 \end{adjustbox}
 \end{table}
 
+\paragraph{闭环修复可视化。}
+图~\ref{fig:repair_curve} 比较了受控测试集上七种方法的闭环修复结果。左图报告了在所有 324 段受控视频上的自动验证器 Pass@1/2；右图报告了在分层抽样 144 段视频子集上的盲法人工 Pass@1/2。人工 Pass@2 从 0.236（随机补丁）和 0.278（仅评分）上升至 0.764（VideoGenDoctor-full），表明带有定位证据和模板约束修复计划的结构化诊断记录显著改善了后续视频质量。人工面板提供了对验证器耦合自动增益的独立检验。
+
 \begin{figure}[t]
 \centering
 \safeincludegraphics[width=\textwidth]{../figures/manuscript_fig3.pdf}
 \caption{受控测试集上的闭环修复比较。左图：在所有 324 段受控视频上的自动验证器 Pass@1/2。右图：在分层抽样 144 段人工评估子集上的盲法人工 Pass@1/2。自动通过率可能与系统验证器耦合，而人工通过率提供修复成功与否的独立检验。}
 \label{fig:repair_curve}
 \end{figure}
+
+\paragraph{成本-性能权衡。}
+表~\ref{tab:cost_performance} 比较了共享下游修复协议下五种配置的成本、延迟和性能。仅规则方法实现了最低成本（0.42$\times$），但在人工 Pass@2 上存在显著差距（0.599 vs.\ VideoGenDoctor-full 的 0.764）。Rule+Open-VLM 以 0.73$\times$ 的成本将差距缩小至 Pass@2 0.716。Rule+GPT-4V 以 2.75$\times$ 的成本实现了最强的人工 Pass@2（0.792）。绕过了基于规则的候选阶段的直接 VLM 结构化报告以 1.16$\times$ 的成本达到 Pass@2 0.681，表现不如所有规则辅助配置。VideoGenDoctor-full 代表了推荐的默认配置，在强大的修复性能与适度的成本之间取得了平衡。图~\ref{fig:cost_performance_pareto} 将此权衡关系可视化为帕累托前沿，确认了 VideoGenDoctor-full 占据拐点位置：在此之外，边际 Pass@2 增益伴随着急剧上升的相对成本。
 
 \begin{table}[t]
 \centering\scriptsize
@@ -724,6 +751,9 @@ VLM 结构化报告 & 0.8869 & 0.6639 & 0.6810 & 1.16$\times$ & 1.20$\times$ \\
 \end{tabular}
 \end{adjustbox}
 \end{table}
+
+\paragraph{帕累托最优权衡。}
+图~\ref{fig:cost_performance_pareto} 将表~\ref{tab:cost_performance} 中的成本-性能权衡绘制为帕累托前沿。默认 VideoGenDoctor-full 操作点占据拐点位置：它在人工修复成功率上优于低成本规则变体和直接结构化 VLM 报告，而高成本的 Rule+GPT-4V 参考方案以显著更高的相对成本获得最强的人工 Pass@2。帕累托曲线确认了仅规则方法是资源受限环境下最具成本效率的配置，VideoGenDoctor-full 是推荐的默认方案，Rule+GPT-4V 在预算允许时设定了质量上限。
 
 \begin{figure}[t]
 \centering
