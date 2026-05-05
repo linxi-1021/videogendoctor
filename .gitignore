@@ -75,12 +75,30 @@ service-account*.json
 .ipynb_checkpoints/
 
 # --- Internal planning documents (not for public release) ---
+AGENTS.md
 TANBO_COMPLETE_GUIDE.md
 TANBO_TOPVENUE_EXECUTION_PLAN.md
 plan.md
 prompt.txt
 manuscript.docx
 download.txt
+
+docs/HANDOFF.md
+docs/STUDENT_PLAYBOOK.md
+docs/drafts/
+docs/issues/
+docs/paper1_videogendoctor/HYPOTHETICAL_ICML_REVISION_BLUEPRINT.md
+docs/paper1_videogendoctor/citation_audit.md
+docs/paper1_videogendoctor/figures_plan.md
+docs/paper1_videogendoctor/judge_protocol.md
+docs/paper1_videogendoctor/paper_outline.md
+docs/paper1_videogendoctor/rebuttal_cheatsheet.md
+docs/paper1_videogendoctor/table_figure_audit.md
+docs/paper1_videogendoctor/tables_plan.md
+docs/paper1_videogendoctor/draft_results/
+docs/paper1_videogendoctor/图.txt
+docs/paper1_videogendoctor/neurIPS/review_optimization_report.md
+docs/submission_checklist.md
 
 # --- Personal Claude Code config ---
 .claude/

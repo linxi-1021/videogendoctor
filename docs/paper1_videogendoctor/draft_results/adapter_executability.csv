@@ -1,5 +1,0 @@
-adapter_level,plan_share,adapter_executable_rate,human_pass2,new_artifact_rate
-L0,0.100,0.000,0.280,0.040
-L1,0.310,0.280,0.540,0.100
-L2,0.420,0.740,0.730,0.140
-L3,0.170,0.960,0.810,0.160

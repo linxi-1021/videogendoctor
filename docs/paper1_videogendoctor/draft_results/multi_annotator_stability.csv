@@ -1,4 +1,0 @@
-subset,videos,candidate_spans,annotators,fleiss_kappa,mean_pairwise_tiou,boundary_disagreement_sec
-Controlled,72,468,3,0.842,0.704,0.38
-Real-failure,48,300,3,0.782,0.628,0.52
-Combined,120,768,3,0.813,0.666,0.45
