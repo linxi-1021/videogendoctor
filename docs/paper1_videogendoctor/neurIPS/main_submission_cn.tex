@@ -290,7 +290,7 @@ VideoGenDoctor-Bench-v0 包含 324 段视频，这些视频由来自六个领域
 我们从 CogVideoX、Wan、Stable Video Diffusion 和 HunyuanVideo~\cite{cogvideox2024,wan2025,svd2023,hunyuanvideo2025} 收集了 240 段自然发生的故障视频。从 480 段原始生成中，仅当标注者确认存在至少一处可见的规格说明违规时才保留视频。采样按每个生成器 60 段故障进行平衡，每个视频清单中记录了生成器特定的输入适配器：CogVideoX 和 Wan 使用 ShotIR-to-prompt 模板，SVD 使用参考帧条件，HunyuanVideo 使用多镜头提示模板。另外还从同一批原始生成池中保留了 120 段真实正常视频（每个生成器 30 段），用于估计假阳性率。由于该子集以故障富集的方式构造，它可以支持已验证故障下的迁移分析，但不能估计自然的故障发生率。源组成、正常集行为以及压力测试表见附录~\ref{app:additional_experiment_tables}。
 
 \paragraph{标注。}
-一个包含 120 段视频、768 个候选证据区间的可靠性子集在仲裁前进行了双人标注。代码级一致率达到 Cohen's $\kappa = \IAAcode$；区间级一致率较低（tIoU = \IAAspan），反映了细粒度时间边界的内在模糊性。数据集统计和标注细节见附录~\ref{app:additional_experiment_tables}（表~\ref{tab:dataset_statistics}--\ref{tab:annotation_reliability}）。
+一个包含 120 段视频、768 个候选证据区间的可靠性子集在仲裁前进行了双人标注。代码级一致率达到 Cohen's $\kappa = \IAAcode$；区间级一致率较低（tIoU = \IAAspan），反映了细粒度时间边界的内在模糊性。数据集统计见附录~\ref{app:moved_main_details}（表~\ref{tab:dataset_statistics}）；标注细节见附录~\ref{app:additional_experiment_tables}（表~\ref{tab:annotation_reliability}）。
 
 \subsection{比较方法与评估指标}
 我们比较三组方法。\textbf{诊断变体：}Prior-only（基于频率的先验，在不检查视频的情况下预测每种扰动类型最常见的故障代码）、Rule-only、Rule+DummyJudge、Rule+Open-VLM、Rule+GPT-4V 以及 VideoGenDoctor-diagnosis。\textbf{修复变体：}VideoGenDoctor-patch（从诊断输出直接应用基于模板的补丁，不经验证）、Patch+Judge 以及 VideoGenDoctor-full。\textbf{外部 VLM 基线：}自由形式 VLM 报告、结构化 VLM 报告、自一致性、时间提案+补丁、VLM-to-patch 以及 Score+LLM-to-patch。直接 VLM 基线与 Rule+GPT-4V 共享相同的 GPT-4V 端点，以便将提示结构、输出模式和修复协议与模型主干隔离开来单独考察；Rule+Open-VLM 提供一个开放模型参考。无论何时报告人工修复成功率，仅诊断前端都与同一个下游修复回路配对。实现细节见附录~\ref{app:additional_experiment_tables}（表~\ref{tab:vlm_details}）；强化的 VLM-agent 基线见附录~\ref{app:moved_main_details}（表~\ref{tab:strong_vlm_agent_baselines}）。
