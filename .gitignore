@@ -98,6 +98,17 @@ docs/paper1_videogendoctor/tables_plan.md
 docs/paper1_videogendoctor/draft_results/
 docs/paper1_videogendoctor/图.txt
 docs/paper1_videogendoctor/neurIPS/review_optimization_report.md
+
+# --- Paper source files (hosted in draft repo, not in public code repo) ---
+docs/paper1_videogendoctor/latex/
+docs/paper1_videogendoctor/neurIPS/*.tex
+docs/paper1_videogendoctor/neurIPS/*.sty
+docs/paper1_videogendoctor/neurIPS/*.bib
+docs/paper1_videogendoctor/neurIPS/*.bbl
+docs/paper1_videogendoctor/figures/*.pdf
+docs/paper1_videogendoctor/figures/*.png
+docs/paper1_videogendoctor/figures/__pycache__/
+docs/paper1_videogendoctor/checklist.tex
 docs/submission_checklist.md
 
 # --- Personal Claude Code config ---
